@@ -1,0 +1,7 @@
+# Experiment workspace
+
+Complete the supplied task using this local public source snapshot. Use source inspection and local fake-CLI tests. Do not invoke real debate, doctor, init, or other external agent CLI sessions; native subagent tools are available if your policy calls for them. Do not browse or read experiment answer keys, other runs, or files outside this workspace except installed runtime/tool dependencies. Do not publish, commit, or push. Preserve unrelated behavior.
+
+When delegating, use explicit model IDs with high reasoning effort and fresh context, supplying the necessary task brief and workspace path. Model mapping: Luna = gpt-6-luna; Terra = gpt-5.6-terra; Sol = gpt-6-sol; Astra = gpt-6-astra. The parent runs at high reasoning. This is a host adapter, not a requirement to delegate. At most two workers may be active at once; workers should not create their own workers.
+
+Return the requested final artifact. Report any failed validation or unresolved uncertainty. For read-only tasks, do not edit the repository. For implementation, changes and a concise validation report are required.

@@ -1,0 +1,3 @@
+Investigate the `maxBudgetUsd` setting and related `--budget` CLI override in this source snapshot. Do not modify project source.
+
+Give a concise, evidence-backed inventory of its production declarations and consumers (paths and line references), how configuration and CLI values reach the Claude invocation, effective defaults and precedence, and which execution paths apply the override. Identify the existing tests that directly cover this behavior and distinguish what they prove from uncovered wiring. Mention any nearby misleading documentation or comments about the default. Limit the search to src/, test/, examples/, README.md and package.json. Do not call real model CLIs or access the network. Return your report as the final answer.

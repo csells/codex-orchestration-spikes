@@ -1,0 +1,178 @@
+// Debate config (Kaizen v0): `--config debate.yaml` selects the participant
+// lineup so each run can choose adapters that match the target repository policy.
+//
+// This parses a deliberately MINIMAL YAML subset — flat top-level scalars plus
+// one `participants:` list of flat maps — with strict, line-numbered errors.
+// No dependency, no build step (the repo's standing rule). When config needs
+// real YAML (nesting, anchors), switch to a parser library; do not grow this.
+
+export type AdapterId = "claude" | "agy" | "codex" | "pi" | "copilot-cli";
+
+export type ParticipantSpec = {
+  adapter: AdapterId;
+  model?: string;        // omit = the adapter's default (codex: the account default)
+  bin?: string;          // override the binary path (e.g. a shadowed codex install)
+  maxBudgetUsd?: number; // claude only
+  effort?: string;       // reasoning effort, to dose token spend. claude: --effort
+                         // (low|medium|high|xhigh|max); codex: model_reasoning_effort
+                         // (minimal|low|medium|high). NOT supported by agy (effort is
+                         // baked into the model name, e.g. "Gemini 3.5 Flash (High)").
+                         // Free-form string: the CLI validates it (errors surface in
+                         // the raw capture / --doctor), so this parser stays version-agnostic.
+};
+
+export type DebateConfig = {
+  rounds?: number;
+  repo?: string;
+  timeoutMinutes?: number;
+  participants?: ParticipantSpec[];
+  judge?: ParticipantSpec; // the respondeo agent: renders the consolidatio (opt-in)
+};
+
+// The inverse of parseDebateConfig: emit the same minimal YAML subset this module
+// parses, so a generated config round-trips back through parseDebateConfig unchanged.
+// Used by `disputatio --init` to write ~/.config/disputatio/config.yaml. Keep it in
+// lock-step with the parser — if one grows a key, so must the other (round-trip test).
+const PARTICIPANT_ORDER: (keyof ParticipantSpec)[] = ["adapter", "model", "bin", "maxBudgetUsd", "effort"];
+
+// Quote a scalar only when leaving it bare would change how the parser reads it — namely
+// edge whitespace or an empty value (both eaten by the parser otherwise). Plain values
+// like model names with spaces/parens ("Gemini 3.5 Flash (High)") stay unquoted; the
+// parser reads the whole rest-of-line. A value with a `(^|\s)#` is UNREPRESENTABLE — the
+// parser strips trailing comments before handling quotes, so quoting can't save it; we
+// refuse it loudly rather than write config that silently round-trips to something else.
+function emitScalar(v: string | number): string {
+  if (typeof v === "number") return String(v);
+  if (/(^|\s)#/.test(v)) throw new Error(`config value cannot contain a "#" comment marker: ${JSON.stringify(v)}`);
+  return v === "" || v !== v.trim() ? JSON.stringify(v) : v;
+}
+
+function emitSpec(spec: ParticipantSpec, indent: string, firstPrefix: string): string {
+  const lines: string[] = [];
+  let prefix = firstPrefix;
+  for (const key of PARTICIPANT_ORDER) {
+    const val = spec[key];
+    if (val === undefined) continue;
+    lines.push(`${prefix}${key}: ${emitScalar(val)}`);
+    prefix = indent; // only the first key carries the "- " list marker
+  }
+  return lines.join("\n");
+}
+
+export function serializeDebateConfig(cfg: DebateConfig): string {
+  const out: string[] = [];
+  if (cfg.rounds !== undefined) out.push(`rounds: ${cfg.rounds}`);
+  if (cfg.timeoutMinutes !== undefined) out.push(`timeoutMinutes: ${cfg.timeoutMinutes}`);
+  if (cfg.repo !== undefined) out.push(`repo: ${emitScalar(cfg.repo)}`);
+  if (cfg.participants) {
+    out.push("participants:");
+    for (const p of cfg.participants) out.push(emitSpec(p, "    ", "  - "));
+  }
+  if (cfg.judge) {
+    out.push("judge:");
+    out.push(emitSpec(cfg.judge, "  ", "  "));
+  }
+  return out.join("\n") + "\n";
+}
+
+const ADAPTERS = new Set<string>(["claude", "agy", "codex", "pi", "copilot-cli"]);
+const TOP_KEYS = new Set<string>(["rounds", "repo", "timeoutMinutes", "participants", "judge"]);
+const PARTICIPANT_KEYS = new Set<string>(["adapter", "model", "bin", "maxBudgetUsd", "effort"]);
+const NUMERIC_KEYS = new Set<string>(["rounds", "timeoutMinutes", "maxBudgetUsd"]);
+
+function fail(lineNo: number, msg: string): never {
+  throw new Error(`debate config line ${lineNo}: ${msg}`);
+}
+
+function scalar(raw: string, key: string, lineNo: number): string | number {
+  let v = raw.trim();
+  const quoted = (v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"));
+  if (quoted) v = v.slice(1, -1);
+  if (v === "") fail(lineNo, `key "${key}" has no value`);
+  if (NUMERIC_KEYS.has(key)) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) fail(lineNo, `key "${key}" must be a number, got "${v}"`);
+    return n;
+  }
+  return v;
+}
+
+export function parseDebateConfig(text: string): DebateConfig {
+  const cfg: DebateConfig = {};
+  let participants: Record<string, string | number>[] | null = null;
+  // The judge is a single spec (not a list). The `in*` flags track which block's
+  // continuation lines we are currently reading; any new top-level key closes both
+  // (so the accumulators are NOT discarded — a later `judge:` must not drop the
+  // already-parsed participants, nor a later top key the judge).
+  let judge: Record<string, string | number> | null = null;
+  let inParticipants = false;
+  let inJudge = false;
+
+  const lines = text.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const lineNo = i + 1;
+    const noComment = lines[i].replace(/(^|\s)#.*$/, ""); // strip full-line & trailing comments
+    if (noComment.trim() === "") continue;
+
+    const top = noComment.match(/^([A-Za-z][A-Za-z0-9]*):\s*(.*)$/);          // key: value (indent 0)
+    const item = noComment.match(/^\s+-\s+([A-Za-z][A-Za-z0-9]*):\s*(.*)$/);  //   - key: value
+    const cont = noComment.match(/^\s+([A-Za-z][A-Za-z0-9]*):\s*(.*)$/);      //     key: value
+
+    if (top) {
+      const [, key, rest] = top;
+      if (!TOP_KEYS.has(key)) fail(lineNo, `unknown key "${key}" (known: ${[...TOP_KEYS].join(", ")})`);
+      // A new top-level key always ends the current block (but keeps its accumulator).
+      inParticipants = key === "participants";
+      inJudge = key === "judge";
+      if (key === "participants") {
+        if (rest.trim() !== "") fail(lineNo, `"participants" must be a list (put items on the following lines)`);
+        participants = [];
+      } else if (key === "judge") {
+        if (rest.trim() !== "") fail(lineNo, `"judge" must be a block (put its keys on the following indented lines)`);
+        judge = {};
+      } else {
+        (cfg as Record<string, unknown>)[key] = scalar(rest, key, lineNo);
+      }
+    } else if (item && inParticipants && participants) {
+      const [, key, rest] = item;
+      if (!PARTICIPANT_KEYS.has(key)) fail(lineNo, `unknown participant key "${key}" (known: ${[...PARTICIPANT_KEYS].join(", ")})`);
+      participants.push({ [key]: scalar(rest, key, lineNo) });
+    } else if (cont && inParticipants && participants) {
+      const [, key, rest] = cont;
+      if (!PARTICIPANT_KEYS.has(key)) fail(lineNo, `unknown participant key "${key}" (known: ${[...PARTICIPANT_KEYS].join(", ")})`);
+      const current = participants[participants.length - 1];
+      if (!current) fail(lineNo, `participant field before any "- " list item`);
+      if (key in current) fail(lineNo, `duplicate participant key "${key}"`);
+      current[key] = scalar(rest, key, lineNo);
+    } else if (cont && inJudge && judge) {
+      const [, key, rest] = cont;
+      if (!PARTICIPANT_KEYS.has(key)) fail(lineNo, `unknown participant key "${key}" (known: ${[...PARTICIPANT_KEYS].join(", ")})`);
+      if (key in judge) fail(lineNo, `duplicate judge key "${key}"`);
+      judge[key] = scalar(rest, key, lineNo);
+    } else {
+      fail(lineNo, `cannot parse "${lines[i].trim()}" (this parser supports only flat "key: value" and a participants list)`);
+    }
+  }
+
+  if (participants) {
+    for (const p of participants) {
+      if (typeof p.adapter !== "string" || !ADAPTERS.has(p.adapter)) {
+        throw new Error(`debate config: each participant needs "adapter: claude | agy | codex | pi | copilot-cli" (got ${JSON.stringify(p)})`);
+      }
+    }
+    if (participants.length < 2) {
+      throw new Error(`debate config: a debate needs at least 2 participants (got ${participants.length})`);
+    }
+    cfg.participants = participants as ParticipantSpec[];
+  }
+  if (judge) {
+    if (typeof judge.adapter !== "string" || !ADAPTERS.has(judge.adapter)) {
+      throw new Error(`debate config: the judge needs "adapter: claude | agy | codex | pi | copilot-cli" (got ${JSON.stringify(judge)})`);
+    }
+    cfg.judge = judge as ParticipantSpec;
+  }
+  if (cfg.rounds !== undefined && (!Number.isInteger(cfg.rounds) || cfg.rounds < 0)) {
+    throw new Error(`debate config: "rounds" must be a non-negative integer`);
+  }
+  return cfg;
+}

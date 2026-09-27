@@ -1,0 +1,10 @@
+{
+  "id": "audit",
+  "fixture": "fixtures/current",
+  "kind": "read-only",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "scoring": "evaluation/answer-key.md#workflow-audit-8-points",
+  "verify_command": "node evaluation/verify_audit.mjs fixtures/current",
+  "prompt_file": "prompts/audit.md",
+  "prompt": "Audit README.md's documented judge/continuation/finalization workflow against this snapshot's implementation. Do not change source.\n\nFocus on: when judge and final-report phases run; how `--continue` and `--finalize` select a judge and a saved determination; required determination status; whether repository evidence is supplied to re-judging versus final-report drafting; and which artifact path is printed to stdout on success or an unresolved continuation. Report concrete documentation mismatches or enforcement gaps with both README and code evidence, and briefly confirm the important claims that do hold. Do not invent issues merely to fill a quota. Existing tests and local fake CLIs may be used, but never invoke actual model services or the network. Return your findings as the final answer.\n"
+}

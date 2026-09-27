@@ -1,0 +1,29 @@
+{
+  "all_probes_passed": true,
+  "records": [
+    {
+      "name": "fallback-judge",
+      "exit_code": 0,
+      "stdout": "<TEMP>/fallback-judge/final-report.md\n",
+      "stderr": "[disputatio] config: <TEMP>/config.yaml\n[disputatio] finalize — drafting deliverable for <TEMP>/fallback-judge with Claude (opus)\n[disputatio] final report: <TEMP>/fallback-judge/final-report.md\n"
+    },
+    {
+      "name": "unresolved-stdout",
+      "exit_code": 0,
+      "stdout": "<TEMP>/unresolved-stdout/respondeo-2.md\n",
+      "stderr": "[disputatio] config: <TEMP>/config.yaml\n[disputatio] continue — re-judging <TEMP>/unresolved-stdout (from respondeo #1) with Claude (opus)\n[disputatio] respondeo (NEEDS_INPUT): <TEMP>/unresolved-stdout/respondeo-2.md\n[disputatio] ⚠️ still needs input — your answer opened a point the debaters never argued; answer again with --continue, or re-run the debate to re-engage them\n"
+    },
+    {
+      "name": "malformed-status-accepted",
+      "exit_code": 0,
+      "stdout": "<TEMP>/malformed-status-accepted/final-report.md\n",
+      "stderr": "[disputatio] config: <TEMP>/config.yaml\n[disputatio] finalize — drafting deliverable for <TEMP>/malformed-status-accepted with Claude (opus)\n[disputatio] final report: <TEMP>/malformed-status-accepted/final-report.md\n"
+    },
+    {
+      "name": "explicit-needs-input-blocked",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "[disputatio] config: <TEMP>/config.yaml\n[disputatio] respondeo #1 in <TEMP>/explicit-needs-input-blocked still needs input — run --continue \"<answers>\" first\n"
+    }
+  ]
+}

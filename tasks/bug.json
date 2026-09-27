@@ -1,0 +1,11 @@
+{
+  "id": "bugfix",
+  "fixture": "fixtures/timeout-before",
+  "kind": "edit",
+  "revision": "9ee94ad7c6290a9fc95dbc80817df6b219366773",
+  "historical_fix": "5bd2b8343a15d029dadb7bc0bfe709591c245078",
+  "scoring": "evaluation/answer-key.md#bug-fix",
+  "verify_command": "python3 evaluation/evaluate_bug.py <candidate-workspace>",
+  "prompt_file": "prompts/bugfix.md",
+  "prompt": "Fix the CLI timeout behavior in this historical source snapshot. In a real run, a CLI exceeded its time limit, the direct child was signaled, and a surviving worker kept stdout open so the turn never completed. A CLI that ignores SIGTERM can also outlive the cap.\n\nMake the timeout terminate the spawned CLI and its descendants and return `{ ok: false, error: \"timeout\" }` promptly, including when SIGTERM is ignored. Allow a short grace period before forcing termination, preserve normal capture/classification behavior, and avoid signaling the orchestrator's own process group. Keep the change focused and run the existing test suite plus an appropriate local reproduction. Do not invoke actual model services or access the network. Leave your source changes in the workspace and summarize the change and validation in your final answer.\n"
+}

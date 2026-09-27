@@ -1,0 +1,55 @@
+# Disputatio debate config — a TEMPLATE. This file is NOT auto-loaded; copy it (or point
+# `--config` at it), or just run `disputatio --init` to generate a machine-tuned config at
+# ~/.config/disputatio/config.yaml. Keep it portable: no host-specific paths uncommented.
+# Minimal YAML subset: flat "key: value" pairs + one participants list. No nesting.
+
+rounds: 1
+timeoutMinutes: 10
+# repo: /path/to/repo   # optional: read-only evidence gathering (git repos only;
+#                       # agents work in a throwaway worktree of HEAD)
+
+participants:
+  - adapter: claude
+    model: sonnet
+    maxBudgetUsd: 2
+    # effort: high                 # reasoning effort, to dose token spend.
+    #                              # claude values: low | medium | high | xhigh | max
+  - adapter: codex
+    # bin: /opt/homebrew/bin/codex # OPTIONAL host-specific override: uncomment only if a
+    #                              # stale shim shadows the real codex on your machine.
+    #                              # `disputatio --init` detects and pins this automatically.
+    # model: gpt-5.5               # omit = the account's default model
+    # effort: medium               # codex values: minimal | low | medium | high
+    #                              # (note: codex's value set differs from claude's)
+
+# Optional extra participants; enable only when each one's credentials and policy are
+# appropriate for the target repository. agy has NO effort key — encode the effort
+# in the model name instead (e.g. "(High)").
+# - adapter: agy
+#   model: Gemini 3.5 Flash (High)
+#
+# pi (earendil-works/pi) is a minimal, low-token multi-LLM harness. It runs read-only
+# (tool allowlist: read,grep,find,ls) and takes effort via --thinking.
+# - adapter: pi
+#   model: anthropic/claude-sonnet  # provider/id; omit = the account default
+#   effort: medium                  # pi values: off | minimal | low | medium | high | xhigh
+#   # bin: /opt/homebrew/bin/pi     # OPTIONAL: only if a stale shim shadows pi
+#
+# GitHub Copilot CLI (`npm install -g @github/copilot`, binary: copilot). Read-only via
+# --available-tools view,glob,grep with builtin MCP disabled; effort via --effort.
+# - adapter: copilot-cli
+#   model: auto                     # omit/auto = Copilot chooses; or pin a model name
+#   effort: medium                  # none | low | medium | high | xhigh | max
+#   # bin: /opt/homebrew/bin/copilot # OPTIONAL: only if a stale shim shadows copilot
+
+# Respondeo (judge): after the reaction rounds, ONE agent reads the full transcript
+# and renders the consolidatio — settled agreements + per-point rulings, or questions
+# for the human when a point can't be resolved from the transcript alone. Opt-in:
+# remove this block and the debate ends at the reaction rounds. Same keys as a
+# participant. Opus judges the Sonnet+Codex debaters above — a stronger model and a
+# DIFFERENT model from either debater (so no "grading its own argument" warning).
+judge:
+  adapter: claude
+  model: opus
+  effort: high
+  maxBudgetUsd: 2

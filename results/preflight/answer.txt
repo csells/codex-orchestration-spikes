@@ -1,0 +1,7 @@
+Verified all three references with one shell command:
+
+- `config.py:1`
+- `worker.py:1`
+- `worker.py:2`
+
+Requested worker model: `gpt-6-luna`, high reasoning, fresh context.

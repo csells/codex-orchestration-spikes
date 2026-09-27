@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "selection_date": "2026-09-27",
+  "source_repository": "https://github.com/csells/disputatio",
+  "license": "Apache-2.0",
+  "tasks": [
+    {"id":"inventory","fixture":"fixtures/current","prompt":"prompts/inventory.md","kind":"read-only","revision":"706995b0934ba3ad28684c6b68e965b1b0d9995c","scoring":"evaluation/answer-key.md#inventory-8-points"},
+    {"id":"audit","fixture":"fixtures/current","prompt":"prompts/audit.md","kind":"read-only","revision":"706995b0934ba3ad28684c6b68e965b1b0d9995c","scoring":"evaluation/answer-key.md#workflow-audit-8-points","verify_command":"node evaluation/verify_audit.mjs fixtures/current"},
+    {"id":"bugfix","fixture":"fixtures/timeout-before","prompt":"prompts/bugfix.md","kind":"edit","revision":"9ee94ad7c6290a9fc95dbc80817df6b219366773","historical_fix":"5bd2b8343a15d029dadb7bc0bfe709591c245078","scoring":"evaluation/answer-key.md#bug-fix","verify_command":"python3 evaluation/evaluate_bug.py <candidate-workspace>"}
+  ]
+}

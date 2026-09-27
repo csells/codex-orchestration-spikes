@@ -1,0 +1,122 @@
+
+> disputatio@0.7.0 test
+> node --test "test/*.test.ts"
+
+✔ claude: success envelope → ok with text and cost (468.372167ms)
+✔ claude: --max-budget-usd defaults to $5, overridable via maxBudgetUsd (110.168541ms)
+✔ claude: effort is passed as --effort when set, omitted when absent (185.836958ms)
+✔ codex: effort is passed as model_reasoning_effort override when set, omitted when absent (196.258917ms)
+✔ claude: budget-exceeded envelope (no `result` string) → error from `errors` array (30.154083ms)
+✔ claude: REGRESSION — subtype lies on error; classify on is_error (41.955583ms)
+✔ claude: non-JSON stdout → error with exit code (30.493375ms)
+✔ claude: exit 126 (stale shim) → setup hint, not a cryptic error (19.177833ms)
+✔ agy: trimmed stdout is the answer (259.11275ms)
+✔ agy: empty stdout → failure even on exit 0 (21.873542ms)
+✔ agy: timeout kills the run and reports it (210.58475ms)
+✔ REGRESSION — leaked worker holding the pipe + SIGTERM-ignoring CLI still times out fast (process-group kill) (2219.638ms)
+✔ codex: success JSONL → LAST agent_message wins (47.585875ms)
+✔ codex: turn.failed → failure with the event's message (36.070833ms)
+✔ codex: exit 0 but no turn.completed → failure (incomplete stream) (35.794791ms)
+✔ codex: custom bin override is used (47.119417ms)
+✔ pi: success JSON lines → LAST assistant message_end wins (185.185416ms)
+✔ pi: runs read-only (tools allowlist, no edit/write/bash) in json mode (29.120417ms)
+✔ pi: effort is passed as --thinking when set, omitted when absent (59.215584ms)
+✔ pi: auto_retry_end finalError → failure with the error (46.880542ms)
+✔ pi: custom bin override is used (40.690375ms)
+✔ copilot-cli: success JSON lines → LAST assistant.message wins (263.666292ms)
+✔ copilot-cli: runs read-only (available-tools view/glob/grep, no bash/edit/write) in json mode (41.661459ms)
+✔ copilot-cli: effort is passed as --effort when set, omitted when absent (67.977792ms)
+✔ copilot-cli: result exitCode non-zero → failure (31.864416ms)
+✔ copilot-cli: custom bin override is used (28.826791ms)
+﹣ published bundle: JS bin with a single line-1 shebang that runs (61.578875ms) # esbuild not installed (zero-dep clone)
+✔ userConfigPath honors XDG_CONFIG_HOME, else ~/.config (3.024083ms)
+✔ no --config + no user config → built-in lineup (text:null) — the P2 guard (22.721958ms)
+✔ no --config but user config present → loads it (9.686041ms)
+✔ explicit --config that does not exist → hard-fails (does not silently fall back) (63.597875ms)
+✔ a malformed user config still surfaces (parse throws downstream, not swallowed) (201.678208ms)
+✔ parses the shipped example config (a portable template — no host-specific bin) (103.120375ms)
+✔ serializeDebateConfig round-trips through parseDebateConfig (9.594625ms)
+✔ serializeDebateConfig quotes edge-whitespace values, leaves spaces/parens bare (2.001459ms)
+✔ serializeDebateConfig refuses an unrepresentable comment marker rather than corrupting (19.814291ms)
+✔ parses a judge: block (respondeo) (3.945125ms)
+✔ judge is undefined when the section is absent (1.675667ms)
+✔ rejects an unknown judge key with the line number (0.701084ms)
+✔ rejects a judge without a valid adapter (0.850917ms)
+✔ a top-level key after a judge block closes it (no misattribution) (0.431125ms)
+✔ models with spaces and parens survive (agy model names) (0.857958ms)
+✔ quoted values are unquoted (0.507916ms)
+✔ rejects unknown top-level keys with the line number (2.902625ms)
+✔ parses per-participant effort (free-form string) (0.272333ms)
+✔ rejects unknown participant keys (0.272708ms)
+✔ rejects a single-participant lineup (0.305959ms)
+✔ rejects unknown adapters (1.118875ms)
+✔ rejects non-numeric numeric keys and non-integer rounds (2.172709ms)
+✔ rejects nested structures it cannot represent (0.309542ms)
+[disputatio] Round 1 — independent proposals: a, b
+[disputatio] ABORTED — only 1/2 proposals succeeded — no debate possible. Failures: b: timeout
+[disputatio] Round 1 — independent proposals: a, b
+✔ abort: <2 successful proposals ends the debate before any reaction round (83.845542ms)
+[disputatio] ABORTED — only 0/2 proposals succeeded — no debate possible. Failures: a: budget | b: timeout
+[disputatio] Round 1 — independent proposals: a, b
+✔ abort: both proposals failing lists both failures (2.421792ms)
+[disputatio] Round 2 — reactions
+[disputatio] Round 1 — independent proposals: a, b
+✔ reaction context is clean: proposals included, cost footnotes excluded (3.941584ms)
+[disputatio] Round 2 — reactions
+[disputatio] Respondeo — opus renders the consolidatio
+[disputatio] Redactio — opus drafts the final deliverable
+[disputatio] Round 1 — independent proposals: a, b
+✔ respondeo: the judge runs after reactions and reads proposals + reactions (5.960333ms)
+[disputatio] Respondeo — opus renders the consolidatio
+[disputatio] Redactio — opus drafts the final deliverable
+[disputatio] Round 1 — independent proposals: a, b
+✔ finalize: a RESOLVED respondeo triggers a final-report deliverable turn (19.874916ms)
+[disputatio] Respondeo — opus renders the consolidatio
+[disputatio] Round 1 — independent proposals: a, b
+✔ finalize: NEEDS_INPUT does not produce a final report (the deliverable waits for the human) (10.673292ms)
+[disputatio] Round 1 — independent proposals: a, b
+✔ finalize: no judge means no final report (2.514916ms)
+[disputatio] Respondeo — opus renders the consolidatio
+[disputatio] Redactio — opus drafts the final deliverable
+[disputatio] Round 1 — independent proposals: a, b
+✔ finalize: a failing redactio is non-fatal (debate + respondeo still succeeded) (5.513708ms)
+[disputatio] Respondeo — opus renders the consolidatio
+[disputatio] Redactio — opus drafts the final deliverable
+✔ finalize: budget-exhausted redactio sets finalReportError.budgetExhausted (6.26725ms)
+✔ continuation: re-invokes the judge with the quaestio, transcript, prior determination, and human answers (2.40975ms)
+[disputatio] Round 1 — independent proposals: a, b
+✔ continuation: degrades to NEEDS_INPUT when the answer opens ground the debaters never argued (1.8485ms)
+[disputatio] Round 2 — reactions
+[disputatio] Round 1 — independent proposals: a, b
+✔ respondeo: no judge turn when the judge arg is absent (3.600834ms)
+[disputatio] Respondeo — opus renders the consolidatio
+[disputatio] Round 1 — independent proposals: a, b
+✔ respondeo: STATUS: NEEDS_INPUT surfaces on the outcome (19.633916ms)
+[disputatio] Respondeo — opus renders the consolidatio
+✔ respondeo: a failing judge is non-fatal (28.661625ms)
+✔ redactio: with a repo, the synthesizer is grounded in a throwaway worktree, never the real checkout (1222.62175ms)
+[disputatio] Round 1 — independent proposals: m, s
+✔ worktree isolation: agents run in a throwaway worktree, never the real checkout (1242.538041ms)
+✔ doctor: all participants answer the canary → all ok, allHealthy true (24.426167ms)
+✔ doctor: one participant fails → that diagnosis ok:false and allHealthy false (9.80325ms)
+✔ doctor: a participant that throws is reported as unhealthy, not crash the run (6.070542ms)
+✔ doctor: report shows a per-participant marker, vendor, and the failing detail (6.586958ms)
+✔ resolveBinary: PATH binary works → ok, no pin, alternatives untouched (16.757167ms)
+✔ resolveBinary: PATH binary fails, an alternative works → pin that alternative (0.816208ms)
+✔ resolveBinary: nothing works → ok:false, no bin (0.622375ms)
+✔ runInit: codex stale shim → brew bin pinned; claude on PATH → no bin; judge seeded (79.533084ms)
+✔ runInit: PATH binaries all work → no bin pinned (only-when-needed) (22.861ms)
+✔ runInit: a participant with no working binary → exit 1, config not written (13.649458ms)
+✔ inline is the default: the sole positional IS the quaestio (29.824042ms)
+✔ --file selects the file source (no positional) (0.214708ms)
+✔ no quaestio at all → not ok (0.170542ms)
+✔ both --file and an inline positional → conflict, not ok (0.200917ms)
+✔ extra positionals (likely an unquoted prompt) → not ok (0.190792ms)
+ℹ tests 81
+ℹ suites 0
+ℹ pass 80
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 6146.550667

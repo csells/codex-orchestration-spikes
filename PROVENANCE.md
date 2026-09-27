@@ -1,0 +1,13 @@
+# Public fixture provenance
+
+All source fixtures were downloaded from the **public** [csells/disputatio](https://github.com/csells/disputatio) GitHub repository using the GitHub tarball API on 2026-09-27. The project is an Apache-2.0-licensed fork; package.json links the original [marcomd/disputatio](https://github.com/marcomd/disputatio) project. Each fixture retains upstream LICENSE and original source comments. No private local source was used.
+
+- Current inventory/audit: [706995b0934ba3ad28684c6b68e965b1b0d9995c](https://github.com/csells/disputatio/tree/706995b0934ba3ad28684c6b68e965b1b0d9995c).
+- Historical timeout bug: [9ee94ad7c6290a9fc95dbc80817df6b219366773](https://github.com/csells/disputatio/tree/9ee94ad7c6290a9fc95dbc80817df6b219366773).
+- Independent upstream regression test and fake: [5bd2b8343a15d029dadb7bc0bfe709591c245078](https://github.com/csells/disputatio/commit/5bd2b8343a15d029dadb7bc0bfe709591c245078), the actual historical fix. Fixed implementation is excluded from candidate fixtures.
+
+These are curated, byte-preserving file subsets, not whole-repository clones. Included: src/, test/, README.md, LICENSE, package.json, examples/debate.yaml and examples/task.md; current also includes package-lock.json and build scripts. Excluded: upstream agent instructions/configuration/skills, graphs, research/transcripts, generated output, screenshots, other examples, changelog/history, and design documents. This standardizes agent instructions across conditions and prevents future-fix leakage; README links outside the subset are not available. Only README is in scope for the workflow audit. `fixture-manifest.json` records SHA-256 for each included file.
+
+No dependencies or real agents are required for these task checks: Node's native TypeScript runner handles the source; adapter tests shadow agent CLIs with local fake executables. Current test suite skips its optional bundled-build check without installed esbuild. Historical regression permits a maximum 4s completion for a 200ms timeout against an 8s fake hang. Fake CLI processes run locally and terminate; no service calls occur.
+
+Limitations: one small TypeScript project, curated snapshots, developer-authored semantic answer key, historical implementation bug with a clearly described symptom, and only one task per class. Publicly available historical solutions may already be in model training data; trial prompts prohibit network/history lookup. This is a diagnostic spike, not a general ranking benchmark. Audit findings were established and runtime-probed before model outputs; they are existing upstream behavior, not planted defects.
