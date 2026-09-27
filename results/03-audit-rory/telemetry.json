@@ -11,33 +11,32 @@
       "reasoning_efforts": [
         "high"
       ],
-      "response_count": 4,
+      "response_count": 9,
       "usage": {
-        "input_tokens": 75071,
-        "cached_input_tokens": 66816,
+        "input_tokens": 320341,
+        "cached_input_tokens": 275584,
         "cache_write_input_tokens": 0,
-        "output_tokens": 304,
-        "reasoning_output_tokens": 0,
-        "total_tokens": 75375
+        "output_tokens": 3791,
+        "reasoning_output_tokens": 330,
+        "total_tokens": 324132
       },
       "usage_by_model": {
         "gpt-6-astra": {
-          "input_tokens": 75071,
-          "cached_input_tokens": 66816,
+          "input_tokens": 320341,
+          "cached_input_tokens": 275584,
           "cache_write_input_tokens": 0,
-          "output_tokens": 304,
-          "reasoning_output_tokens": 0,
-          "total_tokens": 75375
+          "output_tokens": 3791,
+          "reasoning_output_tokens": 330,
+          "total_tokens": 324132
         }
       },
       "tool_call_counts": {
-        "spawn_agent": 1,
-        "wait_agent": 1,
-        "exec": 1
+        "exec": 7,
+        "spawn_agent": 1
       },
       "successful_spawn_requests": [
         {
-          "requested_model": "gpt-6-luna",
+          "requested_model": "gpt-6-sol",
           "requested_reasoning_effort": "high",
           "fork_turns": "none",
           "observed_child": "worker_1"
@@ -45,8 +44,8 @@
       ],
       "context_proxy": {
         "definition": "Provider input_tokens for each observed response; not exact live occupancy",
-        "peak_request_input_tokens": 18994,
-        "last_request_input_tokens": 18994,
+        "peak_request_input_tokens": 53936,
+        "last_request_input_tokens": 53936,
         "reported_model_context_window": 258400
       },
       "compaction_count": 0,
@@ -68,38 +67,39 @@
       "thread": "worker_1",
       "parent": "root",
       "actual_models": [
-        "gpt-6-luna"
+        "gpt-6-sol"
       ],
       "reasoning_efforts": [
         "high"
       ],
-      "response_count": 2,
+      "response_count": 12,
       "usage": {
-        "input_tokens": 43927,
-        "cached_input_tokens": 32256,
+        "input_tokens": 507501,
+        "cached_input_tokens": 452736,
         "cache_write_input_tokens": 0,
-        "output_tokens": 167,
-        "reasoning_output_tokens": 24,
-        "total_tokens": 44094
+        "output_tokens": 4572,
+        "reasoning_output_tokens": 1637,
+        "total_tokens": 512073
       },
       "usage_by_model": {
-        "gpt-6-luna": {
-          "input_tokens": 43927,
-          "cached_input_tokens": 32256,
+        "gpt-6-sol": {
+          "input_tokens": 507501,
+          "cached_input_tokens": 452736,
           "cache_write_input_tokens": 0,
-          "output_tokens": 167,
-          "reasoning_output_tokens": 24,
-          "total_tokens": 44094
+          "output_tokens": 4572,
+          "reasoning_output_tokens": 1637,
+          "total_tokens": 512073
         }
       },
       "tool_call_counts": {
-        "exec": 1
+        "exec": 7,
+        "send_message": 4
       },
       "successful_spawn_requests": [],
       "context_proxy": {
         "definition": "Provider input_tokens for each observed response; not exact live occupancy",
-        "peak_request_input_tokens": 22060,
-        "last_request_input_tokens": 22060,
+        "peak_request_input_tokens": 52969,
+        "last_request_input_tokens": 52969,
         "reported_model_context_window": 258400
       },
       "compaction_count": 0,
@@ -119,29 +119,29 @@
     }
   ],
   "total_usage": {
-    "input_tokens": 118998,
-    "cached_input_tokens": 99072,
+    "input_tokens": 827842,
+    "cached_input_tokens": 728320,
     "cache_write_input_tokens": 0,
-    "output_tokens": 471,
-    "reasoning_output_tokens": 24,
-    "total_tokens": 119469
+    "output_tokens": 8363,
+    "reasoning_output_tokens": 1967,
+    "total_tokens": 836205
   },
   "usage_by_model": {
     "gpt-6-astra": {
-      "input_tokens": 75071,
-      "cached_input_tokens": 66816,
+      "input_tokens": 320341,
+      "cached_input_tokens": 275584,
       "cache_write_input_tokens": 0,
-      "output_tokens": 304,
-      "reasoning_output_tokens": 0,
-      "total_tokens": 75375
+      "output_tokens": 3791,
+      "reasoning_output_tokens": 330,
+      "total_tokens": 324132
     },
-    "gpt-6-luna": {
-      "input_tokens": 43927,
-      "cached_input_tokens": 32256,
+    "gpt-6-sol": {
+      "input_tokens": 507501,
+      "cached_input_tokens": 452736,
       "cache_write_input_tokens": 0,
-      "output_tokens": 167,
-      "reasoning_output_tokens": 24,
-      "total_tokens": 44094
+      "output_tokens": 4572,
+      "reasoning_output_tokens": 1637,
+      "total_tokens": 512073
     }
   },
   "accounting": "Sum unique token_usage_record.usage by response_id, restricted to actual thread_id; includes nested compaction records once",

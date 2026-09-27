@@ -1,0 +1,130 @@
+{
+  "score": 8,
+  "max_score": 8,
+  "passed": true,
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correctly identifies shared optional numeric field, parsing in participant/judge blocks, and serialization.",
+      "evidence": [
+        "src/config.ts:11-29",
+        "src/config.ts:36-74",
+        "src/config.ts:80-95",
+        "src/config.ts:136-151"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correctly identifies CLI parsing, copied-spec replacement, and actual numeric validation. Cited withBudget code contains Number(budgetArg).",
+      "evidence": [
+        "src/index.ts:58",
+        "src/index.ts:85-87",
+        "src/index.ts:120-121"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correctly identifies Claude-only forwarding and other adapters ignoring this field.",
+      "evidence": [
+        "src/index.ts:105-114"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correctly identifies ClaudeOpts, nullish default 5, per-invocation CLI flag, and separate fallback judge default.",
+      "evidence": [
+        "src/adapters.ts:84-107",
+        "src/index.ts:103"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 1,
+      "finding": "All requested path distinctions are correct, including no judge created by --budget, fallback judge for resume/finalization, and doctor/init bypassing override.",
+      "evidence": [
+        "src/index.ts:171-176",
+        "src/index.ts:196-197",
+        "src/index.ts:214",
+        "src/index.ts:333",
+        "src/index.ts:340"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 1,
+      "finding": "Correct precedence for judges versus debaters and distinction between explicit example value 2 and default 5.",
+      "evidence": [
+        "src/index.ts:120-121",
+        "src/adapters.ts:89",
+        "examples/debate.yaml:14",
+        "examples/debate.yaml:55"
+      ]
+    },
+    {
+      "item": 7,
+      "credit": 1,
+      "finding": "Accurate adapter/config/install test inventory; correctly distinguishes example participant assertion, judge round-trip coverage, and missing CLI override wiring tests.",
+      "evidence": [
+        "test/adapters.test.ts:33-45",
+        "test/config.test.ts:12-42",
+        "test/install.test.ts:51-75",
+        "test/: no --budget CLI invocation"
+      ]
+    },
+    {
+      "item": 8,
+      "credit": 1,
+      "finding": "Correct stale-default comment finding, supported by help and implementation.",
+      "evidence": [
+        "src/index.ts:119",
+        "src/index.ts:37",
+        "src/adapters.ts:89"
+      ]
+    }
+  ],
+  "missing_items": [],
+  "false_claims": [],
+  "additional_findings": [
+    {
+      "finding": "CLI accepts positive infinity; config parser permits nonpositive finite budgets.",
+      "assessment": "Correct from code predicates; no extra rubric credit.",
+      "evidence": [
+        "src/index.ts:85-87",
+        "src/config.ts:92-95"
+      ]
+    },
+    {
+      "finding": "Config selection honors XDG_CONFIG_HOME and does not merge config files.",
+      "assessment": "Correct.",
+      "evidence": [
+        "src/install.ts:28-49",
+        "src/index.ts:184-185"
+      ]
+    },
+    {
+      "finding": "Init participant probes preserve configured budget fields, and serialization retains participant/judge settings.",
+      "assessment": "Correct.",
+      "evidence": [
+        "src/install.ts:137",
+        "src/install.ts:142-159"
+      ]
+    },
+    {
+      "finding": "The budget is per invocation rather than shared debate accounting; adapter comment does not state the judge-only restriction of --budget.",
+      "assessment": "Correct source characterization.",
+      "evidence": [
+        "src/adapters.ts:87-107",
+        "src/index.ts:118-121",
+        "src/debate.ts:261-275"
+      ]
+    }
+  ],
+  "limitations": [
+    "The answer's self-report of seven tests passing and no network/source edits cannot be independently verified from answer and source alone. Run logs were deliberately excluded to preserve blinding; these claims did not add rubric points and are not contradicted by inspected evidence."
+  ],
+  "method": "Blind rubric scoring against frozen public source; reviewer did not see policy or cost."
+}

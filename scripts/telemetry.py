@@ -207,7 +207,7 @@ def collect(root_id: str, rollout_roots: str | Path | list[str | Path],
             continue
         sessions[session_id] = {
             "meta": meta, "events": events, "malformed": malformed,
-            "parent": spawn.get("parent_thread_id"),
+            "parent": spawn.get("parent_thread_id"), "agent_path": spawn.get("agent_path"),
         }
     if root_id not in sessions:
         raise ValueError("Root rollout was not found in supplied locations")
@@ -220,6 +220,8 @@ def collect(root_id: str, rollout_roots: str | Path | list[str | Path],
     ordered = [root_id] + sorted(members - {root_id}, key=lambda sid: (
         str(sessions[sid]["meta"].get("timestamp", "")), sid))
     labels = {sid: ("root" if i == 0 else f"worker_{i}") for i, sid in enumerate(ordered)}
+    agent_paths = {sessions[sid]["agent_path"]: labels[sid] for sid in ordered
+                   if sessions[sid]["agent_path"]}
     total = _usage({})
     model_usage: dict[str, dict[str, int]] = defaultdict(lambda: _usage({}))
     seen_responses: set[str] = set()
@@ -242,6 +244,8 @@ def collect(root_id: str, rollout_roots: str | Path | list[str | Path],
         context_window = None
         last_quota = None
         started_own_history = False
+        pending_spawns: dict[str, dict[str, Any]] = {}
+        observed_spawns = []
 
         def add_record(record: dict[str, Any]) -> None:
             nonlocal responses, foreign_records, duplicates
@@ -295,7 +299,32 @@ def collect(root_id: str, rollout_roots: str | Path | list[str | Path],
                     if isinstance(payload.get("rate_limits"), dict):
                         last_quota = _quota_snapshot(payload["rate_limits"])
             elif kind == "response_item" and payload.get("type") in ("function_call", "custom_tool_call"):
-                counters[payload.get("name", "unknown")] += 1
+                name = payload.get("name", "unknown")
+                counters[name] += 1
+                if name.rsplit(".", 1)[-1] == "spawn_agent":
+                    try:
+                        arguments = json.loads(payload.get("arguments", "{}"))
+                    except (json.JSONDecodeError, TypeError):
+                        arguments = {}
+                    if isinstance(arguments, dict):
+                        pending_spawns[payload.get("call_id", "")] = arguments
+            elif kind == "response_item" and payload.get("type") == "function_call_output":
+                arguments = pending_spawns.get(payload.get("call_id", ""))
+                if arguments is not None:
+                    try:
+                        output = json.loads(payload.get("output", "{}"))
+                    except (json.JSONDecodeError, TypeError):
+                        output = {}
+                    if isinstance(output, dict) and output.get("task_name"):
+                        child = agent_paths.get(output["task_name"])
+                        observed_spawns.append({
+                            "requested_model": arguments.get("model"),
+                            "requested_reasoning_effort": arguments.get("reasoning_effort"),
+                            "fork_turns": arguments.get("fork_turns", "all"),
+                            "observed_child": child,
+                        })
+                        if child is None:
+                            warnings.append(f"{labels[sid]} has a successful spawn without a descendant rollout; accounting is incomplete")
         if not responses:
             warnings.append(f"{labels[sid]} has no attributable per-response usage records")
         if "unknown" in models:
@@ -305,6 +334,7 @@ def collect(root_id: str, rollout_roots: str | Path | list[str | Path],
             "actual_models": sorted(models), "reasoning_efforts": sorted(efforts),
             "response_count": responses, "usage": thread_usage,
             "usage_by_model": dict(by_model), "tool_call_counts": dict(counters),
+            "successful_spawn_requests": observed_spawns,
             "context_proxy": {
                 "definition": "Provider input_tokens for each observed response; not exact live occupancy",
                 "peak_request_input_tokens": max(footprints) if footprints else None,

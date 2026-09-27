@@ -1,0 +1,515 @@
+{
+  "rate_source": "https://learn.chatgpt.com/docs/pricing",
+  "rates_checked_date": "2026-09-27",
+  "rates_per_million_tokens_standard_speed": {
+    "gpt-6-astra": {
+      "input": 250,
+      "cached": 25,
+      "output": 1250
+    },
+    "gpt-6-sol": {
+      "input": 50,
+      "cached": 5,
+      "output": 250
+    },
+    "gpt-6-luna": {
+      "input": 2.5,
+      "cached": 0.25,
+      "output": 12.5
+    },
+    "gpt-5.6-terra": {
+      "input": 50,
+      "cached": 5,
+      "output": 300
+    }
+  },
+  "caveat": "Published Standard credit-equivalent estimate, not measured subscription quota or API bill. Input cache is counted at its own rate; reasoning is already included in output. Resumed-session usage is cumulative: never sum successive session snapshots.",
+  "runs": [
+    {
+      "run_id": "01-lookup-default",
+      "task": "lookup",
+      "policy": "default",
+      "elapsed_seconds": 83.866,
+      "resumed_session": false,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 222516,
+        "cached_input_tokens": 171904,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1945,
+        "reasoning_output_tokens": 81,
+        "total_tokens": 224461
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 222516,
+          "cached_input_tokens": 171904,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1945,
+          "reasoning_output_tokens": 81,
+          "total_tokens": 224461
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 19.38185
+        },
+        "total": 19.38185
+      },
+      "workers": 0,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 58389,
+        "last_request_input_tokens": 58389,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": {
+        "score": 8,
+        "max_score": 8,
+        "passed": true,
+        "details": [
+          {
+            "item": 1,
+            "credit": 1,
+            "finding": "Correctly identifies shared optional numeric field, parsing in participant/judge blocks, and serialization.",
+            "evidence": [
+              "src/config.ts:11-29",
+              "src/config.ts:36-74",
+              "src/config.ts:80-95",
+              "src/config.ts:136-151"
+            ]
+          },
+          {
+            "item": 2,
+            "credit": 1,
+            "finding": "Correctly identifies CLI parsing, copied-spec replacement, and actual numeric validation. Cited withBudget code contains Number(budgetArg).",
+            "evidence": [
+              "src/index.ts:58",
+              "src/index.ts:85-87",
+              "src/index.ts:120-121"
+            ]
+          },
+          {
+            "item": 3,
+            "credit": 1,
+            "finding": "Correctly identifies Claude-only forwarding and other adapters ignoring this field.",
+            "evidence": [
+              "src/index.ts:105-114"
+            ]
+          },
+          {
+            "item": 4,
+            "credit": 1,
+            "finding": "Correctly identifies ClaudeOpts, nullish default 5, per-invocation CLI flag, and separate fallback judge default.",
+            "evidence": [
+              "src/adapters.ts:84-107",
+              "src/index.ts:103"
+            ]
+          },
+          {
+            "item": 5,
+            "credit": 1,
+            "finding": "All requested path distinctions are correct, including no judge created by --budget, fallback judge for resume/finalization, and doctor/init bypassing override.",
+            "evidence": [
+              "src/index.ts:171-176",
+              "src/index.ts:196-197",
+              "src/index.ts:214",
+              "src/index.ts:333",
+              "src/index.ts:340"
+            ]
+          },
+          {
+            "item": 6,
+            "credit": 1,
+            "finding": "Correct precedence for judges versus debaters and distinction between explicit example value 2 and default 5.",
+            "evidence": [
+              "src/index.ts:120-121",
+              "src/adapters.ts:89",
+              "examples/debate.yaml:14",
+              "examples/debate.yaml:55"
+            ]
+          },
+          {
+            "item": 7,
+            "credit": 1,
+            "finding": "Accurate adapter/config/install test inventory; correctly distinguishes example participant assertion, judge round-trip coverage, and missing CLI override wiring tests.",
+            "evidence": [
+              "test/adapters.test.ts:33-45",
+              "test/config.test.ts:12-42",
+              "test/install.test.ts:51-75",
+              "test/: no --budget CLI invocation"
+            ]
+          },
+          {
+            "item": 8,
+            "credit": 1,
+            "finding": "Correct stale-default comment finding, supported by help and implementation.",
+            "evidence": [
+              "src/index.ts:119",
+              "src/index.ts:37",
+              "src/adapters.ts:89"
+            ]
+          }
+        ],
+        "missing_items": [],
+        "false_claims": [],
+        "additional_findings": [
+          {
+            "finding": "CLI accepts positive infinity; config parser permits nonpositive finite budgets.",
+            "assessment": "Correct from code predicates; no extra rubric credit.",
+            "evidence": [
+              "src/index.ts:85-87",
+              "src/config.ts:92-95"
+            ]
+          },
+          {
+            "finding": "Config selection honors XDG_CONFIG_HOME and does not merge config files.",
+            "assessment": "Correct.",
+            "evidence": [
+              "src/install.ts:28-49",
+              "src/index.ts:184-185"
+            ]
+          },
+          {
+            "finding": "Init participant probes preserve configured budget fields, and serialization retains participant/judge settings.",
+            "assessment": "Correct.",
+            "evidence": [
+              "src/install.ts:137",
+              "src/install.ts:142-159"
+            ]
+          },
+          {
+            "finding": "The budget is per invocation rather than shared debate accounting; adapter comment does not state the judge-only restriction of --budget.",
+            "assessment": "Correct source characterization.",
+            "evidence": [
+              "src/adapters.ts:87-107",
+              "src/index.ts:118-121",
+              "src/debate.ts:261-275"
+            ]
+          }
+        ],
+        "limitations": [
+          "The answer's self-report of seven tests passing and no network/source edits cannot be independently verified from answer and source alone. Run logs were deliberately excluded to preserve blinding; these claims did not add rubric points and are not contradicted by inspected evidence."
+        ],
+        "method": "Blind rubric scoring against frozen public source; reviewer did not see policy or cost."
+      }
+    },
+    {
+      "run_id": "02-lookup-rory",
+      "task": "lookup",
+      "policy": "rory",
+      "elapsed_seconds": 90.307,
+      "resumed_session": false,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 248249,
+        "cached_input_tokens": 203648,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2226,
+        "reasoning_output_tokens": 239,
+        "total_tokens": 250475
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 248249,
+          "cached_input_tokens": 203648,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2226,
+          "reasoning_output_tokens": 239,
+          "total_tokens": 250475
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 19.02395
+        },
+        "total": 19.02395
+      },
+      "workers": 0,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 52252,
+        "last_request_input_tokens": 52252,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": {
+        "score": 8,
+        "max_score": 8,
+        "passed": true,
+        "details": [
+          {
+            "item": 1,
+            "credit": 1,
+            "finding": "Correctly identifies the shared ParticipantSpec field, participant/judge parsing, numeric acceptance, and serialization.",
+            "evidence": [
+              "src/config.ts:11-29",
+              "src/config.ts:36-74",
+              "src/config.ts:80-95",
+              "src/config.ts:136-151"
+            ]
+          },
+          {
+            "item": 2,
+            "credit": 1,
+            "finding": "Correctly describes budgetArg parsing and withBudget's numeric override on a copied spec, including actual validation behavior.",
+            "evidence": [
+              "src/index.ts:58",
+              "src/index.ts:85-87",
+              "src/index.ts:120-121"
+            ]
+          },
+          {
+            "item": 3,
+            "credit": 1,
+            "finding": "Correctly identifies buildParticipant as the forwarding boundary and that only Claude consumes maxBudgetUsd.",
+            "evidence": [
+              "src/index.ts:105-114"
+            ]
+          },
+          {
+            "item": 4,
+            "credit": 1,
+            "finding": "Correctly identifies ClaudeOpts, nullish default of 5, CLI argv flag, and DEFAULT_JUDGE's independent value 5.",
+            "evidence": [
+              "src/adapters.ts:84-107",
+              "src/index.ts:103"
+            ]
+          },
+          {
+            "item": 5,
+            "credit": 1,
+            "finding": "Correctly distinguishes configured new-debate judge, fallback continuation/finalization judge, unmodified debaters, and absence of override in doctor/init.",
+            "evidence": [
+              "src/index.ts:171-176",
+              "src/index.ts:196-197",
+              "src/index.ts:214",
+              "src/index.ts:333",
+              "src/index.ts:340"
+            ]
+          },
+          {
+            "item": 6,
+            "credit": 1,
+            "finding": "Correct CLI > configured > 5 precedence and explicit distinction between examples' configured 2 and effective default 5.",
+            "evidence": [
+              "src/index.ts:120-121",
+              "src/adapters.ts:89",
+              "examples/debate.yaml:14",
+              "examples/debate.yaml:55"
+            ]
+          },
+          {
+            "item": 7,
+            "credit": 1,
+            "finding": "Accurate direct test inventory and coverage limits. Correctly notes install test seeds a judge but does not assert its budget, and no test passes --budget through the CLI.",
+            "evidence": [
+              "test/adapters.test.ts:33-45",
+              "test/config.test.ts:12-42",
+              "test/install.test.ts:51-75",
+              "test/: no --budget CLI invocation"
+            ]
+          },
+          {
+            "item": 8,
+            "credit": 1,
+            "finding": "Identifies stale default-$2 comment and correctly contrasts help and executable default.",
+            "evidence": [
+              "src/index.ts:119",
+              "src/index.ts:37",
+              "src/adapters.ts:89"
+            ]
+          }
+        ],
+        "missing_items": [],
+        "false_claims": [],
+        "additional_findings": [
+          {
+            "finding": "CLI validation accepts positive Infinity while YAML numeric parsing requires finite numbers and permits zero/negative budgets.",
+            "assessment": "Correct from the predicates; no extra rubric credit.",
+            "evidence": [
+              "src/index.ts:85-87",
+              "src/config.ts:92-95"
+            ]
+          },
+          {
+            "finding": "Config files are selected rather than merged, and user path honors XDG_CONFIG_HOME.",
+            "assessment": "Correct.",
+            "evidence": [
+              "src/install.ts:28-49",
+              "src/index.ts:184-185"
+            ]
+          },
+          {
+            "finding": "Adapter comment recommending --budget omits its judge-only scope.",
+            "assessment": "Correct contextual qualification, not an additional rubric point.",
+            "evidence": [
+              "src/adapters.ts:87-88",
+              "src/index.ts:118-121",
+              "src/index.ts:333-340"
+            ]
+          },
+          {
+            "finding": "Budget-error classification and finalReportError tests are related but distinct from budget selection.",
+            "assessment": "Correct distinction.",
+            "evidence": [
+              "test/adapters.test.ts:76-82",
+              "test/debate.test.ts:137-148"
+            ]
+          }
+        ],
+        "limitations": [
+          "The answer's self-report of seven tests passing and no network/source edits cannot be independently verified from answer and source alone. Run logs were deliberately excluded to preserve blinding; these claims did not add rubric points and are not contradicted by inspected evidence."
+        ],
+        "method": "Blind rubric scoring against frozen public source; reviewer did not see policy or cost."
+      }
+    },
+    {
+      "run_id": "03-audit-rory",
+      "task": "audit",
+      "policy": "rory",
+      "elapsed_seconds": 154.918,
+      "resumed_session": false,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 827842,
+        "cached_input_tokens": 728320,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8363,
+        "reasoning_output_tokens": 1967,
+        "total_tokens": 836205
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 320341,
+          "cached_input_tokens": 275584,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3791,
+          "reasoning_output_tokens": 330,
+          "total_tokens": 324132
+        },
+        "gpt-6-sol": {
+          "input_tokens": 507501,
+          "cached_input_tokens": 452736,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 4572,
+          "reasoning_output_tokens": 1637,
+          "total_tokens": 512073
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 22.8176,
+          "gpt-6-sol": 6.14493
+        },
+        "total": 28.962529999999997
+      },
+      "workers": 1,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 53936,
+        "last_request_input_tokens": 53936,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "04-audit-default",
+      "task": "audit",
+      "policy": "default",
+      "elapsed_seconds": 133.418,
+      "resumed_session": false,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 312538,
+        "cached_input_tokens": 263936,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3221,
+        "reasoning_output_tokens": 366,
+        "total_tokens": 315759
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 312538,
+          "cached_input_tokens": 263936,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3221,
+          "reasoning_output_tokens": 366,
+          "total_tokens": 315759
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 22.77515
+        },
+        "total": 22.77515
+      },
+      "workers": 0,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 56016,
+        "last_request_input_tokens": 56016,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "preflight",
+      "task": null,
+      "policy": null,
+      "elapsed_seconds": null,
+      "resumed_session": false,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 118998,
+        "cached_input_tokens": 99072,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 471,
+        "reasoning_output_tokens": 24,
+        "total_tokens": 119469
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 75071,
+          "cached_input_tokens": 66816,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 304,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 75375
+        },
+        "gpt-6-luna": {
+          "input_tokens": 43927,
+          "cached_input_tokens": 32256,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 167,
+          "reasoning_output_tokens": 24,
+          "total_tokens": 44094
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 4.11415,
+          "gpt-6-luna": 0.039329
+        },
+        "total": 4.153479000000001
+      },
+      "workers": 1,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 18994,
+        "last_request_input_tokens": 18994,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    }
+  ]
+}

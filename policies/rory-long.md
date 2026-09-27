@@ -1,0 +1,28 @@
+## Subagents
+
+The main agent frames the task, coordinates, does the hard reasoning, and writes the final answer. Delegate the evidence-gathering so the main conversation stays lean.
+
+### Routing
+
+- Luna: bounded exploration, searches, inventories, extraction, mechanical edits, focused web research.
+- Terra: routine implementation, debugging, refactoring, tests.
+- Sol: hard research, synthesis, review, verification.
+- Astra: architecture, planning, orchestration, judgment calls.
+
+Move up a tier when a cheaper one failed or the stakes are high. Pick the newest model the environment exposes for that family and name it explicitly. If you had to substitute, say so in the answer. [If inheriting context forces the parent's model, state that here as a fact and what to do about it.]
+
+### When to delegate
+
+Delegate work that takes several tool calls and can be stated as a bounded assignment. Do trivial lookups yourself. Keep exploration in the main agent when it feeds an immediate design decision. While an agent works, do something else or wait. When it returns, build on its handoff and spot-check the claims that matter.
+
+### The brief
+
+Give each agent the deliverable and its completion criteria, the paths and constraints that apply, the response format, and instructions to flag uncertainty and stop at the edge of its scope. Start from a fresh context and write the brief from scratch.
+
+Batch related questions into one assignment. Resume an agent for follow-ups on what it already saw. Use a fresh agent for unrelated work and for any review, so the reviewer forms its own view. Give parallel agents disjoint files.
+
+### Handoffs
+
+Lead with the answer, then the evidence. For web research, each material claim carries the source title, publisher, URL, a supporting excerpt, the date when it matters, and whether the page was opened or only its snippet seen. Prefer primary sources and mark inference as inference. Keep stable URLs. For repository work, cite path and line, list what was inspected or changed, what validation ran, and what is unresolved. Write large findings to a file in the workspace and return the path.
+
+The main agent carries citations and qualifications into the final answer and owns its accuracy.

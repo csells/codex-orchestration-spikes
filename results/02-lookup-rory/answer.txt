@@ -1,0 +1,38 @@
+**The effective default is $5 per Claude invocation.** `--budget` overrides judge/synthesizer budgets only; it is not a total-debate spending limit.
+
+Production declarations and data flow:
+
+| Location | Role |
+|---|---|
+| `src/config.ts:15,28–29` | Declares optional numeric `ParticipantSpec.maxBudgetUsd`, shared by debaters and the judge. |
+| `src/config.ts:36,50–74,80–95,136–151` | Recognizes, parses, and serializes the setting. Requires a finite number, but does **not** require positivity or enforce “Claude only.” |
+| `src/index.ts:58,85–87,120–121` | Parses `--budget`; `withBudget()` copies the spec with `maxBudgetUsd: Number(budgetArg)`. Rejects missing, nonnumeric, and nonpositive arguments, but accepts positive `Infinity`. |
+| `src/index.ts:103,105–114` | Defines the fallback judge with `$5`; `buildParticipant()` forwards `maxBudgetUsd` only to `claudeAdapter`. Other adapters ignore it. |
+| `src/adapters.ts:84–89,95–110` | Declares `ClaudeOpts.maxBudgetUsd`, selects `opts.maxBudgetUsd ?? 5`, and passes `--max-budget-usd String(budget)` to `runCli("claude", …)` on every turn. |
+| `src/install.ts:134–159` | Init preserves participant specs and the supplied judge, then serializes their settings into the generated config. |
+
+Configuration resolution is explicit `--config` → user config → built-in lineup (`src/install.ts:28–49`; consumed at `src/index.ts:184–188`). The user config is `$XDG_CONFIG_HOME/disputatio/config.yaml`, falling back to `~/.config/disputatio/config.yaml`. Config files are selected, not merged; the example is never automatically loaded.
+
+For Claude judges, precedence is **`--budget` → configured `maxBudgetUsd` → $5**. Claude debaters use **configured `maxBudgetUsd` → $5**. The built-in lineup has no judge (`src/index.ts:102`); supplying `--budget` does not create one.
+
+| Execution path | Does `--budget` apply? |
+|---|---|
+| Normal debate | Yes, to a configured judge (`src/index.ts:340`). The same participant performs the determination and, if resolved, final synthesis (`src/debate.ts:261,275`). |
+| `--continue` | Yes, to re-judging and subsequent synthesis if resolved (`src/index.ts:214,257,279`). |
+| `--finalize` | Yes, to synthesis (`src/index.ts:214,240`). Continue/finalize use the built-in $5 Opus judge when config has none. |
+| Debater proposals/reactions | No; participants are built without `withBudget()` (`src/index.ts:333`). |
+| `--doctor` | No; configured participants and judge are built directly (`src/index.ts:196–197`). |
+| `--init` | No; uses explicit config or built-in specs, seeds the $5 judge when no explicit config is supplied, and bypasses `withBudget()` (`src/index.ts:171–176`). |
+
+Existing test coverage:
+
+- `test/adapters.test.ts:33–44`: fake Claude captures argv and proves adapter default `"5"` and explicit option `"10"` become `--max-budget-usd` values.
+- `test/config.test.ts:12–27,30–41`: proves the example’s debater budget parses as numeric `2`, and participant/judge budgets survive serialization round-trip.
+- `test/config.test.ts:77–81,118–122`: rejects `budget` as a YAML alias in both locations.
+- `test/adapters.test.ts:76–82` and `test/debate.test.ts:137–148`: prove budget-exhaustion classification and propagation into `finalReportError`. Related production handling is at `src/adapters.ts:126–131`, `src/debate.ts:281`, with retry hints at `src/index.ts:243–244,286–287,393–394`.
+
+**Uncovered wiring:** no existing test passes `--budget` through the CLI to captured Claude argv. Consequently CLI validation, precedence, mode-specific application, debater exclusion, and non-Claude behavior are established by source inspection—not those tests. Config-resolution tests exercise lookup separately (`test/config-resolution.test.ts:14–59`). The init test’s `$2` judge fixture only asserts judge/model output, not the budget (`test/install.test.ts:51,74–75`).
+
+The misleading comment is `src/index.ts:119`: it still says “default $2.” Help correctly says `$5` (`src/index.ts:37`). `examples/debate.yaml:14,55` explicitly sets `$2` for both Claude roles; these override the default. The adapter comment’s “Use --budget to override” (`src/adapters.ts:87–88`) also omits the judge-only restriction.
+
+Validation: all **7 targeted parser, fake-CLI, and budget-error tests passed**. No project files were modified; no network or real model CLIs were used.

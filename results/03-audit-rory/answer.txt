@@ -1,0 +1,18 @@
+Found four documentation mismatches or enforcement gaps:
+
+1. **“Resolved” is not strictly enforced.** README says final drafting runs only after resolution and `--finalize` requires an already-resolved debate ([README.md:103](<<WORKSPACE>/README.md:103>), [README.md:172](<<WORKSPACE>/README.md:172>)). But the parser recognizes only `NEEDS_INPUT`; everything else—including empty text, malformed status, and `Respondeo turn failed: timeout`—becomes `RESOLVED` ([debate.ts:124](<<WORKSPACE>/src/debate.ts:124>)). Consequently, `--finalize` accepts a saved failed determination ([index.ts:234](<<WORKSPACE>/src/index.ts:234>)). Fake-CLI checks confirmed final reports were produced from both failed and empty determinations.
+
+2. **Continuation does not require a prior `NEEDS_INPUT`.** The documented workflow answers an unresolved judge’s questions ([README.md:95](<<WORKSPACE>/README.md:95>)). Implementation loads the latest determination and re-judges without checking its status ([index.ts:255](<<WORKSPACE>/src/index.ts:255>)). A fake-CLI check successfully continued an already-resolved debate.
+
+3. **The configuration-only judge claim has exceptions.** README says everything from respondeo onward runs only when configuration defines a judge ([README.md:158](<<WORKSPACE>/README.md:158>)). That holds for new debates, but both saved-debate commands use the **current configuration’s judge**, falling back to Claude Opus when absent; they do not recover the original judge ([index.ts:103](<<WORKSPACE>/src/index.ts:103>), [index.ts:214](<<WORKSPACE>/src/index.ts:214>)). Both configured and fallback selection were confirmed with fake CLIs.
+
+4. **The stdout fallback is documented incorrectly for continuation.** README promises `final-report.md` when produced, otherwise `debate.md` ([README.md:107](<<WORKSPACE>/README.md:107>)). An unresolved continuation instead prints its new **`respondeo-N.md`**, with exit 0. The same occurs when re-judging resolves but final drafting fails ([index.ts:270](<<WORKSPACE>/src/index.ts:270>), [index.ts:285](<<WORKSPACE>/src/index.ts:285>)). Both cases were reproduced.
+
+Important claims that hold:
+
+- New debates run the configured judge after reactions; fewer than two successful proposals abort first. Recognized `NEEDS_INPUT` and failed judge turns skip automatic final drafting ([debate.ts:228](<<WORKSPACE>/src/debate.ts:228>), [debate.ts:253](<<WORKSPACE>/src/debate.ts:253>)).
+- Explicit `--debate` wins; otherwise selection uses the lexicographically latest timestamp directory under the current directory’s `.debate`. Both commands load the highest **numeric** determination version, not an older resolved one ([index.ts:124](<<WORKSPACE>/src/index.ts:124>)).
+- Continuation invokes only the judge, then the synthesizer if classified resolved. `--finalize` performs no re-judging. Repository access is supplied to final drafting in a disposable HEAD worktree; initial judging and re-judging receive transcript evidence but no repository worktree ([debate.ts:188](<<WORKSPACE>/src/debate.ts:188>), [debate.ts:261](<<WORKSPACE>/src/debate.ts:261>)).
+- Successful final drafting prints `final-report.md`; a new debate without a final report prints `debate.md`.
+
+Validation: 14 focused existing tests and six isolated fake-CLI checks passed. No source changes, real model calls, or network access. Git-status verification was unavailable because this snapshot has no Git repository metadata.

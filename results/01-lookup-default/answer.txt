@@ -1,0 +1,39 @@
+**Claude’s effective default is $5 per invocation.** For judges/synthesizers, precedence is `--budget` → configured `maxBudgetUsd` → $5. Debaters use their configured value → $5.
+
+Production declarations and data flow:
+
+| Location | Role |
+|---|---|
+| `src/config.ts:11–29` | Declares optional numeric `ParticipantSpec.maxBudgetUsd`; shared by participants and judge. |
+| `src/config.ts:36,50–74,80–95,136–151` | Serializes the field, accepts it in participant/judge blocks, and converts it with `Number()`. Requires finite numbers, but permits zero/negative values. |
+| `src/index.ts:58,85–87,120–121` | Parses `--budget`; `withBudget()` copies the spec and replaces `maxBudgetUsd`. Rejects missing, NaN and nonpositive values, but does **not** reject positive infinity. |
+| `src/index.ts:103,105–114` | Declares the fallback Opus judge with `$5`; `buildParticipant()` forwards the setting only to Claude. Other adapters ignore it. |
+| `src/adapters.ts:84–107` | Declares `ClaudeOpts.maxBudgetUsd`, resolves `opts.maxBudgetUsd ?? 5`, then passes `--max-budget-usd`, `String(budget)` to each `claude` invocation. |
+
+Configuration selection is explicit `--config` → user config → built-in lineup. The user path honors `XDG_CONFIG_HOME`, otherwise `~/.config/disputatio/config.yaml` (`src/install.ts:28–49`). Selected text is parsed at `src/index.ts:184–185`; files are not merged. The example is never automatically loaded.
+
+Execution paths:
+
+| Path | Applies `--budget`? |
+|---|---|
+| New debate | **Yes**, to the configured judge (`src/index.ts:340`). That same participant handles determination and, when resolved, synthesis (`src/debate.ts:261,275`). |
+| Debater proposals/reactions | **No**; participants are constructed without `withBudget()` (`src/index.ts:333`). |
+| `--continue` | **Yes**, to re-judging and subsequent resolved synthesis (`src/index.ts:214,257,279`). |
+| `--finalize` | **Yes**, to synthesis (`src/index.ts:214,240`). |
+| `--doctor` | **No**, including the judge probe; configured budgets still reach Claude (`src/index.ts:196–197`). |
+| `--init` | **No**; uses explicit config or built-ins, seeds the $5 judge when no config is supplied (`src/index.ts:171–176`). Participant probes preserve configured budgets; serialization preserves participant/judge specs (`src/install.ts:137–159`). |
+
+A bare new debate has Claude+Codex and **no judge** (`src/index.ts:102,187,340`); `--budget` does not create one. Continuation/finalization instead fall back to `DEFAULT_JUDGE`. The cap is per invocation, with no shared debate-wide budget accounting.
+
+Existing tests and their limits:
+
+- `test/adapters.test.ts:33–45`: fake CLI records argv and proves adapter default `"5"` and explicit override `"10"`.
+- `test/config.test.ts:12–28`: proves the example’s Claude participant parses with budget `2`; does not assert the example judge’s budget.
+- `test/config.test.ts:30–42`: proves participant **and judge** budget values survive serialization/parsing.
+- `test/config.test.ts:77–81,118–122`: proves `budget` is rejected as a config-key alias.
+- `test/adapters.test.ts:76–82`: proves budget-error envelope classification. `test/debate.test.ts:137–148` proves propagation into `finalReportError`; neither tests cap selection.
+- **Uncovered wiring:** no existing test exercises `--budget` through CLI parsing, configuration precedence, `buildParticipant()`, or the execution-path distinctions above. The init test supplies its own `$2` judge and asserts judge/model presence, not its budget (`test/install.test.ts:51–75`).
+
+Misleading nearby material: `src/index.ts:119` still says “default $2,” contradicting executable code and help (`:37`). The adapter comment’s “Use --budget to override” (`src/adapters.ts:88`) omits the judge-only restriction. Example budgets are explicitly `$2` (`examples/debate.yaml:14,55`), not defaults.
+
+Validation: **7 focused existing tests passed**, using fake CLIs/in-process participants. No repository files changed, network access, or real model CLI calls. Execution-path wiring conclusions above are source-inspected, not end-to-end validated.

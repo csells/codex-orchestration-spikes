@@ -38,7 +38,7 @@ def sanitize(text, workspace, codex_home, private):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--task", required=True)
-    ap.add_argument("--policy", choices=["default", "rory", "rory-astra-workers", "sol"], required=True)
+    ap.add_argument("--policy", choices=["default", "rory", "rory-astra-workers", "rory-long", "rory-long-astra-workers", "sol"], required=True)
     ap.add_argument("--run-id", required=True)
     ap.add_argument("--private-root", type=Path, required=True)
     ap.add_argument("--codex-home", type=Path, required=True)
@@ -59,9 +59,14 @@ def main():
     if not args.resume:
         shutil.copytree(original, workspace)
         common = (ROOT / "policies/common.md").read_text()
-        if args.policy == "rory-astra-workers":
+        if args.policy.endswith("astra-workers"):
             common = common.replace("Luna = gpt-6-luna; Terra = gpt-5.6-terra; Sol = gpt-6-sol", "Luna = gpt-6-astra; Terra = gpt-6-astra; Sol = gpt-6-astra")
-        policy = (ROOT / "policies/rory-v2.md").read_text() if args.policy.startswith("rory") else ""
+        policy_file = "rory-long.md" if args.policy.startswith("rory-long") else "rory-v2.md"
+        policy = (ROOT / "policies" / policy_file).read_text() if args.policy.startswith("rory") else ""
+        if args.policy.startswith("rory-long"):
+            policy = policy.replace("[If inheriting context forces the parent's model, state that here as a fact and what to do about it.]", "In this harness, use fork_turns=none to request a fresh worker with its explicitly selected model.")
+        if args.policy.endswith("astra-workers"):
+            policy += "\nExperimental control: keep the same assignment and handoff policy, but every worker must use gpt-6-astra at high reasoning. This overrides the routing model names above.\n"
         (workspace / "AGENTS.md").write_text(common + "\n" + policy)
     prompt = args.prompt_file.read_text() if args.prompt_file else task.get("prompt") or (ROOT / task["prompt_file"]).read_text()
     (out / "prompt.txt").write_text(prompt)
