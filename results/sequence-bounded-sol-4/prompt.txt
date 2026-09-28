@@ -1,0 +1,5 @@
+Explain the general isolation and failure behavior of this snapshot for operators, without changing the deployment. Do not modify source or run a real debate.
+
+A target repository can contain uncommitted edits and untracked build dependencies. Explain what a turn sees with and without `--repo`, how temporary directories/worktrees are cleaned up, and whether turns themselves are serialized. Describe the timeout mechanism and its limits. Then explain the artifacts, continuation behavior, and CLI exit outcomes when fewer than two proposals succeed, when a reaction returns a failure after proposals succeed, and when a run with an optional configured judge has a judge or final-drafting failure. Distinguish returned failure results from uncaught exceptions if that matters. Do throwaway working directories alone prove a filesystem security boundary?
+
+Support the answer with source evidence and relevant existing tests. Use only local fake/in-process tests if needed, never actual model services or the network. Return a concise operator-facing explanation.

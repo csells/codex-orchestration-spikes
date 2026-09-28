@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "thread_count": 5,
+  "threads": [
+    {
+      "thread": "root",
+      "parent": null,
+      "actual_models": [
+        "gpt-6-astra"
+      ],
+      "reasoning_efforts": [
+        "high"
+      ],
+      "response_count": 38,
+      "usage": {
+        "input_tokens": 1604340,
+        "cached_input_tokens": 1545984,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 8235,
+        "reasoning_output_tokens": 1040,
+        "total_tokens": 1612575
+      },
+      "usage_by_model": {
+        "gpt-6-astra": {
+          "input_tokens": 1604340,
+          "cached_input_tokens": 1545984,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8235,
+          "reasoning_output_tokens": 1040,
+          "total_tokens": 1612575
+        }
+      },
+      "tool_call_counts": {
+        "spawn_agent": 4,
+        "wait_agent": 13,
+        "send_message": 5,
+        "exec": 12
+      },
+      "successful_spawn_requests": [
+        {
+          "requested_model": "gpt-6-sol",
+          "requested_reasoning_effort": "high",
+          "fork_turns": "none",
+          "observed_child": "worker_1"
+        },
+        {
+          "requested_model": "gpt-6-sol",
+          "requested_reasoning_effort": "high",
+          "fork_turns": "none",
+          "observed_child": "worker_2"
+        },
+        {
+          "requested_model": "gpt-6-sol",
+          "requested_reasoning_effort": "high",
+          "fork_turns": "none",
+          "observed_child": "worker_3"
+        },
+        {
+          "requested_model": "gpt-6-sol",
+          "requested_reasoning_effort": "high",
+          "fork_turns": "none",
+          "observed_child": "worker_4"
+        }
+      ],
+      "context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 66331,
+        "last_request_input_tokens": 66331,
+        "reported_model_context_window": 258400
+      },
+      "compaction_count": 0,
+      "compaction_markers": {},
+      "last_observed_quota": {
+        "primary": {
+          "used_percent": 5.0,
+          "window_minutes": 10080,
+          "resets_at": 1791054703
+        },
+        "limit_id": "codex",
+        "spend_control_reached": null
+      },
+      "excluded_foreign_usage_records": 0,
+      "deduplicated_usage_records": 0,
+      "malformed_lines": 0
+    },
+    {
+      "thread": "worker_1",
+      "parent": "root",
+      "actual_models": [
+        "gpt-6-sol"
+      ],
+      "reasoning_efforts": [
+        "high"
+      ],
+      "response_count": 10,
+      "usage": {
+        "input_tokens": 504828,
+        "cached_input_tokens": 436992,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 3980,
+        "reasoning_output_tokens": 1525,
+        "total_tokens": 508808
+      },
+      "usage_by_model": {
+        "gpt-6-sol": {
+          "input_tokens": 504828,
+          "cached_input_tokens": 436992,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3980,
+          "reasoning_output_tokens": 1525,
+          "total_tokens": 508808
+        }
+      },
+      "tool_call_counts": {
+        "exec": 7,
+        "send_message": 2
+      },
+      "successful_spawn_requests": [],
+      "context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 66388,
+        "last_request_input_tokens": 66388,
+        "reported_model_context_window": 258400
+      },
+      "compaction_count": 0,
+      "compaction_markers": {},
+      "last_observed_quota": {
+        "primary": {
+          "used_percent": 4.0,
+          "window_minutes": 10080,
+          "resets_at": 1791054703
+        },
+        "limit_id": "codex",
+        "spend_control_reached": null
+      },
+      "excluded_foreign_usage_records": 0,
+      "deduplicated_usage_records": 0,
+      "malformed_lines": 0
+    },
+    {
+      "thread": "worker_2",
+      "parent": "root",
+      "actual_models": [
+        "gpt-6-sol"
+      ],
+      "reasoning_efforts": [
+        "high"
+      ],
+      "response_count": 9,
+      "usage": {
+        "input_tokens": 420338,
+        "cached_input_tokens": 364672,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2985,
+        "reasoning_output_tokens": 878,
+        "total_tokens": 423323
+      },
+      "usage_by_model": {
+        "gpt-6-sol": {
+          "input_tokens": 420338,
+          "cached_input_tokens": 364672,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2985,
+          "reasoning_output_tokens": 878,
+          "total_tokens": 423323
+        }
+      },
+      "tool_call_counts": {
+        "exec": 6,
+        "send_message": 2
+      },
+      "successful_spawn_requests": [],
+      "context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 62904,
+        "last_request_input_tokens": 62904,
+        "reported_model_context_window": 258400
+      },
+      "compaction_count": 0,
+      "compaction_markers": {},
+      "last_observed_quota": {
+        "primary": {
+          "used_percent": 4.0,
+          "window_minutes": 10080,
+          "resets_at": 1791054703
+        },
+        "limit_id": "codex",
+        "spend_control_reached": null
+      },
+      "excluded_foreign_usage_records": 0,
+      "deduplicated_usage_records": 0,
+      "malformed_lines": 0
+    },
+    {
+      "thread": "worker_3",
+      "parent": "root",
+      "actual_models": [
+        "gpt-6-sol"
+      ],
+      "reasoning_efforts": [
+        "high"
+      ],
+      "response_count": 8,
+      "usage": {
+        "input_tokens": 334589,
+        "cached_input_tokens": 297088,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 2942,
+        "reasoning_output_tokens": 838,
+        "total_tokens": 337531
+      },
+      "usage_by_model": {
+        "gpt-6-sol": {
+          "input_tokens": 334589,
+          "cached_input_tokens": 297088,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2942,
+          "reasoning_output_tokens": 838,
+          "total_tokens": 337531
+        }
+      },
+      "tool_call_counts": {
+        "exec": 5,
+        "send_message": 2
+      },
+      "successful_spawn_requests": [],
+      "context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 54180,
+        "last_request_input_tokens": 54180,
+        "reported_model_context_window": 258400
+      },
+      "compaction_count": 0,
+      "compaction_markers": {},
+      "last_observed_quota": {
+        "primary": {
+          "used_percent": 5.0,
+          "window_minutes": 10080,
+          "resets_at": 1791054703
+        },
+        "limit_id": "codex",
+        "spend_control_reached": null
+      },
+      "excluded_foreign_usage_records": 0,
+      "deduplicated_usage_records": 0,
+      "malformed_lines": 0
+    },
+    {
+      "thread": "worker_4",
+      "parent": "root",
+      "actual_models": [
+        "gpt-6-sol"
+      ],
+      "reasoning_efforts": [
+        "high"
+      ],
+      "response_count": 13,
+      "usage": {
+        "input_tokens": 759177,
+        "cached_input_tokens": 704128,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5105,
+        "reasoning_output_tokens": 2023,
+        "total_tokens": 764282
+      },
+      "usage_by_model": {
+        "gpt-6-sol": {
+          "input_tokens": 759177,
+          "cached_input_tokens": 704128,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5105,
+          "reasoning_output_tokens": 2023,
+          "total_tokens": 764282
+        }
+      },
+      "tool_call_counts": {
+        "exec": 10,
+        "send_message": 2
+      },
+      "successful_spawn_requests": [],
+      "context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 78567,
+        "last_request_input_tokens": 78567,
+        "reported_model_context_window": 258400
+      },
+      "compaction_count": 0,
+      "compaction_markers": {},
+      "last_observed_quota": {
+        "primary": {
+          "used_percent": 5.0,
+          "window_minutes": 10080,
+          "resets_at": 1791054703
+        },
+        "limit_id": "codex",
+        "spend_control_reached": null
+      },
+      "excluded_foreign_usage_records": 0,
+      "deduplicated_usage_records": 0,
+      "malformed_lines": 0
+    }
+  ],
+  "total_usage": {
+    "input_tokens": 3623272,
+    "cached_input_tokens": 3348864,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 23247,
+    "reasoning_output_tokens": 6304,
+    "total_tokens": 3646519
+  },
+  "usage_by_model": {
+    "gpt-6-astra": {
+      "input_tokens": 1604340,
+      "cached_input_tokens": 1545984,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 8235,
+      "reasoning_output_tokens": 1040,
+      "total_tokens": 1612575
+    },
+    "gpt-6-sol": {
+      "input_tokens": 2018932,
+      "cached_input_tokens": 1802880,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 15012,
+      "reasoning_output_tokens": 5264,
+      "total_tokens": 2033944
+    }
+  },
+  "accounting": "Sum unique token_usage_record.usage by response_id, restricted to actual thread_id; includes nested compaction records once",
+  "limitations": [
+    "Only descendants with persisted rollouts in supplied directories are observable",
+    "Cached input is a subset of input; reasoning output is a subset of output",
+    "Input-token footprint is a proxy for context, not exact next-request occupancy",
+    "Quota snapshots are account-wide, rounded or delayed, and may include concurrent work"
+  ],
+  "warnings": []
+}

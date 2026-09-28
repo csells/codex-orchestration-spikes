@@ -1,0 +1,9 @@
+Explain how this source snapshot interprets question input and reaction-round arguments so an operator can use it correctly. Do not modify source or invoke actual model services.
+
+Compare these command shapes without running a real debate:
+- `node src/index.ts task.md`
+- `node src/index.ts --file task.md`
+- `node src/index.ts --file task.md "extra question"`
+- `node src/index.ts Review this branch`
+
+Does a filename-looking positional argument cause a file read? What changes when a multiword inline question is quoted? Where does actual file I/O occur relative to input resolution? Also explain `--rounds 0`, `--rounds 1.5`, and the default/override precedence. Identify the existing focused tests and what they establish. Give concise source evidence. Local parser tests or in-process checks are allowed; no network or real model CLIs. Return the explanation as your final answer.

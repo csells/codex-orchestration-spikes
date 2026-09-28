@@ -1,0 +1,16 @@
+**No built-in report-generation command is authorized now.** The saved `RESOLVED` determination satisfies the workflow prerequisite, but `--finalize` still invokes a model. With no configured judge, it selects the built-in Claude Opus fallback—explicitly prohibited under your operating conditions (`src/index.ts:103,209–214,234–240`).
+
+A safe procedure is:
+
+1. **Keep the deployment unchanged:** arrange for an authorized human to draft the deliverable from `debate.md` and `respondeo-3.md`, review it, and save it as `final-report.md`. The determination itself is not the final deliverable.
+2. **If automated synthesis is required:** first obtain explicit authorization for the synthesis agent and model-service invocation. Using the existing judge-less configuration would specifically require authorization for the fallback judge. This review grants neither.
+3. **Only after approval:** verify the archive and selected configuration, ensure the archive and its `raw/` directory are writable, then use the finalization workflow targeting that archive. No continuation or new debate is needed. Finalization assumes `raw/` already exists, writes its capture there, then writes and prints `final-report.md` on success (`src/index.ts:240–252`).
+
+The loader selects the highest-numbered determination, so your stated `respondeo-3.md` would be used (`src/index.ts:145–152`).
+
+Neither flag changes the authorization decision:
+
+- **`--budget`** changes the Claude synthesis spending cap; it does not avoid invoking the fallback (`src/index.ts:118–122,214`).
+- **`--repo`** supplies repository evidence to drafting through a disposable worktree of committed `HEAD`; it does not eliminate the synthesis agent (`src/index.ts:217–240`; `src/debate.ts:188–191`).
+
+I independently checked **fallback selection** and **finalization’s invocation/output sequence** against source. Local config/parser checks passed; filesystem-dependent debate tests were blocked by the read-only sandbox. The hypothetical path was not accessed, and no model service was invoked.

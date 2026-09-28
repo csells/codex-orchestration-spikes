@@ -1,0 +1,49 @@
+**Turns use disposable working directories, but those directories alone are not a filesystem security boundary. Exit 0 also does not mean every turn succeeded.**
+
+**Isolation and cleanup**
+
+- Without `--repo` or configured `repo`, each turn starts in a fresh temporary directory; repository files are not copied there.
+- With repository evidence, each turn gets a detached Git worktree of **HEAD**. Uncommitted edits—including staged changes—and untracked dependencies such as `node_modules` are absent. The CLI warns about a dirty working tree (`src/index.ts:319–328`; `src/debate.ts:62–77`).
+- Initial judging and continuation remain transcript-only; final drafting can receive the repository worktree (`src/debate.ts:188–199,261–275`).
+- Cleanup uses `finally`: force-remove the worktree, then recursively remove its enclosing temporary directory. This also runs when a participant throws. Worktree-removal errors are swallowed, potentially leaving Git administrative entries for later pruning; directory-removal errors propagate. Process crashes or forced termination can bypass cleanup (`src/debate.ts:70–86`).
+- **Agent turns are not serialized.** Proposals run concurrently, as do participants within each reaction round. Rounds await completion before advancing. Only worktree add/remove operations share an in-process lock (`src/debate.ts:53–59,223–250`).
+
+Changing `cwd` does not restrict absolute paths, inherited permissions, or access outside that directory. Separate adapter controls matter—for example, Claude tool restrictions and Codex’s `-s read-only` (`src/adapters.ts:103–105,184–195`). Disposable worktrees protect ordinary relative writes; they do not independently prove confinement.
+
+**Timeouts**
+
+The configured `timeoutMinutes` defaults to **10 minutes per CLI invocation** (`src/index.ts:188`). The child starts in its own process group. At timeout, the wrapper sends that group `SIGTERM`, then `SIGKILL` after a two-second grace period; adapters report a returned `timeout` failure with captured output (`src/adapters.ts:16,28–59,111`).
+
+This is not a whole-debate deadline. It does not bound worktree setup/cleanup or arbitrary in-process participant code. Completion still depends on child `error`/`close` events; descendants escaping the process group are outside that kill mechanism. There is no unconditional promise-resolution deadline.
+
+**Returned failures during an ordinary debate**
+
+Assuming artifact writes succeed:
+
+| Failure | What happens | Artifacts / CLI outcome |
+|---|---|---|
+| Fewer than two proposals succeed | Aborts before reactions or judging. With your two debaters, either proposal failing triggers this. | Partial `debate.md` and per-turn `raw/*.json`; prints transcript path; **exit 1**. |
+| A reaction fails after proposals succeed | Records the failure; remaining rounds continue, including future turns for that participant. No reaction-success threshold or automatic retry. | Transcript and raw result retained; your no-judge run prints `debate.md`; **exit 0**. |
+| Optional configured judge fails | Records `FAILED`; skips final drafting. | Transcript/raw capture plus `respondeo.md` containing the failure message; prints `debate.md`; **exit 0**. |
+| Final drafting fails after a resolved judge | Keeps the determination; records drafting failure. | Transcript/raw capture and `respondeo.md`; no new final report; prints `debate.md`; **exit 0**. |
+
+Evidence: `src/debate.ts:231–281`; artifact writing and exits at `src/index.ts:353–403`. Failed turns appear with error details in the saved transcript, but subsequent prompts receive a “no contribution this turn” placeholder (`src/debate.ts:37–50`).
+
+**Continuation and exceptions**
+
+`--continue` does **not** resume failed proposals or reactions. It requires a saved determination and re-judges alone. A normal no-judge run produces none, so it cannot use that workflow (`src/index.ts:145–152,209–214,255–257`). The built-in judge fallback remains unauthorized for your deployment.
+
+For hypothetical judge-enabled follow-ups:
+
+- Failed re-judging saves raw diagnostics, creates no new numbered determination, and exits **1**.
+- Unresolved continuation saves/prints `respondeo-N.md`, exiting **0**.
+- Successful drafting saves/prints `final-report.md`; failed drafting instead prints the new determination path, still exiting **0**.
+- Standalone `--finalize` exits **1** on drafting failure, **0** on success (`src/index.ts:234–292`).
+
+The status check is permissive: finalization rejects only recognized `NEEDS_INPUT`; even a saved judge-failure message is interpreted as resolved (`src/debate.ts:120–126`). That is not evidence of a valid determination.
+
+These outcomes apply to returned `{ok:false}` results. Thrown exceptions—including filesystem/Git errors—can reject orchestration outright. Ordinary-run artifacts are written only **after** `runDebate()` returns, so an uncaught exception can leave no transcript/raw artifacts for that run. `Promise.all` also does not cancel sibling turns (`src/debate.ts:70–86,223–250`; `src/index.ts:353–366`).
+
+Existing tests cover proposal aborts (`test/debate.test.ts:22–42`), nonfatal judge/drafting failures (`:125–148,191–198`), normal worktree cleanup and containment of relative stray writes (`:201–263`), and timeout/group-kill behavior using fake CLIs (`test/adapters.test.ts:121–139`). They do not prove filesystem confinement, escaped-process termination, or cleanup after crashes; reaction-failure continuation and CLI exits above follow from source inspection.
+
+No source changes or executions were needed for this audit; no model services or network were used.

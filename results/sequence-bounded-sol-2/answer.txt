@@ -1,0 +1,24 @@
+Three concrete gaps emerged. The documented fresh-debate workflow otherwise largely matches the implementation.
+
+1. **The “configured judge only” rule has an undocumented exception.** README.md:158–160 says judge and final-report phases run only when configuration defines a judge. That holds for fresh debates (`src/index.ts:340,353`), but `--continue` and `--finalize` select the **current configuration’s judge or built-in Claude Opus fallback** (`src/index.ts:103,209–214`). They do not restore the original judge’s identity.
+
+   These commands first require a saved determination (`src/index.ts:145–152`); an ordinary judge-less debate lacks one and fails before judge construction. For your deployment, the fallback remains unauthorized.
+
+2. **The documented determination-status requirements are incompletely enforced.** README.md:103–104 describes finalizing an already-resolved debate; :172–179 says drafting follows resolution and continuation answers outstanding questions. However:
+   
+   - `--finalize` rejects only text classified as `NEEDS_INPUT` (`src/index.ts:234–240`).
+   - The parser treats **anything without a leading `STATUS: NEEDS_INPUT` marker as `RESOLVED`**, including malformed text and failure messages (`src/debate.ts:120–126`).
+   - A failed initial judge’s message is saved as `respondeo.md` (`src/debate.ts:263–265`; `src/index.ts:378–380`). A later finalization can therefore treat that failure as a resolved determination.
+   - `--continue` never checks the prior determination’s status (`src/index.ts:255–257`), although its prompt asserts that the prior determination ended in `NEEDS_INPUT` (`src/debate.ts:170`).
+
+   Likewise, a successful initial judge invocation returning malformed text can trigger drafting (`src/debate.ts:263–275`).
+
+3. **The README’s stdout rule omits continuation outcomes.** README.md:107–110 promises `final-report.md` when produced, otherwise `debate.md`. That matches fresh runs (`src/index.ts:403`). But an unresolved continuation prints **`respondeo-N.md` and exits successfully** (`src/index.ts:265–275`). A resolved continuation whose drafting fails also prints that determination path and exits 0 (`:278–292`). Successful continuation drafting and standalone finalization print `final-report.md` (`:249–252,281–284`).
+
+Important claims that hold:
+
+- **Phase order:** after sufficient successful proposals and the reaction rounds, a configured judge runs; drafting follows a determination classified as resolved. No configured judge means neither phase in a fresh run (`README.md:162–175`; `src/debate.ts:253–283`).
+- **Saved-debate selection:** the documented latest-debate default and explicit `--debate` targeting work (`README.md:95–104`; `src/index.ts:132–152`). “Latest” means lexicographically newest `debate-*` directory, without filtering for a usable determination. Within it, the highest-numbered `respondeo*.md` wins; both commands load task/transcript from `debate.md` (`:209–213`).
+- **Evidence separation:** initial judging and continuation receive no repository worktree; final-report drafting receives the CLI/configured repository, using a disposable worktree of **HEAD** (`README.md:99–104,167–175`; `src/debate.ts:62–86,188–199,261,275`; `src/index.ts:221,240,279`). Standalone finalization drafts without re-judging.
+
+I independently checked **the saved-command judge/status/stdout branches** and **ran read-only parser assertions**, confirming that failure and malformed text become `RESOLVED`. Existing stub tests cover phase gating and continuation prompts (`test/debate.test.ts:62–199`), but do not establish the CLI wiring above. No files changed, services invoked, or network accessed; no end-to-end CLI test was run.

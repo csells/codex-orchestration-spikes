@@ -1,0 +1,37 @@
+**For your two-debater, no-judge deployment, `--budget` has no effect.** Claude debaters use configured `maxBudgetUsd`, or **$5 per invocation** when omitted. Your operating conditions remain unchanged; no model services were invoked.
+
+Production inventory and flow (paths relative to the workspace):
+
+| Location | Declaration or consumer |
+|---|---|
+| `src/config.ts:15,36,80–95,136–151` | Declares optional `ParticipantSpec.maxBudgetUsd`; serializes it and parses it for participants and judges. Config requires a finite number, but does not require positivity. |
+| `src/install.ts:28–49`; `src/index.ts:184–188` | Selects explicit `--config`, otherwise the XDG user config, otherwise built-ins; parses the selected configuration. The example is never automatically loaded. |
+| `src/index.ts:37,58,85–87,120–122` | Documents and parses `--budget`; `withBudget` overlays its numeric value onto a spec. CLI validation rejects NaN and nonpositive values, but permits positive infinity. |
+| `src/index.ts:103,105–115` | Built-in fallback judge explicitly specifies $5. `buildParticipant` forwards `maxBudgetUsd` only to Claude; other adapters ignore it. |
+| `src/adapters.ts:84–107` | Declares `ClaudeOpts.maxBudgetUsd`, computes `opts.maxBudgetUsd ?? 5`, then passes `--max-budget-usd`, `String(budget)` to each Claude invocation. |
+| `src/index.ts:244,287,394` | Budget-exhaustion messages suggest a `--finalize --budget` retry; these are guidance strings, not additional override consumers. |
+
+Execution paths:
+
+| Path | Override behavior |
+|---|---|
+| Ordinary debate | Debaters bypass `withBudget` (`src/index.ts:333`). Only a configured judge receives it (`:340`), including that judge’s final synthesis (`src/debate.ts:258–275`). |
+| `--continue` / `--finalize` | Applies it to the configured judge **or a built-in fallback judge** (`src/index.ts:214`); continuation and subsequent synthesis reuse that judge (`:257,279`). These fallback paths are outside your authorization. |
+| `--doctor` | Builds debaters and any configured judge without the override (`src/index.ts:194–201`). |
+| `--init` | Uses supplied specs without the override; absent explicit configuration, seeds the built-in judge (`src/index.ts:171–176`). |
+
+Thus Claude judge precedence is **CLI override → configuration → $5**; Claude debater precedence is **configuration → $5**. This is a per-invocation cap, not a deployment-wide spending limit.
+
+Existing coverage:
+
+- `test/config.test.ts:12–28,30–41`: verifies example participant budget parsing and participant/judge budget serialization round-trip.
+- `test/adapters.test.ts:33–45`: fake Claude captures arguments and proves default `"5"` and explicit `"10"` forwarding. It bypasses configuration loading and CLI parsing.
+- `test/config-resolution.test.ts:23–50`: verifies configuration-source selection, not budget override wiring.
+- `test/adapters.test.ts:76–83` and `test/debate.test.ts:137–149`: verify budget-exhaustion classification and propagation, not cap enforcement.
+- `test/install.test.ts:51–76`: supplies a budget-bearing judge, but asserts judge/model presence rather than the budget itself.
+
+No tests directly exercise `--budget` routing or precedence through `src/index.ts`.
+
+The comment at `src/index.ts:119` incorrectly says **default $2**; actual code and CLI help (`:37`) say **$5**. The adapter comment’s “Use --budget to override” (`src/adapters.ts:88`) also omits its judge-only scope. Example values of $2 (`examples/debate.yaml:14,55`) are explicit settings, not defaults.
+
+Validation: the worker reported **71/71 targeted tests passing**. I independently checked **(1)** judge-only routing against source and **(2)** reran the fake-CLI default/explicit-budget test successfully. No source changes or network access. Full-suite validation was not performed; end-to-end CLI wiring remains untested.

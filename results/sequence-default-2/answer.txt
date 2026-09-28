@@ -1,0 +1,28 @@
+The main gaps are **an undocumented fallback judge, permissive status handling, and an incorrect stdout promise for continuations**.
+
+1. **“Judge is opt-in” holds only for ordinary debates.** README.md:158–160 says these phases run only when configuration defines a judge. Ordinary debates honor that (`src/index.ts:340`). However, both `--continue` and `--finalize` use the **current configuration’s judge or built-in Claude Opus**, rather than recovering the original judge (`src/index.ts:184–185,209–214`; default at `:103`). They require a saved determination, but not a currently configured judge. This fallback is outside your deployment’s authorization.
+
+2. **An “already-resolved” determination is not strictly required.** README.md:103–104 and :172–175 describe finalization after resolution. The CLI only rejects a determination parsed as `NEEDS_INPUT` (`src/index.ts:234–240`). The parser recognizes that marker on the first nonempty line and classifies **everything else as `RESOLVED`**, including empty text, malformed status, and failure messages (`src/debate.ts:120–126`).
+   
+   There is a concrete failure route: an unsuccessful judge produces `Respondeo turn failed: …`, which is saved as `respondeo.md` (`src/debate.ts:263–265`; `src/index.ts:378–379`). A later `--finalize` accepts that text. Successful ordinary judge/continuation calls with missing markers also trigger drafting.
+
+3. **Continuation does not enforce its documented starting condition.** README.md:95–96 and :177–181 describe answering a `NEEDS_INPUT` determination. `--continue` never checks the prior status before re-judging (`src/index.ts:209–214,255–257`). It accepts resolved or failed determinations too, while its prompt asserts that the prior determination ended in `NEEDS_INPUT` (`src/debate.ts:165–170`). This is an enforcement gap rather than a contradiction of an explicit README rejection promise.
+
+4. **The stdout description misses continuation outcomes.** README.md:107–110 promises `final-report.md` when produced, otherwise `debate.md`. Actual behavior:
+
+   | Outcome | Printed artifact |
+   |---|---|
+   | Ordinary debate | `final-report.md` if produced; otherwise `debate.md` (`src/index.ts:403`) |
+   | Successful `--finalize` | `final-report.md` (`src/index.ts:249–252`) |
+   | Resolved continuation with successful drafting | `final-report.md` (`src/index.ts:281–284`) |
+   | Continuation still needing input | New `respondeo-N.md`, **exit 0** (`src/index.ts:265–275`) |
+   | Continuation whose drafting fails | New `respondeo-N.md`, also **exit 0** (`src/index.ts:285–292`) |
+
+Important documented behavior **does hold**:
+
+- **Phase order:** ordinary debates run proposals, reactions, then the optional judge; drafting follows a successful determination classified as resolved (`README.md:162–175`; `src/debate.ts:221–275`). With your two debaters and no judge, neither judge nor final-report phase runs.
+- **Saved selection:** explicit `--debate` wins; otherwise the lexicographically latest `.debate/debate-*` directory is chosen. Within it, both commands use the highest-numbered `respondeo[-N].md`, treating `respondeo.md` as number 1—not the latest *resolved* determination. Missing determinations fail (`README.md:95–104,188`; `src/index.ts:124–152,210–212`).
+- **Evidence separation:** initial judging and continuation receive transcript context without a repository worktree. Drafting receives repository evidence when supplied; follow-ups select `--repo` over current `cfg.repo` (`README.md:99–104,175,202–203`; `src/index.ts:221,240,257,279`; `src/debate.ts:188–199,261`). Repository execution uses a detached temporary worktree of HEAD (`src/debate.ts:70–77`).
+- **No re-debate/re-judging mix-up:** continuation invokes the judge alone; standalone finalization invokes only drafting, as documented.
+
+Validation was read-only source inspection plus a local, model-free parser check confirming the permissive status cases. Existing tests cover phase ordering, conditional drafting, continuation inputs, and repository drafting (`test/debate.test.ts:62–123,151–180,201–225`), but not the CLI selection/status/stdout wiring above. No files changed or model services invoked.

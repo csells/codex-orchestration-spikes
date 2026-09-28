@@ -1,0 +1,41 @@
+**For this two-debater, no-judge deployment, `--budget` does not change either debater’s budget.** Claude debaters use their configured `maxBudgetUsd`, otherwise **$5 per invocation**. The fallback-judge paths described below remain outside the stated authorization.
+
+**Declarations and value flow**
+
+| Location | Production behavior |
+|---|---|
+| `src/config.ts:11–29` | Declares optional numeric `ParticipantSpec.maxBudgetUsd`, shared by participants and the optional judge; marked Claude-only. |
+| `src/config.ts:36,50–74,80–95,136–151` | Serializes the field, accepts it in participant/judge blocks, and converts it with `Number()`. Requires a finite number, but does **not** require a positive value. It is not a top-level setting. |
+| `src/install.ts:28–49`; `src/index.ts:184–188` | Selects explicit `--config`, otherwise the XDG-aware user config, otherwise built-ins; then parses the selected configuration. The example is never automatically loaded. |
+| `src/index.ts:58,85–87,120–121` | Parses `--budget`; rejects missing, NaN, and nonpositive values. Unlike configuration parsing, it permits `Infinity`. `withBudget()` copies the selected spec and replaces `maxBudgetUsd`. |
+| `src/index.ts:105–114` | `buildParticipant()` passes `s.maxBudgetUsd` into `claudeAdapter()`. Other adapters ignore the field. |
+| `src/adapters.ts:84–110` | Declares `ClaudeOpts.maxBudgetUsd`; computes `opts.maxBudgetUsd ?? 5`; each invocation receives `claude … --max-budget-usd String(budget)` through `runCli()`. This is a per-invocation cap, not an aggregate debate budget. |
+| `src/index.ts:102–103`; `examples/debate.yaml:14,55` | Built-in debaters omit the field; built-in Opus judge explicitly uses **5**. The example explicitly sets **2** for both its Claude debater and judge. |
+
+**Precedence and execution paths**
+
+For Claude judge/synthesizer calls: **`--budget` → selected judge’s configured value → $5**. For Claude debaters: **configured value → $5**.
+
+| Path | Override applied? |
+|---|---|
+| Ordinary debate | Only to a configured judge (`src/index.ts:333–340`). That same adapter handles the determination and, when resolved, final deliverable (`src/debate.ts:258–275`). No judge means no override consumer. |
+| `--continue` | Yes: re-judging and any subsequent finalization share the overridden adapter (`src/index.ts:214,257,279`). |
+| `--finalize` | Yes: final deliverable invocation (`src/index.ts:214,240`). |
+| `--doctor` | No: participant and judge specs go directly to construction (`src/index.ts:194–199`). |
+| `--init` | No: basis specs bypass `withBudget()` (`src/index.ts:171–176`). Participant probing preserves configured budgets; serialization preserves participant/judge specs (`src/install.ts:134–159`). |
+
+Both continuation paths select `cfg.judge ?? DEFAULT_JUDGE` (`src/index.ts:214`), after loading an existing determination. That fallback exists in source; it is **not an authorized workaround** for this deployment.
+
+**Existing tests and their limits**
+
+- `test/adapters.test.ts:33–44`: fake-Claude argv assertions prove adapter default **5** and explicit override **10** reach `--max-budget-usd`. They do not exercise `--budget`.
+- `test/config.test.ts:12–41`: proves example participant budget parsing and participant/judge budget serialization round-trip. Lines **77–81,118–121** reject the incorrect YAML key `budget`.
+- `test/adapters.test.ts:76–82`: proves budget-error envelope classification. `test/debate.test.ts:137–148` proves propagation into `finalReportError`; neither tests budget selection.
+- `test/debate.test.ts:118–123,174–180`: proves no final report/judge turn without a judge.
+- `test/config-resolution.test.ts:14–59` covers configuration lookup behavior, not budget forwarding. `test/install.test.ts:51–75` supplies a budget-bearing judge but does not assert its budget.
+
+**Uncovered wiring:** no existing test directly exercises CLI `--budget` parsing, configuration-to-adapter budget forwarding, CLI/config precedence, or override routing across execution modes. Those conclusions come from source inspection.
+
+The comment at `src/index.ts:119` incorrectly says “default $2.” Help at `src/index.ts:37` correctly says **$5**. The example’s **$2** values are explicit overrides; `src/adapters.ts:87–88` describes the historical increase but its “Use --budget” advice only applies to judge/synthesizer paths.
+
+Validation: **9 focused existing tests passed**, using fake CLIs/in-process participants. No repository edits, network access, or actual model invocations.

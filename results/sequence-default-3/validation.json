@@ -1,0 +1,69 @@
+{
+  "score": 6,
+  "max_score": 6,
+  "passed": true,
+  "stage": 3,
+  "rubric": "publication/evaluation/session-answer-key.md#stage-3",
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correctly treats task.md positional as literal inline text, independent of filename appearance.",
+      "evidence": [
+        "src/quaestio.ts:21-27",
+        "src/index.ts:295-307"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correct --file selection and pure resolver; UTF-8 readFile occurs only after successful resolution in index.ts.",
+      "evidence": [
+        "src/quaestio.ts:16-19",
+        "src/index.ts:295-304"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correct conflict rejection for file plus positional input and rejection of three unquoted positionals rather than joining them.",
+      "evidence": [
+        "src/quaestio.ts:16-25",
+        "src/index.ts:295-300"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correct shell-quoting behavior: groups words into one inline positional; does not imply filename detection or file input.",
+      "evidence": [
+        "src/quaestio.ts:21-27"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 1,
+      "finding": "Correct zero-round acceptance, no reactions after proposals, fractional-round rejection, and CLI > config > 1 precedence.",
+      "evidence": [
+        "src/index.ts:310-314",
+        "src/debate.ts:221-250"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 1,
+      "finding": "Correct focused input-test inventory and distinction between pure resolution tests, actual file reads, and separate CLI rounds validation.",
+      "evidence": [
+        "test/quaestio.test.ts:9-38",
+        "src/index.ts:302-314"
+      ]
+    }
+  ],
+  "false_claims": [],
+  "gradingnotes": [
+    "All six frozen criteria are conveyed with supporting source evidence; required numeric values 0, 1.5, and default 1 are correctly reported.",
+    "Additional source-supported points: configuration I/O precedes question-input validation; question-file reading precedes CLI rounds validation; invalid configured rounds cannot be rescued by a valid CLI override because config parsing happens first.",
+    "No results/policy/cost files were inspected. Self-reported test executions and side-effect absence were not independently audited and add no rubric credit.",
+    "The -f alias and warning that rounds 0 is not a dry run are correct additional facts; no extra points."
+  ]
+}

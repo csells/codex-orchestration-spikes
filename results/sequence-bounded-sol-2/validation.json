@@ -1,0 +1,96 @@
+{
+  "score": 7,
+  "max_score": 8,
+  "passed": false,
+  "stage": 2,
+  "rubric": "publication/evaluation/session-answer-key.md#stage-2",
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correctly scopes config-only judge rule to fresh runs and identifies current configured judge/default fallback in saved commands.",
+      "evidence": [
+        "README.md:158-160",
+        "src/index.ts:103",
+        "src/index.ts:209-214",
+        "src/index.ts:340"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correctly identifies unresolved-continuation and failed-drafting continuation stdout exceptions.",
+      "evidence": [
+        "README.md:107-110",
+        "src/index.ts:265-292"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correctly describes permissive status parsing and saved initial-judge failure being accepted for later finalization, while distinguishing explicit NEEDS_INPUT rejection.",
+      "evidence": [
+        "README.md:103-104",
+        "README.md:172-175",
+        "src/debate.ts:120-126",
+        "src/debate.ts:263-265",
+        "src/index.ts:234-240"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correct optional-judge phase order and condition that successful results classified RESOLVED trigger drafting.",
+      "evidence": [
+        "src/debate.ts:221-283"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 0,
+      "finding": "Correctly discusses re-judging and resolved/unresolved continuation outcomes, but does not convey that continuation omits debater turns. Describing re-judging alone does not establish that no additional debater rounds occur.",
+      "missing": "Continuation invokes the judge alone and does not rerun debaters.",
+      "evidence": [
+        "README.md:202-204",
+        "src/index.ts:255-279",
+        "src/debate.ts:195-200"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 1,
+      "finding": "Correct explicit/latest debate-directory selection and highest numeric determination version.",
+      "evidence": [
+        "src/index.ts:124-152"
+      ]
+    },
+    {
+      "item": 7,
+      "credit": 1,
+      "finding": "Correct transcript-only judging/continuation and CLI/config repository evidence for drafting in disposable HEAD worktree.",
+      "evidence": [
+        "src/index.ts:221",
+        "src/debate.ts:70-77",
+        "src/debate.ts:188-199",
+        "src/debate.ts:261-275"
+      ]
+    },
+    {
+      "item": 8,
+      "credit": 1,
+      "finding": "Correct NEEDS_INPUT blocking case and final-report.md successful output. Exact rejection exit code 1 is not spelled out, consistent with prior semantic credit.",
+      "evidence": [
+        "src/index.ts:234-252"
+      ]
+    }
+  ],
+  "false_claims": [],
+  "gradingnotes": [
+    "Unchanged audit8 semantic rubric. No policy/results/cost files were inspected.",
+    "All three pre-registered discrepancies are correctly reported.",
+    "Additional correct observations: ordinary judge-less runs produce no saved determination; current configuration rather than original saved judge is selected; malformed successful replies can trigger drafting; continuation does not require prior NEEDS_INPUT. The latter describes broader accepted behavior and a prompt inconsistency, not necessarily an explicitly promised rejection policy.",
+    "Source supports the reported facts. Validation/test/tool self-reports were not independently audited through execution logs and add no rubric credit.",
+    "Status-rejection exit-code omission is handled identically to previous audit grading; rejection and successful artifact behavior are conveyed.",
+    "The lost item is coverage rather than a false statement. Applied the same item5 standard as anonymous one-off C/D: merely mentioning re-judging does not convey exclusion of debater turns."
+  ]
+}

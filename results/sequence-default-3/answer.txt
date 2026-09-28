@@ -1,0 +1,31 @@
+**A positional argument is literal question text, even when it looks like a filename. Only `--file` (or `-f`) selects file input.**
+
+| Command | Interpretation |
+|---|---|
+| `node src/index.ts task.md` | Uses the literal question `task.md`; does not read that file. |
+| `node src/index.ts --file task.md` | Reads `task.md` as UTF-8 and uses its contents as the question. |
+| `node src/index.ts --file task.md "extra question"` | Rejects conflicting file and inline input, exiting 1 before reading the question file. |
+| `node src/index.ts Review this branch` | Receives three positionals and rejects them with a “did you forget to quote” error. |
+| `node src/index.ts "Review this branch"` | Receives one positional and accepts the complete inline question. Shell quoting groups the words; it does not select file input. |
+
+The CLI collects flags and positionals at `src/index.ts:64–95`. The pure resolver implements these decisions at `src/quaestio.ts:12–27`; it performs no filesystem operations or filename detection.
+
+**File I/O happens after successful input resolution:** `src/index.ts:296–306` checks the resolver result, then calls `readFile(input.path, "utf8")` only for file input. Relative paths resolve from the process’s working directory. Configuration loading happens earlier (`src/index.ts:184–185`), while reaction-count validation happens afterward (`:310–313`). Thus an invalid `--rounds` value does not prevent an otherwise valid question file from being read first.
+
+**`--rounds` counts reaction rounds after the initial proposals.**
+
+- `--rounds 0`: runs proposals and skips reactions. In your two-debater, no-judge deployment, that means two proposal turns and no judge/final-report turns.
+- `--rounds 1.5`: rejected with exit 1; the value must be a nonnegative integer.
+- Precedence is **explicit `--rounds` → configuration `rounds` → default `1`**. Explicit zero is preserved. CLI values are converted using `Number()` before validation (`src/index.ts:310–313`).
+- Configuration independently validates `rounds` during parsing (`src/config.ts:174–175`), so an invalid configuration is rejected even if a valid CLI override was supplied.
+- Proposals always precede the reaction loop. Fewer than two successful proposals aborts before reactions (`src/debate.ts:221–250`). Consequently, `--rounds 0` is **not a dry run**.
+
+Existing focused tests:
+
+- `test/quaestio.test.ts:9–37`: proves inline/file selection and rejection of missing, conflicting, or multiple positional inputs.
+- `test/config.test.ts:136–138`: rejects nonnumeric and fractional configuration round counts.
+- `test/debate.test.ts:45–59,174–180`: verifies one reaction round gives two proposals plus two reactions for two participants.
+
+These tests do not directly cover CLI flag parsing, actual question-file reads, or CLI/config round precedence; those conclusions follow from the cited wiring.
+
+Validation: **23 existing parser/config tests passed**, plus in-process assertions that `task.md` remains inline and configuration accepts `rounds: 0`. No source changes, network access, or model invocations.

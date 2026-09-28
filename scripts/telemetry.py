@@ -43,6 +43,16 @@ def _add(target: dict[str, int], values: dict[str, int]) -> None:
         target[key] = target.get(key, 0) + values.get(key, 0)
 
 
+def _event_time(value: Any) -> datetime | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed.astimezone(timezone.utc) if parsed.tzinfo is not None else None
+
+
 def sanitize(value: Any, private_prefixes: tuple[str, ...] = ()) -> Any:
     """Defense in depth for public text; structured telemetry uses allowlists.
 
@@ -208,6 +218,11 @@ def collect(root_id: str, rollout_roots: str | Path | list[str | Path],
         sessions[session_id] = {
             "meta": meta, "events": events, "malformed": malformed,
             "parent": spawn.get("parent_thread_id"), "agent_path": spawn.get("agent_path"),
+            # The outer timestamp records rollout persistence, which may occur
+            # after spawn_agent returns. Use the thread's actual creation time.
+            "created_at": next((entry["payload"].get("timestamp") or entry.get("timestamp") for entry in events
+                                if entry.get("type") == "session_meta"
+                                and entry.get("payload", {}).get("id") == session_id), None),
         }
     if root_id not in sessions:
         raise ValueError("Root rollout was not found in supplied locations")
@@ -220,8 +235,10 @@ def collect(root_id: str, rollout_roots: str | Path | list[str | Path],
     ordered = [root_id] + sorted(members - {root_id}, key=lambda sid: (
         str(sessions[sid]["meta"].get("timestamp", "")), sid))
     labels = {sid: ("root" if i == 0 else f"worker_{i}") for i, sid in enumerate(ordered)}
-    agent_paths = {sessions[sid]["agent_path"]: labels[sid] for sid in ordered
-                   if sessions[sid]["agent_path"]}
+    children_by_path: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for sid in ordered:
+        if sessions[sid]["agent_path"]:
+            children_by_path[(sessions[sid]["parent"], sessions[sid]["agent_path"])].append(sid)
     total = _usage({})
     model_usage: dict[str, dict[str, int]] = defaultdict(lambda: _usage({}))
     seen_responses: set[str] = set()
@@ -307,23 +324,40 @@ def collect(root_id: str, rollout_roots: str | Path | list[str | Path],
                     except (json.JSONDecodeError, TypeError):
                         arguments = {}
                     if isinstance(arguments, dict):
-                        pending_spawns[payload.get("call_id", "")] = arguments
+                        pending_spawns[payload.get("call_id", "")] = {
+                            "arguments": arguments, "started_at": event.get("timestamp"),
+                        }
             elif kind == "response_item" and payload.get("type") == "function_call_output":
-                arguments = pending_spawns.get(payload.get("call_id", ""))
-                if arguments is not None:
+                pending_spawn = pending_spawns.get(payload.get("call_id", ""))
+                if pending_spawn is not None:
+                    arguments = pending_spawn["arguments"]
                     try:
                         output = json.loads(payload.get("output", "{}"))
                     except (json.JSONDecodeError, TypeError):
                         output = {}
                     if isinstance(output, dict) and output.get("task_name"):
-                        child = agent_paths.get(output["task_name"])
+                        candidates = children_by_path.get((sid, output["task_name"]), [])
+                        start = _event_time(pending_spawn["started_at"])
+                        end = _event_time(event.get("timestamp"))
+                        matches = candidates
+                        if start is not None and end is not None:
+                            created = {candidate: _event_time(sessions[candidate]["created_at"])
+                                       for candidate in candidates}
+                            # Missing timestamps permit only an unambiguous single
+                            # parent/path match. Never attach an earlier spawn to a
+                            # later, timestamped child when names are reused.
+                            matches = [candidate for candidate, when in created.items()
+                                       if when is None or start <= when <= end]
+                        child = labels[matches[0]] if len(matches) == 1 else None
                         observed_spawns.append({
                             "requested_model": arguments.get("model"),
                             "requested_reasoning_effort": arguments.get("reasoning_effort"),
                             "fork_turns": arguments.get("fork_turns", "all"),
                             "observed_child": child,
                         })
-                        if child is None:
+                        if len(matches) > 1:
+                            warnings.append(f"{labels[sid]} has ambiguous child routing for a reused agent path; model attribution for that spawn is unresolved")
+                        elif child is None:
                             warnings.append(f"{labels[sid]} has a successful spawn without a descendant rollout; accounting is incomplete")
         if not responses:
             warnings.append(f"{labels[sid]} has no attributable per-response usage records")

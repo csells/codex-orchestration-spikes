@@ -11,8 +11,11 @@ This covers the observed provider format, not arbitrary secret detection.
 Execution events and tool outputs can overlap, and output can be truncated at
 the source. They are behavioral evidence, not additional usage charges. Usage
 records must be deduplicated by response_hash, including compaction records.
+Use --until with a run's ended_at to freeze a resumed session's earlier trace;
+otherwise export includes the complete current history of that session tree.
 """
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 import re
@@ -57,11 +60,31 @@ def _sanitize_paths(value, prefixes):
     return sanitize(value, prefixes)
 
 
-def export(root_id, home, workspace=None):
+def _timestamp(value):
+    if not isinstance(value, str):
+        raise ValueError("Cutoff export requires a timestamp on every rollout event")
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError("Cutoff export requires timezone-aware ISO timestamps")
+    return parsed.astimezone(timezone.utc)
+
+
+def export(root_id, home, workspace=None, until=None):
+    cutoff = _timestamp(until) if until is not None else None
     sessions = {}
     for path in Path(home, "sessions").rglob("rollout*.jsonl"):
         meta, events, malformed = _read_rollout(path)
         if meta:
+            if cutoff is not None:
+                # Determine the file's own identity before filtering: a future
+                # fork may contain inherited, older metadata for its parent.
+                own_meta = [entry for entry in events if entry.get("type") == "session_meta"
+                            and entry.get("payload", {}).get("id") == meta["id"]
+                            and _timestamp(entry.get("timestamp")) <= cutoff]
+                if not own_meta:
+                    continue
+                meta = own_meta[-1]["payload"]
+                events = [entry for entry in events if _timestamp(entry.get("timestamp")) <= cutoff]
             source = meta.get("source")
             subagent = source.get("subagent") if isinstance(source, dict) else None
             spawn = subagent.get("thread_spawn") if isinstance(subagent, dict) else None
@@ -123,5 +146,6 @@ if __name__ == "__main__":
     p.add_argument("root_id")
     p.add_argument("home", type=Path)
     p.add_argument("--workspace", type=Path)
+    p.add_argument("--until", help="Inclusive timezone-aware ISO cutoff, normally run.json ended_at")
     a = p.parse_args()
-    for row in export(a.root_id, a.home, a.workspace): print(json.dumps(row))
+    for row in export(a.root_id, a.home, a.workspace, a.until): print(json.dumps(row))

@@ -1,0 +1,76 @@
+{
+  "score": 5,
+  "max_score": 6,
+  "passed": false,
+  "stage": 4,
+  "rubric": "publication/evaluation/session-answer-key.md#stage-4",
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correct fresh temporary-directory and detached HEAD-worktree behavior; excludes local uncommitted edits and untracked dependencies.",
+      "evidence": [
+        "src/debate.ts:62-77",
+        "src/index.ts:315-329"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correct finally cleanup and distinction between serialized Git operations and concurrent proposal/reaction turns.",
+      "evidence": [
+        "src/debate.ts:53-86",
+        "src/debate.ts:221-250"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correct own-process-group SIGTERM/SIGKILL sequence with two-second grace, ten-minute default/configurable per-invocation timeout, and escaped-group limitations.",
+      "evidence": [
+        "src/adapters.ts:8-59",
+        "src/index.ts:188"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correct fewer-than-two proposal abort before reactions/judge, transcript/raw preservation, transcript stdout, and exit 1.",
+      "evidence": [
+        "src/debate.ts:228-240",
+        "src/index.ts:353-373"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 1,
+      "finding": "Correct returned reaction/judge/drafting failure outcomes, normal exit versus standalone-finalize exit 1, and distinction from uncaught exceptions.",
+      "evidence": [
+        "src/debate.ts:70-86",
+        "src/debate.ts:243-286",
+        "src/index.ts:242-247",
+        "src/index.ts:285-292",
+        "src/index.ts:376-403"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 0,
+      "finding": "Correctly says disposable cwd is not a security boundary and generic adapter permission flags add restrictions, but supplies no concrete adapter mechanism or corresponding restriction-code evidence.",
+      "missing": "The frozen criterion requires supporting the distinction with at least one actual adapter mechanism, such as Codex read-only sandbox or Claude tool restrictions. Generic permission flags alone do not identify one.",
+      "evidence": [
+        "src/adapters.ts:103-105",
+        "src/adapters.ts:184-195",
+        "src/debate.ts:70-86"
+      ]
+    }
+  ],
+  "false_claims": [],
+  "gradingnotes": [
+    "Frozen six-point criteria applied; required numeric timeout/exit values are conveyed accurately.",
+    "Additional cleanup-error, process-escape, Promise.all non-cancellation, and post-orchestration artifact timing observations agree with source.",
+    "No policy/result/cost files were inspected; execution and side-effect self-reports were not independently audited.",
+    "Lost criterion6 is evidence/coverage incompleteness, not a false confinement claim. The answer correctly states the conceptual limit but does not supply the pre-registered concrete-adapter example.",
+    "Prompt-specificity disclosure: stage4 asks whether disposable working directories establish a filesystem security boundary and requests source evidence, but does not explicitly demand a named adapter or concrete permission flag. Frozen criterion6 adds that specific supporting-example requirement. A answers the broad boundary question correctly; its missed point is strict pre-registered evidence coverage, not a wrong security conclusion or demonstrated core-task failure. Scores are unchanged."
+  ]
+}

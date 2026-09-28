@@ -1,0 +1,30 @@
+**Only `--file` reads the question from disk.** A positional argument is literal question text, even if it looks like a filename.
+
+| Command | Interpretation |
+|---|---|
+| `node src/index.ts task.md` | Inline question containing exactly `task.md`; no task-file read. |
+| `node src/index.ts --file task.md` | Reads `task.md` as UTF-8 question text. Relative paths resolve from the working directory. |
+| `node src/index.ts --file task.md "extra question"` | Input error: file and inline sources cannot be combined. The task file is not read. |
+| `node src/index.ts Review this branch` | Input error: three positionals; the program does not join them. |
+| `node src/index.ts "Review this branch"` | Valid inline question: shell quoting supplies one positional argument. |
+
+Argument collection is at `src/index.ts:64–96`; these input rules are implemented in `src/quaestio.ts:12–27`.
+
+Input resolution itself is **pure—no filesystem access**. The entry point resolves and checks the input first, then calls `readFile(input.path, "utf8")` only for a file result (`src/index.ts:295–308`). Configuration loading occurs earlier (`:184–185`), so rejected input can still involve configuration I/O. Task-file reading also precedes CLI rounds validation (`:310–314`).
+
+`--rounds` counts **reaction rounds after the initial proposals**:
+
+- **`--rounds 0`** is valid and skips reactions. In your two-debater, no-judge deployment, that means two proposal turns and no judge/final-report phase, assuming both proposals succeed.
+- **`--rounds 1.5`** fails with “rounds must be a non-negative integer” and exits 1 before debate execution.
+- **Precedence:** explicit CLI value → configuration’s `rounds` → **1**. Zero is preserved rather than replaced by the default (`src/index.ts:310–314`).
+- Configuration itself must pass validation first; an invalid configured value cannot be rescued by a valid CLI override (`src/config.ts:174–176`; `src/index.ts:184–185`).
+
+The proposal phase and reaction loop are separate (`src/debate.ts:221–250`). Thus, with two debaters, one reaction round means two proposals plus two reactions—not two turns total.
+
+Existing focused tests establish:
+
+- `test/quaestio.test.ts:9–38`: inline/file selection and rejection of missing, conflicting, or multiple positional inputs. These test resolution, not actual file reads.
+- `test/config.test.ts:136–139`: rejects nonnumeric and fractional configured rounds.
+- `test/debate.test.ts:45–60,174–181`: one reaction round produces four turns with two participants; absent a judge, no judge turn appears. These bypass CLI parsing.
+
+**Validation:** 23 parser/config tests passed. My two independent checks were an in-process assertion matrix covering all command shapes, including quoting, and source verification of rounds precedence, validation, and execution. No source changes, network access, or model services; full CLI wiring was not executed.

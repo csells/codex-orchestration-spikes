@@ -1,0 +1,4 @@
+# Preserve exact captured output/instruction whitespace in experimental evidence.
+# Source code and authored documentation retain normal whitespace checks.
+results/**/answer.txt whitespace=-blank-at-eol
+results/**/AGENTS.md.txt whitespace=-blank-at-eof

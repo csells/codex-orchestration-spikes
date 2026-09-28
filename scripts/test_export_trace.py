@@ -113,6 +113,39 @@ class PublicTraceTests(unittest.TestCase):
         self.write("unrelated", [meta("unrelated", {"subagent": "review"})])
         self.assertEqual(len(export("r", self.home)), 1)
 
+    def test_cutoff_freezes_resumed_history_and_excludes_future_fork_sessions(self):
+        def at(timestamp, item):
+            return {**item, "timestamp": timestamp}
+        initial = [meta("r"), at("2000-01-01T00:00:01Z", event("token_usage_record", usage_record("r", "r1", 10)))]
+        self.write("root", [*initial,
+            at("2000-01-01T01:00:03+01:00", event("token_usage_record", usage_record("r", "r2", 30))),
+            at("2000-01-01T00:00:04Z", event("response_item", {
+                "type": "message", "role": "assistant", "phase": "final_answer", "content": "FUTURE_ANSWER_SENTINEL"})),
+        ])
+        source = {"subagent": {"thread_spawn": {"parent_thread_id": "r"}}}
+        self.write("earlier-child", [at("2000-01-01T00:00:01.500Z", meta("c1", source)),
+                                    at("2000-01-01T00:00:01.700Z", event("token_usage_record", usage_record("c1", "c1r", 20)))])
+        # Earlier copied parent metadata must not turn this future child into
+        # a replacement parent record after cutoff filtering.
+        self.write("future-child", [*initial, at("2000-01-01T00:00:03Z", meta("c2", source)),
+                                   at("2000-01-01T00:00:03.500Z", event("token_usage_record", usage_record("c2", "c2r", 40)))])
+        frozen = export("r", self.home, until="1999-12-31T16:00:02-08:00")
+        frozen_tokens = [row for row in frozen if row["kind"] == "token_usage_record"]
+        self.assertEqual(sum(row["payload"]["usage"]["input_tokens"] for row in frozen_tokens), 30)
+        self.assertEqual({row["thread"] for row in frozen}, {"root", "worker_1"})
+        self.assertNotIn("FUTURE_ANSWER_SENTINEL", json.dumps(frozen))
+        complete = export("r", self.home)  # Existing three-argument behavior remains complete-history.
+        self.assertEqual(sum(row["payload"]["usage"]["input_tokens"] for row in complete if row["kind"] == "token_usage_record"), 100)
+        self.assertIn("FUTURE_ANSWER_SENTINEL", json.dumps(complete))
+
+    def test_cutoff_rejects_ambiguous_or_missing_timestamps(self):
+        self.write("root", [meta("r")])
+        with self.assertRaisesRegex(ValueError, "timezone-aware"):
+            export("r", self.home, until="2000-01-01T00:00:02")
+        self.write("root", [{"type": "session_meta", "payload": {"id": "r", "source": "exec"}}])
+        with self.assertRaisesRegex(ValueError, "timestamp"):
+            export("r", self.home, until="2000-01-01T00:00:02Z")
+
     def test_opaque_briefs_embedded_code_and_encrypted_fields_are_hashes_only(self):
         cipher = "gAAAA" + "A" * 95 + "=="  # Synthetic format marker; not real encrypted content.
         digest = hashlib.sha256(cipher.encode()).hexdigest()

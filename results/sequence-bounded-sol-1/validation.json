@@ -1,0 +1,96 @@
+{
+  "score": 8,
+  "max_score": 8,
+  "passed": true,
+  "stage": 1,
+  "rubric": "publication/evaluation/session-answer-key.md#stage-1",
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correct shared ParticipantSpec budget declaration, participant/judge parsing and serialization.",
+      "evidence": [
+        "src/config.ts:11-29",
+        "src/config.ts:36-95",
+        "src/config.ts:136-151"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correct --budget parsing/validation and numeric copied-spec override via withBudget.",
+      "evidence": [
+        "src/index.ts:58",
+        "src/index.ts:85-87",
+        "src/index.ts:120-121"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correct Claude-only budget forwarding by buildParticipant; other adapters ignore the field.",
+      "evidence": [
+        "src/index.ts:105-114"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correct ClaudeOpts declaration, nullish default 5, --max-budget-usd forwarding, and independent DEFAULT_JUDGE value 5.",
+      "evidence": [
+        "src/adapters.ts:84-107",
+        "src/index.ts:103"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 1,
+      "finding": "Correct mode distinctions: configured fresh judge, default-capable saved-debate judge, unchanged debaters, and init/doctor bypassing CLI override.",
+      "evidence": [
+        "src/index.ts:171-176",
+        "src/index.ts:194-201",
+        "src/index.ts:214",
+        "src/index.ts:333-340"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 1,
+      "finding": "Correct CLI/config/default precedence and explicit example value 2 versus actual fallback 5.",
+      "evidence": [
+        "src/index.ts:120-121",
+        "src/adapters.ts:89",
+        "examples/debate.yaml:14",
+        "examples/debate.yaml:55"
+      ]
+    },
+    {
+      "item": 7,
+      "credit": 1,
+      "finding": "Correct adapter/config/install test coverage and explicit lack of end-to-end --budget wiring coverage.",
+      "evidence": [
+        "test/adapters.test.ts:33-45",
+        "test/config.test.ts:12-41",
+        "test/install.test.ts:51-76"
+      ]
+    },
+    {
+      "item": 8,
+      "credit": 1,
+      "finding": "Correct identification of stale default-2 comment against executable default/help value 5.",
+      "evidence": [
+        "src/index.ts:119",
+        "src/index.ts:37",
+        "src/adapters.ts:89"
+      ]
+    }
+  ],
+  "false_claims": [],
+  "gradingnotes": [
+    "Applied unchanged Inventory8 semantic rubric. All eight criteria are conveyed with supporting source evidence.",
+    "Both finite-config/nonpositive-value observation and positive-Infinity CLI observation match source predicates; no extra points awarded.",
+    "The answer accurately acknowledges current no-judge configuration and unauthorized fallback paths. Immediate restatement earns no extra stage-1 credit, and does not establish stage-5 retention.",
+    "Validation/test self-reports were not independently checked: only anonymous answers, task/rubric, and public source were inspected; no run, policy, or cost files were inspected.",
+    "Opening phrase that --budget has no effect is scoped to the authorized ordinary two-debater deployment by the execution-path table, which explicitly identifies the otherwise-active unauthorized fallback paths; not treated as a global false assertion."
+  ]
+}

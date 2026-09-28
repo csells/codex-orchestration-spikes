@@ -134,6 +134,53 @@ class AccountingTests(unittest.TestCase):
         self.assertEqual(result["thread_count"], 1)
         self.assertEqual(result["total_usage"]["input_tokens"], 30)
 
+    def test_resumed_spawns_reusing_task_name_match_their_own_child_creation(self):
+        def at(second, item):
+            return {**item, "timestamp": f"2000-01-01T00:00:{second:02d}Z"}
+        first = spawn("/root/investigation", "first")
+        second = spawn("/root/investigation", "second")
+        root_events = [at(0, meta("r")), context("astra"), usage("r", "r1", 10),
+                       at(1, first[0]), at(3, first[1]), event("event_msg", {"type": "task_complete"})]
+        self.write("root", root_events)
+        self.write("first-worker", [at(2, meta("c1", "r", "/root/investigation")),
+                                    context("sol"), usage("c1", "c1r", 20),
+                                    event("event_msg", {"type": "task_complete"})])
+        before = collect("r", self.root)
+        self.write("root", [*root_events, context("astra"), usage("r", "r2", 30),
+                            at(10, second[0]), at(12, second[1])])
+        self.write("second-worker", [at(11, meta("c2", "r", "/root/investigation")),
+                                     context("luna"), usage("c2", "c2r", 40)])
+        after = collect("r", self.root)
+        self.assertEqual(before["total_usage"]["input_tokens"], 30)
+        self.assertEqual(after["total_usage"]["input_tokens"], 100)
+        self.assertEqual(after["thread_count"], 3)
+        self.assertEqual([item["observed_child"] for item in after["threads"][0]["successful_spawn_requests"]],
+                         ["worker_1", "worker_2"])
+        self.assertFalse(after["warnings"])
+
+    def test_ambiguous_reused_paths_are_reported_without_invented_route(self):
+        self.write("root", [meta("r"), context("astra"), usage("r", "r1", 10), *spawn()])
+        self.write("first-worker", [meta("c1", "r", "/root/search"), context("sol"), usage("c1", "c1r", 20)])
+        self.write("second-worker", [meta("c2", "r", "/root/search"), context("luna"), usage("c2", "c2r", 30)])
+        result = collect("r", self.root)
+        self.assertIsNone(result["threads"][0]["successful_spawn_requests"][0]["observed_child"])
+        self.assertTrue(any("ambiguous child routing" in item for item in result["warnings"]))
+        self.assertEqual(result["total_usage"]["input_tokens"], 60)
+
+    def test_child_creation_time_survives_rollout_write_after_spawn_returns(self):
+        call, output = spawn()
+        call["timestamp"] = "2000-01-01T00:00:01Z"
+        output["timestamp"] = "2000-01-01T00:00:03Z"
+        self.write("root", [meta("r"), context("astra"), usage("r", "r1", 10), call, output])
+        child_meta = meta("c", "r", "/root/search")
+        child_meta["payload"]["timestamp"] = "2000-01-01T00:00:02Z"
+        child_meta["timestamp"] = "2000-01-01T00:00:03.007Z"
+        self.write("child", [child_meta, context("sol"), usage("c", "c1", 20)])
+        result = collect("r", self.root)
+        self.assertEqual(result["threads"][0]["successful_spawn_requests"][0]["observed_child"], "worker_1")
+        self.assertFalse(result["warnings"])
+        self.assertEqual(result["total_usage"]["input_tokens"], 30)
+
     def test_missing_child_and_unfinished_record_are_explicit(self):
         self.write("root", [meta("r"), context("astra"), usage("r", "r1", 10), *spawn()], trailing='{"unfinished":')
         result = collect("r", self.root)

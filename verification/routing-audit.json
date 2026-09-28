@@ -1,0 +1,61 @@
+{
+  "correction": "Use session_meta.payload.timestamp for actual child creation, rather than the outer rollout persistence timestamp; fall back to outer timestamp only if creation time is absent.",
+  "affected_spawn": "Fourth fresh Sol worker in the bounded-sol five-turn session, /root/isolation_failure.",
+  "evidence_utc": {
+    "spawn_call": "2026-09-28T00:20:20.901Z",
+    "child_actual_creation": "2026-09-28T00:20:20.922Z",
+    "spawn_return": "2026-09-28T00:20:21.224Z",
+    "child_rollout_write": "2026-09-28T00:20:21.231Z"
+  },
+  "finding": "The thread was created inside the spawn interval. Its metadata record was persisted 7 milliseconds after the spawn returned. The former matcher produced a false missing-child warning; the child and all of its model usage were already included.",
+  "snapshot_updates": [
+    {
+      "path": "results/sequence-bounded-sol-4/telemetry.json",
+      "before_sha256": "edabc086eb6e6220686183e7b4dfb42b912626a9efc881e12da9424711fa332b",
+      "after_sha256": "fa7ed363c76898339a9a8bb6dc262ea8ffc42e93c38fc93ad1106895cb584d9d",
+      "field_changes": [
+        {
+          "path": "threads[0].successful_spawn_requests[3].observed_child",
+          "before": null,
+          "after": "worker_4"
+        },
+        {
+          "path": "warnings",
+          "before": [
+            "root has a successful spawn without a descendant rollout; accounting is incomplete"
+          ],
+          "after": []
+        }
+      ],
+      "all_other_json_fields_unchanged": true
+    },
+    {
+      "path": "results/sequence-bounded-sol-5/telemetry.json",
+      "before_sha256": "82fb844c829faa1c449e93df6233386cffeaab899ee92022ae2fea380a648a1e",
+      "after_sha256": "7a72e2e2b9ce3214ceaba39960b2037d9a5498772f404cb5c0f65c345e6ea498",
+      "field_changes": [
+        {
+          "path": "threads[0].successful_spawn_requests[3].observed_child",
+          "before": null,
+          "after": "worker_4"
+        },
+        {
+          "path": "warnings",
+          "before": [
+            "root has a successful spawn without a descendant rollout; accounting is incomplete"
+          ],
+          "after": []
+        }
+      ],
+      "all_other_json_fields_unchanged": true
+    }
+  ],
+  "verification": {
+    "all_token_cost_context_and_compaction_fields_unchanged": true,
+    "stage_4_future_usage_not_recollected": true,
+    "stage_5_corrected_snapshot_equals_full_recollection_of_finished_session": true,
+    "regression_test": "test_child_creation_time_survives_rollout_write_after_spawn_returns",
+    "test_suite_passed": 23
+  },
+  "scope": "Instrumentation correction only. No policy, prompt, model run, or grade changed."
+}

@@ -1,0 +1,29 @@
+**Turns get disposable working directories, but those directories alone are not a filesystem security boundary.** Your two-debater, no-judge deployment remains unchanged; judge behavior below describes the optional implementation.
+
+- **Without a repository configured:** each turn starts in a fresh temporary directory, with no project snapshot.
+- **With `--repo` or configured `repo`:** each repository-backed turn gets a detached worktree of **committed `HEAD`**. Uncommitted edits and untracked dependencies such as `node_modules` are absent. Initial judging and continuation are transcript-only; final drafting can receive the repository.
+- **Cleanup:** `finally` attempts worktree removal, then recursively removes the temporary directory. Worktree-removal errors are swallowed, potentially leaving Git metadata needing pruning. Crashes or cleanup exceptions prevent an unconditional cleanup guarantee.
+- **Concurrency:** proposals run concurrently, as do reactions within each round. Rounds are sequential and share a prior-round transcript snapshot. Only Git worktree add/remove operations are serialized.
+
+Evidence: `src/debate.ts:53–86,188–199,221–275`; dirty-checkout warning: `src/index.ts:315–329`.
+
+**Timeouts apply to individual CLI invocations**, normally ten minutes, configurable through `timeoutMinutes`. The adapter starts a detached process group, sends group `SIGTERM` at timeout, then `SIGKILL` after two seconds, and reports a returned timeout failure. This is not a whole-debate deadline and excludes Git setup/cleanup and artifact I/O. Processes escaping the group or remote work are not guaranteed stopped; completion still depends on child error/close events (`src/adapters.ts:8–59`; `src/index.ts:188`).
+
+For **returned `{ok:false}` results**, assuming artifact writes succeed:
+
+| Failure | Subsequent behavior and artifacts | Fresh-run CLI outcome |
+|---|---|---|
+| Fewer than two proposals succeed | Aborts before reactions or judging. Saves partial `debate.md` and per-turn JSON under `raw/`. With your two debaters, either proposal failing triggers this. | Prints `debate.md`; exit **1**. |
+| A reaction fails after successful proposals | Records failure in the transcript; later prompts receive a “no contribution” placeholder. Remaining rounds continue. With no judge, no determination or final report is created. | Prints `debate.md`; exit **0**. |
+| Optional configured judge fails | Records failure and writes its failure message to `respondeo.md`; skips drafting. Transcript/raw artifacts remain. | Prints `debate.md`; exit **0**. |
+| Final drafting fails after resolution | Retains the successful determination, transcript and failed-turn raw data; no new `final-report.md`. | Prints `debate.md`; exit **0**. |
+
+Evidence: `src/debate.ts:37–50,228–286`; `src/index.ts:353–403`. Artifacts are written under `.debate/` relative to the invocation directory, after orchestration returns.
+
+**Continuation does not resume failed proposal/reaction rounds.** It requires a saved determination and runs a judge. Your judge-less runs lack that determination. Saved-command code can select an unauthorized fallback judge when configuration lacks one; that remains outside your operating conditions (`src/index.ts:145–152,209–214`). A returned continuation failure exits 1; unresolved continuation prints the new `respondeo-N.md` and exits 0. Drafting failure after continuation also prints that determination and exits 0, whereas standalone finalization failure exits 1 (`:239–292`). The previously identified status gap remains: saved judge-failure text can be mistaken for resolution (`src/debate.ts:120–126`).
+
+**Thrown exceptions differ:** participant, Git or filesystem exceptions can reject orchestration before artifacts are created. `Promise.all` does not cancel already-started peers. These paths lack the controlled partial-artifact guarantees above (`src/debate.ts:70–86,223–225`; `src/index.ts:353–358`).
+
+A disposable cwd does not block absolute-path access. Adapter permission flags provide separate restrictions; worktree tests establish cleanup and containment of ordinary relative writes, not universal filesystem confinement.
+
+Independent checks: I verified failure/artifact branches against source and ran both fake-CLI timeout tests successfully (`test/adapters.test.ts:121–139`). Existing tests cover proposal aborts, judge/drafting failures and worktree cleanup (`test/debate.test.ts:22–43,125–149,191–261`). Full-suite validation was not run; a worker Git-status check was sandbox-blocked. No source changes, real model services or network access.
