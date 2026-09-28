@@ -1,0 +1,10 @@
+{
+  "id": "sustained-b-5",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-b",
+  "turn": 5,
+  "prompt": "Add safe artifact reading: export async `readDebateArtifact(root, id, kind): Promise<string | null>`, where kind is `transcript`, `determination`, or `final-report`. Transcript maps to debate.md; final-report maps to final-report.md; determination selects the same highest numbered regular determination as the catalog. Return exact UTF-8 text, preserving all whitespace, or null when the valid requested directory/artifact does not exist. An id not matching the catalog basename rule must throw code `INVALID_ID`; unknown kind uses `INVALID_QUERY`. Reject directory or selected artifact symlinks with `UNSAFE_PATH` rather than reading through them. Do not modify files or launch anything.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream b --stage 5"
+}

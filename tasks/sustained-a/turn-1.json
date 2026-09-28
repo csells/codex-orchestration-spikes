@@ -1,0 +1,10 @@
+{
+  "id": "sustained-a-1",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-a",
+  "turn": 1,
+  "prompt": "Add named configuration bundles to Disputatio. Create `src/profile-bundle.ts` exporting async `loadProfileBundle(bundlePath: string, profileName: string): Promise<DebateConfig>`. A bundle is JSON `{ \"version\": 1, \"profiles\": { \"fast\": { \"config\": \"configs/fast.yaml\" } } }`. Resolve each config path relative to the bundle's directory and parse its text using the existing `parseDebateConfig`. Invalid JSON, unsupported version, a non-object profiles map, or malformed selected profile must throw an Error carrying `code: \"INVALID_BUNDLE\"`; an unknown profile uses `code: \"UNKNOWN_PROFILE\"`. Missing config files may retain the filesystem error. Do not launch any participants.\n\nStanding invariant for this workstream: loading or rendering a bundle must never modify its input files, and returned configurations must be independently owned\u2014mutating one returned object must not affect a later load. Keep the existing YAML parser's public behavior intact. This invariant applies throughout the follow-ups.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream a --stage 1"
+}

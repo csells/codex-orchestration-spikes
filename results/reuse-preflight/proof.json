@@ -1,0 +1,66 @@
+{
+  "status": "passed",
+  "codex_version": "0.156.1",
+  "transport": "one persistent native app-server process across two root user turns",
+  "root_thread_sha256": "a0c0d22ebd32dfc2a297bd04bca725699f9088246f2e847b147494ed94db6f47",
+  "child_thread_sha256": "84d9eed331b6820d258a62b40ed53f122947f0f13ad0437754554e5e38d1aa22",
+  "root_turn_count": 2,
+  "child_turns": [
+    {
+      "thread_sha256": "84d9eed331b6820d258a62b40ed53f122947f0f13ad0437754554e5e38d1aa22",
+      "turn_sha256": "66998d88c5a92b2062cb7ab2bad3beec1d82082bb448bb930f65d3c19fda5636",
+      "status": "completed",
+      "observed_at": "2026-09-28T02:15:26.941066+00:00"
+    },
+    {
+      "thread_sha256": "84d9eed331b6820d258a62b40ed53f122947f0f13ad0437754554e5e38d1aa22",
+      "turn_sha256": "927a4f5eb7bf5bf07fe8411513943ff681839db94acc056be3ac62de8c582bd5",
+      "status": "completed",
+      "observed_at": "2026-09-28T02:15:47.093392+00:00"
+    }
+  ],
+  "native_child_activity": [
+    {
+      "kind": "started",
+      "thread_sha256": "84d9eed331b6820d258a62b40ed53f122947f0f13ad0437754554e5e38d1aa22",
+      "observed_at": "2026-09-28T02:15:14.976230+00:00"
+    },
+    {
+      "kind": "completed",
+      "thread_sha256": "84d9eed331b6820d258a62b40ed53f122947f0f13ad0437754554e5e38d1aa22",
+      "observed_at": "2026-09-28T02:15:26.955118+00:00"
+    },
+    {
+      "kind": "interacted",
+      "thread_sha256": "84d9eed331b6820d258a62b40ed53f122947f0f13ad0437754554e5e38d1aa22",
+      "observed_at": "2026-09-28T02:15:43.867680+00:00"
+    },
+    {
+      "kind": "completed",
+      "thread_sha256": "84d9eed331b6820d258a62b40ed53f122947f0f13ad0437754554e5e38d1aa22",
+      "observed_at": "2026-09-28T02:15:47.148621+00:00"
+    }
+  ],
+  "command_executions": [
+    {
+      "thread": "worker_1",
+      "turn_sha256": "66998d88c5a92b2062cb7ab2bad3beec1d82082bb448bb930f65d3c19fda5636",
+      "command": "/bin/zsh -lc 'cat fact.txt'",
+      "output": "cerulean-lantern-7139\n",
+      "exit_code": 0,
+      "observed_at": "2026-09-28T02:15:24.983101+00:00"
+    }
+  ],
+  "controller_removed_fact_between_turns": true,
+  "root_model": "gpt-6-astra",
+  "worker_model": "gpt-6-luna",
+  "effort": "high",
+  "reported_context_window": 258400,
+  "context_limit_overrides": false,
+  "trace_sha256": "4bacc91340e484b71a06dbcc6b1da0bef115729e57ae21aa0f49f9c0d61d4e42",
+  "limitations": [
+    "Tiny capability check, not a comparison of task quality, cost, or compaction.",
+    "Telemetry-2 is cumulative across both root and child turns; do not add telemetry-1 to it.",
+    "Known hidden instruction and reasoning envelopes are omitted; opaque provider content is marked, not decoded."
+  ]
+}

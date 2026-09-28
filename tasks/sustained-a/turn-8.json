@@ -1,0 +1,10 @@
+{
+  "id": "sustained-a-8",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-a",
+  "turn": 8,
+  "prompt": "Finish the rendering interface with two read-only conveniences. Export async `listProfiles(bundlePath): Promise<string[]>` from profile-bundle.ts, returning profile names in ascending code-point lexical order after validating the bundle envelope; listing must not load YAML files or require a default. Add `--list` to profile-cli.ts to print those names as a JSON array, and add `--json` to print the resolved config as JSON instead of YAML. --list cannot combine with --profile or --json; reject those combinations with exit 1 and no stdout. Ordinary rendering, explicit/default selection, path confinement, participant replacement, and unchanged-file/fresh-object invariants must all continue to hold.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream a --stage 8"
+}

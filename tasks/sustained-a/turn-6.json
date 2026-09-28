@@ -1,0 +1,10 @@
+{
+  "id": "sustained-a-6",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-a",
+  "turn": 6,
+  "prompt": "Constrain config-file resolution to the bundle's real parent directory. A profile's config path must be relative and both its normalized target and resolved real path must remain within that directory. Reject absolute paths, traversal escapes, prefix-sibling escapes, and symlinks escaping the directory with Error code `UNSAFE_CONFIG_PATH`. Internal nested paths, including normalization that stays inside the directory, remain valid. Resolve this boundary using the real location of the bundle file. Existing missing-file behavior can remain a filesystem error. Preserve the loader's read-only and fresh-object invariants.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream a --stage 6"
+}

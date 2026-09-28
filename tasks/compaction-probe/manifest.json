@@ -1,0 +1,52 @@
+{
+  "id": "paired-native-forced-compaction",
+  "model": "gpt-6-astra",
+  "effort": "high",
+  "condition_order": ["chat", "agents"],
+  "instruction_placement": {
+    "chat": "allocation-rule.md prepended once to initial.md; AGENTS contains common.md only",
+    "agents": "allocation-rule.md appended once to AGENTS after common.md; initial prompt is initial.md only"
+  },
+  "inputs": {
+    "initial_task": "initial.md",
+    "continuation_task": "continuation.md",
+    "inventory": "inventory.csv",
+    "common_instructions": "common.md",
+    "operational_rule": "allocation-rule.md"
+  },
+  "answer_schema": {
+    "type": "object",
+    "required": ["batch", "sku", "reserve_units", "requested", "allocated", "deferred"],
+    "additionalProperties": false,
+    "properties": {
+      "batch": {"type": "string"},
+      "sku": {"type": "string"},
+      "reserve_units": {"type": "integer"},
+      "requested": {"type": "integer"},
+      "allocated": {"type": "integer"},
+      "deferred": {"type": "integer"}
+    },
+    "serialization_requirements": "Exactly one JSON object, without fences, duplicate keys, or surrounding prose. Booleans are not integer values."
+  },
+  "expected_answers": [
+    {"batch": "first", "sku": "bolts", "reserve_units": 7, "requested": 18, "allocated": 16, "deferred": 2},
+    {"batch": "second", "sku": "washers", "reserve_units": 7, "requested": 27, "allocated": 22, "deferred": 5}
+  ],
+  "adherence_requirements": {
+    "workspace": "All initial files byte-identical; no additional filesystem entries",
+    "corrected_fact": "The initial correction supersedes reserve_units3 with reserve_units7 in both conditions",
+    "allocation": "min(requested, max(0, on_hand - reported reserve_units)); deferred equals remainder",
+    "native_boundary": "Zero root compactions before request, exactly one newly persisted root compacted event after native completion, exactly one at final collection",
+    "model_scope": "One root thread, no workers",
+    "retention_inference": "Requires successful initial compliance and the specified native boundary. Post-boundary adherence is scored without evaluator feedback."
+  },
+  "caps": {
+    "user_turns_total": 4,
+    "explicit_compaction_requests_total": 2,
+    "seconds_per_user_turn": 180,
+    "seconds_per_compaction": 180,
+    "automatic_retries": 0
+  },
+  "accounting": "Retain cumulative pre/post/final snapshots; final is total including observed compaction usage. Do not sum snapshots. Flag unobserved compaction usage growth.",
+  "interpretation_limit": "One forced boundary per condition; not natural compaction, long-session reliability, or attributable subscription savings."
+}

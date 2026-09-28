@@ -2,6 +2,8 @@
 
 Reproducible, bounded experiments testing Rory's proposal to use Astra as an orchestrator with cheaper workers.
 
+**Faithful follow-up prepared:** [frozen six-session protocol](specs/plans/0002-faithful-sustained-comparison.md), [worker reuse proof](results/reuse-preflight/README.md), and [functional workload validation](evaluation/sustained-verification.json). The new comparison uses Rory’s actual short and long rules across related coding turns with persistent workers. Results will be reported separately from the earlier pilot.
+
 **Diagnostic pilot completed; overall evaluation incomplete.** Ten fresh-task trials, two independent five-turn sessions, and a routing/accounting preflight are recorded. [Read the pilot report](REPORT.md) and [what a complete evaluation requires](notes/complete-evaluation-requirements.md). Faithful worker reuse, natural compaction, and attributable subscription consumption remain required primary tests.
 
 The experiments demonstrate that a whole-task handoff can reduce parent input. They did not establish an equivalent-quality cost saving for the tested delegation policies. Across five turns, our bounded variant used 27% less peak parent input but 73% more estimated credits, with 32/34 coverage versus 34/34. Both sessions retained the earlier constraint; neither compacted. The original short block, long block, and our variant are distinguished in the report. These estimates do not measure subscription savings.

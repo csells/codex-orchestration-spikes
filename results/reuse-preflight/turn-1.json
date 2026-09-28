@@ -1,0 +1,30 @@
+{
+  "status": "completed",
+  "answer": "READY",
+  "started_at": "2026-09-28T02:15:02.852748+00:00",
+  "ended_at": "2026-09-28T02:15:31.757989+00:00",
+  "elapsed_seconds": 28.905,
+  "timed_out": false,
+  "event_count": 59,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 49083,
+      "inputTokens": 48921,
+      "cachedInputTokens": 32128,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 162,
+      "reasoningOutputTokens": 0
+    },
+    "last": {
+      "totalTokens": 16420,
+      "inputTokens": 16415,
+      "cachedInputTokens": 16128,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 5,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  },
+  "thread_sha256": "a0c0d22ebd32dfc2a297bd04bca725699f9088246f2e847b147494ed94db6f47",
+  "turn_sha256": "85cc53455c1c0b697f794b6d17ba4bdd39ff7385aca0581024a9934400b6c8dd"
+}

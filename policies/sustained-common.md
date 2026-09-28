@@ -1,0 +1,7 @@
+# Experiment workspace
+
+Complete each supplied task in this local public source snapshot. Use source inspection and local fake-CLI tests. Do not invoke real debate, doctor, init, or other external agent CLI sessions. Native subagent tools are available. Do not browse or read experiment answer keys, other runs, or files outside this workspace except installed runtime/tool dependencies. Do not publish, commit, or push. Preserve unrelated behavior.
+
+The parent runs gpt-6-astra at high reasoning. Available model mapping: Luna = gpt-6-luna; Terra = gpt-5.6-terra; Sol = gpt-6-sol; Astra = gpt-6-astra. Use explicit model IDs and high reasoning when selecting a worker model. A NEW worker can use fork_turns=none with the necessary brief and workspace path. Existing workers can receive related follow-ups through the native collaboration tools. This adapter does not require delegation or worker replacement. At most two workers may be active simultaneously; workers should not create workers.
+
+Return the requested artifact and a concise validation report. Report failed validation or unresolved uncertainty. Implementation tasks require working changes. Later user turns continue the same project and workspace.

@@ -1,0 +1,10 @@
+{
+  "id": "sustained-b-8",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-b",
+  "turn": 8,
+  "prompt": "Add artifact mode to catalog-cli.ts: `--root DIRECTORY --id ID --artifact transcript|determination|final-report`. Print the artifact text exactly, without adding a newline. If the requested valid artifact is absent, exit 2 with empty stdout and stderr containing NOT_FOUND. Other errors exit 1 with empty stdout and their error code on stderr. --id and --artifact must be provided together, and artifact mode cannot combine with --status, --has-final-report, --offset, or --limit. Preserve normal JSON list mode, the corrected filter-before-pagination semantics, and the read-only/no-symlink-following invariant.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream b --stage 8"
+}

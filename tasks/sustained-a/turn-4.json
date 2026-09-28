@@ -1,0 +1,10 @@
+{
+  "id": "sustained-a-4",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-a",
+  "turn": 4,
+  "prompt": "Correction to the participant inheritance contract: when a child YAML config or inline override supplies `participants`, that entire list must REPLACE the inherited list, in exactly the supplied order. Do not retain parent adapters absent from the child. An omitted participants field still inherits unchanged. Apply the correction consistently at every level of multi-level inheritance and in inline overrides; scalar precedence and `judge: null` removal stay as already specified. Update implementation and relevant tests for this corrected contract.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream a --stage 4"
+}

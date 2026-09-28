@@ -1,0 +1,10 @@
+{
+  "id": "sustained-a-7",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-a",
+  "turn": 7,
+  "prompt": "Provide a rendering CLI at `src/profile-cli.ts`: `node src/profile-cli.ts --bundle FILE [--profile NAME]`. It must load the selected/default profile and print canonical YAML using the existing serializeDebateConfig, so operators can redirect it and later use normal Disputatio --config. No source or bundle files should be written and no participants should run. Successful output is only the rendered YAML on stdout with exit 0. Missing required arguments, unknown flags, or loader errors must exit 1, keep stdout empty, and print a useful diagnostic to stderr containing the loader's code when one exists. Keep loadProfileBundle usable independently.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream a --stage 7"
+}

@@ -1,0 +1,83 @@
+{
+  "workstream": "b",
+  "fixture": "fixtures/current",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "turns": 8,
+  "stages": [
+    {
+      "turn": 1,
+      "task_file": "tasks/sustained-b/turn-1.json",
+      "prompt_file": "tasks/sustained-b/turn-1.md",
+      "acceptance": [
+        "Immediate directory catalog and regular-file flags; ascending order; missing root; symlinks ignored; unchanged inputs.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 2,
+      "task_file": "tasks/sustained-b/turn-2.json",
+      "prompt_file": "tasks/sustained-b/turn-2.md",
+      "acceptance": [
+        "Highest numeric regular determination and strict first-nonempty-line status classification.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 3,
+      "task_file": "tasks/sustained-b/turn-3.json",
+      "prompt_file": "tasks/sustained-b/turn-3.md",
+      "acceptance": [
+        "Descending default ordering; offset/limit behavior and numeric validation.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 4,
+      "task_file": "tasks/sustained-b/turn-4.json",
+      "prompt_file": "tasks/sustained-b/turn-4.md",
+      "acceptance": [
+        "Initial page-before-filter behavior plus status/boolean filter validation.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 5,
+      "task_file": "tasks/sustained-b/turn-5.json",
+      "prompt_file": "tasks/sustained-b/turn-5.md",
+      "acceptance": [
+        "Exact reads, missing artifacts, id/kind validation, symlink rejection.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 6,
+      "task_file": "tasks/sustained-b/turn-6.json",
+      "prompt_file": "tasks/sustained-b/turn-6.md",
+      "acceptance": [
+        "Corrected filter-before-pagination behavior; prior artifact invariants retained.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 7,
+      "task_file": "tasks/sustained-b/turn-7.json",
+      "prompt_file": "tasks/sustained-b/turn-7.md",
+      "acceptance": [
+        "CLI JSON agrees with API; flag ordering and validation; missing root remains empty.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 8,
+      "task_file": "tasks/sustained-b/turn-8.json",
+      "prompt_file": "tasks/sustained-b/turn-8.md",
+      "acceptance": [
+        "Exact artifact CLI bytes, absence exit2, paired/conflicting flags and safe paths.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    }
+  ],
+  "evaluator": "evaluation/evaluate_sustained.py",
+  "maximum_turns": 8,
+  "hidden_evaluator": true
+}

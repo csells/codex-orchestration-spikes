@@ -1,0 +1,153 @@
+{
+  "pre_model_validation": true,
+  "baseline": {
+    "a": {
+      "passed": false,
+      "functional_exit_code": 1,
+      "expected_failure": "new feature module does not exist",
+      "compatibility": {
+        "tests": 81,
+        "pass": 80,
+        "fail": 0,
+        "skipped": 1
+      }
+    },
+    "b": {
+      "passed": false,
+      "functional_exit_code": 1,
+      "expected_failure": "new feature module does not exist",
+      "compatibility": {
+        "tests": 81,
+        "pass": 80,
+        "fail": 0,
+        "skipped": 1
+      }
+    }
+  },
+  "references": {
+    "a": {
+      "full_evaluator_stage8_passed": true,
+      "full_evaluator_exit_code": 0,
+      "compatibility": {
+        "tests": 81,
+        "pass": 80,
+        "fail": 0,
+        "skipped": 1
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 5
+        },
+        {
+          "stage": 2,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 6
+        },
+        {
+          "stage": 3,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 8
+        },
+        {
+          "stage": 4,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 9
+        },
+        {
+          "stage": 5,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 11
+        },
+        {
+          "stage": 6,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 13
+        },
+        {
+          "stage": 7,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 15
+        },
+        {
+          "stage": 8,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 17
+        }
+      ]
+    },
+    "b": {
+      "full_evaluator_stage8_passed": true,
+      "full_evaluator_exit_code": 0,
+      "compatibility": {
+        "tests": 81,
+        "pass": 80,
+        "fail": 0,
+        "skipped": 1
+      },
+      "stages": [
+        {
+          "stage": 1,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 2
+        },
+        {
+          "stage": 2,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 3
+        },
+        {
+          "stage": 3,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 4
+        },
+        {
+          "stage": 4,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 6
+        },
+        {
+          "stage": 5,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 8
+        },
+        {
+          "stage": 6,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 8
+        },
+        {
+          "stage": 7,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 10
+        },
+        {
+          "stage": 8,
+          "passed": true,
+          "exit_code": 0,
+          "functional_checks": 12
+        }
+      ]
+    }
+  },
+  "notes": [
+    "Reference implementations are hand-written preparation controls, stored privately and excluded from candidate workspaces.",
+    "All eight stage-specific functional suites exercised per workstream, including pre/post-correction semantics. Full evaluator including pristine original suite verified at completed stage8 for each reference and stage1 for each untouched baseline. Original suite is unchanged across stages and does not import the new modules."
+  ]
+}

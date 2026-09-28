@@ -1,0 +1,10 @@
+{
+  "id": "sustained-a-5",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-a",
+  "turn": 5,
+  "prompt": "Make profile selection and inheritance errors usable. Change loadProfileBundle's second argument to optional. If omitted, use the bundle's `defaultProfile`; if there is no default, throw an Error with code `PROFILE_REQUIRED`. An unknown explicit/default/parent profile must produce `UNKNOWN_PROFILE`. Detect self-cycles and multi-profile inheritance cycles and return `PROFILE_CYCLE`, without hanging or overflowing the stack. Preserve explicit profile selection over the default and the corrected replacement semantics.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream a --stage 5"
+}

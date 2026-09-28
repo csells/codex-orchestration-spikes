@@ -1,0 +1,83 @@
+{
+  "workstream": "a",
+  "fixture": "fixtures/current",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "turns": 8,
+  "stages": [
+    {
+      "turn": 1,
+      "task_file": "tasks/sustained-a/turn-1.json",
+      "prompt_file": "tasks/sustained-a/turn-1.md",
+      "acceptance": [
+        "Envelope/relative-YAML load and errors; independent return objects; input tree unchanged.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 2,
+      "task_file": "tasks/sustained-a/turn-2.json",
+      "prompt_file": "tasks/sustained-a/turn-2.md",
+      "acceptance": [
+        "Inherited scalars/judge and initially specified keyed participant merge; omitted fields inherit.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 3,
+      "task_file": "tasks/sustained-a/turn-3.json",
+      "prompt_file": "tasks/sustained-a/turn-3.md",
+      "acceptance": [
+        "Inline precedence, null-judge removal, override validation and overrides-only profiles.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 4,
+      "task_file": "tasks/sustained-a/turn-4.json",
+      "prompt_file": "tasks/sustained-a/turn-4.md",
+      "acceptance": [
+        "Corrected full participant replacement at child/config/inline/multiple inheritance levels.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 5,
+      "task_file": "tasks/sustained-a/turn-5.json",
+      "prompt_file": "tasks/sustained-a/turn-5.md",
+      "acceptance": [
+        "Default vs explicit selection; required/missing profile errors; self/multi-cycle failures.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 6,
+      "task_file": "tasks/sustained-a/turn-6.json",
+      "prompt_file": "tasks/sustained-a/turn-6.md",
+      "acceptance": [
+        "Absolute/traversal/prefix/symlink escapes rejected; internal normalized/real paths accepted.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 7,
+      "task_file": "tasks/sustained-a/turn-7.json",
+      "prompt_file": "tasks/sustained-a/turn-7.md",
+      "acceptance": [
+        "Canonical usable YAML CLI; successful stdout and failure exit/diagnostic behavior.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    },
+    {
+      "turn": 8,
+      "task_file": "tasks/sustained-a/turn-8.json",
+      "prompt_file": "tasks/sustained-a/turn-8.md",
+      "acceptance": [
+        "Sorted discovery without YAML loads; JSON config output; list flag conflicts.",
+        "All still-applicable earlier functional checks plus pristine original compatibility suite."
+      ]
+    }
+  ],
+  "evaluator": "evaluation/evaluate_sustained.py",
+  "maximum_turns": 8,
+  "hidden_evaluator": true
+}

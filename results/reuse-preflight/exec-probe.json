@@ -1,0 +1,13 @@
+{
+  "status": "infrastructure-failed",
+  "transport": "codex exec then codex exec resume in enclosing sandbox",
+  "first_answer": "READY",
+  "second_answer": "I can\u2019t recover the value: the earlier file read failed with a sandbox error.",
+  "root_tool_call_counts": {
+    "spawn_agent": 1,
+    "wait_agent": 2,
+    "followup_task": 1
+  },
+  "thread_count": 2,
+  "interpretation": "The original worker was followed up without a second spawn, but its initial file read failed under the enclosing sandbox. This is not a valid memory-recall trial. Persistent smoke was run outside that enclosing sandbox with native workspace-write sandboxing."
+}

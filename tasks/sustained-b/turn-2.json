@@ -1,0 +1,10 @@
+{
+  "id": "sustained-b-2",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-b",
+  "turn": 2,
+  "prompt": "Add determination metadata to every catalog entry: `determination: string | null` is the filename of its numerically highest `respondeo.md` or `respondeo-N.md` (unnumbered is version 1; only positive integer versions count), and `status` is one of `unjudged`, `resolved`, `needs-input`, `failed`, `unknown`. Ignore symlink/nonregular determination files. Export `classifyDetermination(text: string)` for the non-unjudged statuses. On the first nonempty trimmed line, exact uppercase `STATUS: RESOLVED` means resolved, exact uppercase `STATUS: NEEDS_INPUT` means needs-input, and a line starting `Respondeo turn failed:` means failed; everything else, including empty/malformed/lowercase markers, is unknown. No determination means unjudged. Use this strict catalog classification rather than changing the existing debate engine's parser.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream b --stage 2"
+}

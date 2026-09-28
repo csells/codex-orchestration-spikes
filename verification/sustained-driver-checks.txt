@@ -1,0 +1,7 @@
+Pre-execution checks, 2026-09-27 local date:
+- Policy composition: default exactly common adapter; short embeds exact second block; long changes only the host-adapter bracket; reuse instruction retained.
+- Both workload manifests contain eight existing prompt files.
+- Quota delta arithmetic preserves identical-window zero delta.
+- Deterministic mock-transport campaign: six isolated sessions, eight stages each, first stage fails once in each session, exactly one repair issued; 54 total turns; cumulative cost counted once per session (6 units, not summed per-turn snapshots).
+- Existing telemetry/export regression suite: 23 tests passed.
+These verify instrumentation only, not Rory's claims or task quality.

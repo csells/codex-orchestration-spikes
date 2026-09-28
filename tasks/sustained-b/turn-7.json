@@ -1,0 +1,10 @@
+{
+  "id": "sustained-b-7",
+  "fixture": "fixtures/current",
+  "kind": "edit",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "sustained-b",
+  "turn": 7,
+  "prompt": "Add a catalog CLI at `src/catalog-cli.ts`: `node src/catalog-cli.ts --root DIRECTORY [--status STATUS] [--has-final-report yes|no] [--offset N] [--limit N]`. It must print the listDebates result as JSON and exit 0. Flags can appear in any order. Missing required values, unknown flags, invalid yes/no values, and invalid query values must exit 1 with stdout empty and a useful stderr diagnostic; include INVALID_QUERY for query/argument errors. A missing root directory still prints an empty JSON array. This CLI must never start participants or write catalog data.\n\nKeep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.",
+  "verification": "python3 evaluation/evaluate_sustained.py WORKSPACE --workstream b --stage 7"
+}
