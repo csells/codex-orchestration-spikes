@@ -1,6 +1,6 @@
 {
   "fixture_hashes_verified": 59,
-  "trace_snapshots_reconciled": 21,
+  "trace_snapshots_reconciled": 30,
   "known_credential_and_opaque_patterns_found": 0,
   "caveat": "Pattern scan is not proof arbitrary data contains no secrets."
 }

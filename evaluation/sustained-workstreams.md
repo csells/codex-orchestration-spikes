@@ -62,3 +62,5 @@ The evaluator has bounded execution (90 seconds original compatibility; 45 secon
 The untouched source must fail because requested modules do not exist while its original suite passes. Private hand-written reference implementations exercise all stages, including the differing pre/post-correction semantics, to validate the acceptance harness. Those reference implementations are preparation tools, not experimental model outputs and not candidate-visible. Their check summaries are recorded in `sustained-verification.json`.
 
 This is a small fixed coding pilot on one TypeScript project. It tests end-to-end functional completion and coordination under evolving requirements, not universal model rankings. Freeze/hash prompts and evaluator before model runs; do not adjust expectations after observing policy results.
+
+Post-execution publication: the previously private positive-control files are now available in [reference-controls](reference-controls/README.md). They were never present in candidate workspaces.

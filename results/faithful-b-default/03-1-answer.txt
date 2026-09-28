@@ -1,0 +1,3 @@
+Implemented `listDebates(root, { offset?, limit? })` with descending ID order and `INVALID_QUERY` validation. Pagination preserves metadata, symlink restrictions, and read-only behavior.
+
+Validation: 89 tests passed, including nine catalog tests. One build test skipped because esbuild isn’t installed. No network or real model services used.

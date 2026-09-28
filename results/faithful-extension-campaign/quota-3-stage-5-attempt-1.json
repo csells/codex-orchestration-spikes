@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-09-28T05:01:36.239430+00:00",
+  "buckets": {
+    "codex": {
+      "primary": {
+        "used_percent": 13,
+        "window_minutes": 10080,
+        "resets_at": 1791054703
+      },
+      "limit_id": "codex",
+      "spend_control_reached": false
+    }
+  },
+  "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+}

@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e61d-b2f5-79e3-8519-52325d6ed8fd",
+  "turn_id": "01a0e620-b9c3-7393-9369-351ead31c5c9",
+  "status": "completed",
+  "answer": "Added determination filenames and statuses to every catalog entry, plus strict `classifyDetermination(text)`. Selection uses numeric versions and excludes symlinks/nonregular files. Reads remain read-only; the debate engine parser is unchanged.\n\nValidation: 86 tests passed; 1 build test skipped because esbuild is absent. Expanded catalog tests also passed. No network or real model services used.",
+  "started_at": "2026-09-28T03:48:19.437186+00:00",
+  "ended_at": "2026-09-28T03:51:07.029909+00:00",
+  "elapsed_seconds": 167.592,
+  "timed_out": false,
+  "event_count": 452,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 943276,
+      "inputTokens": 937034,
+      "cachedInputTokens": 885376,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 6242,
+      "reasoningOutputTokens": 1236
+    },
+    "last": {
+      "totalTokens": 49098,
+      "inputTokens": 49017,
+      "cachedInputTokens": 48512,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 81,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

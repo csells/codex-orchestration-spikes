@@ -33,8 +33,9 @@ def main():
         validation = json.loads(validation_path.read_text()) if validation_path.exists() else None
         rows.append({
             "run_id": path.parent.name, "task": metadata.get("task"), "policy": metadata.get("policy"),
-            "elapsed_seconds": metadata.get("elapsed_seconds"), "resumed_session": bool(metadata.get("resume")),
-            "estimate_is_cumulative_for_resumed_session": bool(metadata.get("resume")),
+            "elapsed_seconds": metadata.get("elapsed_seconds"), "resumed_session": bool(metadata.get("resume") or metadata.get("extends_run_id")),
+            "extends_run_id": metadata.get("extends_run_id"),
+            "estimate_is_cumulative_for_resumed_session": bool(metadata.get("resume") or metadata.get("extends_run_id")),
             "usage": report["total_usage"], "model_usage": report["usage_by_model"],
             "credit_estimate": estimate(report["usage_by_model"]),
             "workers": report["thread_count"]-1,

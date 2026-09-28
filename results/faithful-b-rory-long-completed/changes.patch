@@ -1,0 +1,912 @@
+--- a/src/catalog-cli.ts
++++ b/src/catalog-cli.ts
+@@ -0,0 +1,92 @@
++#!/usr/bin/env node
++// Standalone, read-only catalog entry point: no debate-engine or participant imports.
++import { listDebates, readDebateArtifact, type DebateArtifactKind, type ListDebatesOptions } from "./catalog.ts";
++
++const FLAGS = new Set(["--root", "--status", "--has-final-report", "--offset", "--limit", "--id", "--artifact"]);
++
++type Command =
++  | { mode: "list"; root: string; options: ListDebatesOptions }
++  | { mode: "artifact"; root: string; id: string; artifact: DebateArtifactKind };
++
++function invalidQuery(message: string): never {
++  throw Object.assign(new Error(message), { code: "INVALID_QUERY" });
++}
++
++function parseArguments(args: string[]): Command {
++  let root: string | undefined;
++  let id: string | undefined;
++  let artifact: string | undefined;
++  const options: ListDebatesOptions = {};
++  const seen = new Set<string>();
++  for (let i = 0; i < args.length; i++) {
++    const flag = args[i];
++    if (!FLAGS.has(flag)) invalidQuery(`Unknown argument: ${flag}`);
++    if (seen.has(flag)) invalidQuery(`Duplicate flag: ${flag}`);
++    seen.add(flag);
++    const value = args[++i];
++    if (value === undefined || value === "" || value.startsWith("--")) {
++      invalidQuery(`Missing value for ${flag}`);
++    }
++
++    switch (flag) {
++      case "--root":
++        root = value;
++        break;
++      case "--id":
++        id = value;
++        break;
++      case "--artifact":
++        artifact = value;
++        break;
++      case "--status":
++        // listDebates validates the status before accessing the filesystem.
++        options.status = value as ListDebatesOptions["status"];
++        break;
++      case "--has-final-report":
++        if (value !== "yes" && value !== "no") invalidQuery(`${flag} must be yes or no`);
++        options.hasFinalReport = value === "yes";
++        break;
++      case "--offset":
++      case "--limit": {
++        const number = Number(value);
++        if (/\D/.test(value) || !Number.isInteger(number)) {
++          invalidQuery(`${flag} must be a nonnegative integer`);
++        }
++        options[flag === "--offset" ? "offset" : "limit"] = number;
++        break;
++      }
++    }
++  }
++  if (root === undefined) invalidQuery("Missing required --root DIRECTORY");
++  if (id !== undefined || artifact !== undefined) {
++    if (id === undefined || artifact === undefined) invalidQuery("--id and --artifact must be provided together");
++    if (Object.keys(options).length > 0) {
++      invalidQuery("Artifact mode cannot combine with --status, --has-final-report, --offset, or --limit");
++    }
++    // readDebateArtifact validates the ID and artifact kind before filesystem access.
++    return { mode: "artifact", root, id, artifact: artifact as DebateArtifactKind };
++  }
++  return { mode: "list", root, options };
++}
++
++try {
++  const command = parseArguments(process.argv.slice(2));
++  // Emit nothing to stdout until validation and the requested read succeed.
++  if (command.mode === "artifact") {
++    const text = await readDebateArtifact(command.root, command.id, command.artifact);
++    if (text === null) {
++      console.error(`NOT_FOUND: ${command.artifact} artifact for ${command.id}`);
++      process.exitCode = 2;
++    } else {
++      process.stdout.write(text);
++    }
++  } else {
++    const entries = await listDebates(command.root, command.options);
++    console.log(JSON.stringify(entries));
++  }
++} catch (error) {
++  const code = (error as NodeJS.ErrnoException).code ?? "CATALOG_ERROR";
++  const message = error instanceof Error ? error.message : String(error);
++  console.error(`${code}: ${message}`);
++  process.exitCode = 1;
++}
+--- a/src/catalog.ts
++++ b/src/catalog.ts
+@@ -0,0 +1,180 @@
++import { constants } from "node:fs";
++import { lstat, open, readdir } from "node:fs/promises";
++import { join, resolve } from "node:path";
++
++export type DeterminationStatus = "resolved" | "needs-input" | "failed" | "unknown";
++export type DebateArtifactKind = "transcript" | "determination" | "final-report";
++
++export type DebateEntry = {
++  id: string;
++  path: string;
++  hasTranscript: boolean;
++  hasFinalReport: boolean;
++  determination: string | null;
++  status: "unjudged" | DeterminationStatus;
++};
++
++export type ListDebatesOptions = {
++  offset?: number;
++  limit?: number;
++  /** Filters apply to the full catalog before offset and limit. */
++  status?: DebateEntry["status"];
++  hasFinalReport?: boolean;
++};
++
++const DEBATE_ID = /^debate-[A-Za-z0-9][A-Za-z0-9._-]*$/;
++const CATALOG_STATUSES = new Set(["unjudged", "resolved", "needs-input", "failed", "unknown"]);
++
++/** Catalog markers are strict; the debate engine's parser has separate semantics. */
++export function classifyDetermination(text: string): DeterminationStatus {
++  const firstLine = text.split(/\r\n?|\n/).map((line) => line.trim()).find(Boolean);
++  if (firstLine === "STATUS: RESOLVED") return "resolved";
++  if (firstLine === "STATUS: NEEDS_INPUT") return "needs-input";
++  if (firstLine?.startsWith("Respondeo turn failed:")) return "failed";
++  return "unknown";
++}
++
++function unsafePath(): Error & { code: string } {
++  return Object.assign(new Error("Cannot read through a symlink"), { code: "UNSAFE_PATH" });
++}
++
++async function readRegularArtifact(path: string): Promise<string | null> {
++  let file;
++  try {
++    const info = await lstat(path);
++    if (info.isSymbolicLink()) throw unsafePath();
++    if (!info.isFile()) return null;
++    // Refuse links even if the file changed after lstat. NONBLOCK prevents a
++    // replacement FIFO from hanging before the regular-file check.
++    file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
++    if (!(await file.stat()).isFile()) return null;
++    return await file.readFile("utf8");
++  } catch (error) {
++    const code = (error as NodeJS.ErrnoException).code;
++    if (code === "ENOENT" || code === "ENOTDIR") return null;
++    if (code === "ELOOP") throw unsafePath();
++    throw error;
++  } finally {
++    await file?.close();
++  }
++}
++
++async function latestDetermination(path: string, rejectSymlinks = false): Promise<{ name: string; text: string } | null> {
++  const candidates: { name: string; version: bigint }[] = [];
++  for (const child of await readdir(path, { withFileTypes: true })) {
++    if (!child.isFile()) continue; // Excludes symlinks and all other nonregular files.
++    const match = /^respondeo(?:-([0-9]+))?\.md$/.exec(child.name);
++    if (!match || match[0] !== child.name) continue;
++    const version = BigInt(match[1] ?? "1");
++    if (version > 0n) candidates.push({ name: child.name, version });
++  }
++  // BigInt preserves numeric ordering even beyond Number.MAX_SAFE_INTEGER.
++  // Equal versions use ascending filename order as a deterministic tie-breaker.
++  candidates.sort((a, b) => a.version === b.version
++    ? (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
++    : a.version > b.version ? -1 : 1);
++
++  for (const candidate of candidates) {
++    try {
++      const text = await readRegularArtifact(join(path, candidate.name));
++      if (text !== null) return { name: candidate.name, text };
++    } catch (error) {
++      // Catalog scans ignore symlinks; explicit reads reject a selected file
++      // that became a symlink between enumeration and opening it.
++      if (rejectSymlinks || (error as NodeJS.ErrnoException).code !== "UNSAFE_PATH") throw error;
++    }
++  }
++  return null;
++}
++
++async function isRegularFile(path: string): Promise<boolean> {
++  try {
++    // lstat checks the artifact itself without following a file symlink.
++    return (await lstat(path)).isFile();
++  } catch (error) {
++    if ((error as NodeJS.ErrnoException).code === "ENOENT") return false;
++    throw error;
++  }
++}
++
++/** Read exact UTF-8 artifact text without following child or artifact symlinks. */
++export async function readDebateArtifact(root: string, id: string, kind: DebateArtifactKind): Promise<string | null> {
++  if (typeof id !== "string" || !DEBATE_ID.test(id)) {
++    throw Object.assign(new Error("id must be a debate directory basename"), { code: "INVALID_ID" });
++  }
++  if (kind !== "transcript" && kind !== "determination" && kind !== "final-report") {
++    throw Object.assign(new Error("Unknown artifact kind"), { code: "INVALID_QUERY" });
++  }
++  const path = join(resolve(root), id);
++  try {
++    const directory = await lstat(path);
++    if (directory.isSymbolicLink()) throw unsafePath();
++    if (!directory.isDirectory()) return null;
++    if (kind === "determination") {
++      // Use the catalog's regular-file selection, including its numeric ordering.
++      return (await latestDetermination(path, true))?.text ?? null;
++    }
++    return await readRegularArtifact(join(path, kind === "transcript" ? "debate.md" : "final-report.md"));
++  } catch (error) {
++    const code = (error as NodeJS.ErrnoException).code;
++    if (code === "ENOENT" || code === "ENOTDIR") return null;
++    throw error;
++  }
++}
++
++/**
++ * Filter the full catalog in descending ID order, then apply offset and limit.
++ * Omitted filters preserve every entry; never launch participants.
++ */
++export async function listDebates(root: string, options: ListDebatesOptions = {}): Promise<DebateEntry[]> {
++  const { offset = 0, limit, status, hasFinalReport } = options;
++  for (const [name, value] of [["offset", offset], ["limit", limit]] as const) {
++    if (value !== undefined && (!Number.isInteger(value) || value < 0)) {
++      throw Object.assign(new Error(`${name} must be a nonnegative integer`), { code: "INVALID_QUERY" });
++    }
++  }
++  if (status !== undefined && (typeof status !== "string" || !CATALOG_STATUSES.has(status))) {
++    throw Object.assign(new Error("status must be a catalog status"), { code: "INVALID_QUERY" });
++  }
++  if (hasFinalReport !== undefined && typeof hasFinalReport !== "boolean") {
++    throw Object.assign(new Error("hasFinalReport must be a boolean"), { code: "INVALID_QUERY" });
++  }
++  const absoluteRoot = resolve(root);
++  let children;
++  try {
++    children = await readdir(absoluteRoot, { withFileTypes: true });
++  } catch (error) {
++    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
++    throw error;
++  }
++
++  // Dirent.isDirectory() excludes symlinks, including links to directories.
++  // IDs are ASCII, so reverse default string sorting gives descending code-point order.
++  const ids = children
++    .filter((child) => child.isDirectory() && DEBATE_ID.test(child.name))
++    .map((child) => child.name)
++    .sort()
++    .reverse();
++
++  const entries = await Promise.all(ids.map(async (id): Promise<DebateEntry> => {
++    const path = join(absoluteRoot, id);
++    const [hasTranscript, hasFinalReport, determination] = await Promise.all([
++      isRegularFile(join(path, "debate.md")),
++      isRegularFile(join(path, "final-report.md")),
++      latestDetermination(path),
++    ]);
++    return {
++      id, path, hasTranscript, hasFinalReport,
++      determination: determination?.name ?? null,
++      status: determination === null ? "unjudged" : classifyDetermination(determination.text),
++    };
++  }));
++
++  // Offset and limit count matching debates, not positions in the unfiltered catalog.
++  return entries
++    .filter((entry) =>
++      (status === undefined || entry.status === status) &&
++      (hasFinalReport === undefined || entry.hasFinalReport === hasFinalReport))
++    .slice(offset)
++    .slice(0, limit);
++}
+--- a/test/catalog-cli.test.ts
++++ b/test/catalog-cli.test.ts
+@@ -0,0 +1,215 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { execFile } from "node:child_process";
++import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
++import { promisify } from "node:util";
++import { join } from "node:path";
++
++const execFileAsync = promisify(execFile);
++const cliPath = join(process.cwd(), "src", "catalog-cli.ts");
++
++type CliResult = { code: number; stdout: string; stderr: string };
++
++async function runCli(args: string[]): Promise<CliResult> {
++  try {
++    const { stdout, stderr } = await execFileAsync(process.execPath, [cliPath, ...args], {
++      cwd: process.cwd(),
++    });
++    return { code: 0, stdout, stderr };
++  } catch (error) {
++    const result = error as NodeJS.ErrnoException & { stdout?: string; stderr?: string };
++    return { code: typeof result.code === "number" ? result.code : 1, stdout: result.stdout ?? "", stderr: result.stderr ?? "" };
++  }
++}
++
++async function makeRoot() {
++  return mkdtemp(join(process.cwd(), ".disputatio-catalog-cli-"));
++}
++
++async function debate(root: string, id: string) {
++  const path = join(root, id);
++  await mkdir(path, { recursive: true });
++  return path;
++}
++
++test("catalog CLI emits exact filtered metadata after full-catalog filtering and pagination", async () => {
++  const root = await makeRoot();
++  try {
++    const failed = await debate(root, "debate-z");
++    await writeFile(join(failed, "respondeo.md"), "Respondeo turn failed: timeout");
++    await writeFile(join(failed, "final-report.md"), "report");
++
++    const firstResolved = await debate(root, "debate-y");
++    await writeFile(join(firstResolved, "respondeo.md"), "STATUS: RESOLVED");
++
++    const unknown = await debate(root, "debate-x");
++    await writeFile(join(unknown, "respondeo.md"), "STATUS: resolved");
++
++    const secondResolved = await debate(root, "debate-w");
++    await writeFile(join(secondResolved, "respondeo.md"), "STATUS: RESOLVED");
++
++    const result = await runCli([
++      "--limit", "1",
++      "--has-final-report", "no",
++      "--root", root,
++      "--offset", "1",
++      "--status", "resolved",
++    ]);
++
++    assert.equal(result.code, 0, result.stderr);
++    assert.deepEqual(JSON.parse(result.stdout), [{
++      id: "debate-w",
++      path: secondResolved,
++      hasTranscript: false,
++      hasFinalReport: false,
++      determination: "respondeo.md",
++      status: "resolved",
++    }]);
++
++    const orderedResolved = await runCli(["--root", root, "--status", "resolved", "--has-final-report", "no"]);
++    assert.equal(orderedResolved.code, 0, orderedResolved.stderr);
++    assert.deepEqual(JSON.parse(orderedResolved.stdout).map((entry: { id: string }) => entry.id), ["debate-y", "debate-w"]);
++
++    const withReport = await runCli(["--has-final-report", "yes", "--root", root]);
++    assert.equal(withReport.code, 0, withReport.stderr);
++    assert.deepEqual(JSON.parse(withReport.stdout).map((entry: { id: string }) => entry.id), ["debate-z"]);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++  }
++});
++
++test("catalog CLI returns an empty JSON array for a missing root", async () => {
++  const missingRoot = join(process.cwd(), ".disputatio-catalog-cli-missing-root");
++  const result = await runCli(["--root", missingRoot]);
++
++  assert.equal(result.code, 0, result.stderr);
++  assert.deepEqual(JSON.parse(result.stdout), []);
++});
++
++test("catalog CLI artifact mode preserves exact text and uses the catalog determination selection", async () => {
++  const root = await makeRoot();
++  const outside = await makeRoot();
++  try {
++    const path = await debate(root, "debate-artifacts");
++    const transcript = "\n  café\t";
++    const determination = "STATUS: NEEDS_INPUT\n  lower regular determination\n";
++    await writeFile(join(path, "debate.md"), transcript);
++    await writeFile(join(path, "final-report.md"), "");
++    await writeFile(join(path, "respondeo-2.md"), determination);
++    const outsideDetermination = join(outside, "respondeo-9.md");
++    await writeFile(outsideDetermination, "STATUS: RESOLVED\noutside");
++    await symlink(outsideDetermination, join(path, "respondeo-9.md"), "file");
++
++    const transcriptResult = await runCli(["--artifact", "transcript", "--root", root, "--id", "debate-artifacts"]);
++    assert.equal(transcriptResult.code, 0, transcriptResult.stderr);
++    assert.equal(transcriptResult.stdout, transcript);
++
++    const reportResult = await runCli(["--id", "debate-artifacts", "--artifact", "final-report", "--root", root]);
++    assert.equal(reportResult.code, 0, reportResult.stderr);
++    assert.equal(reportResult.stdout, "");
++
++    const determinationResult = await runCli(["--root", root, "--artifact", "determination", "--id", "debate-artifacts"]);
++    assert.equal(determinationResult.code, 0, determinationResult.stderr);
++    assert.equal(determinationResult.stdout, determination);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++    await rm(outside, { recursive: true, force: true });
++  }
++});
++
++test("catalog CLI artifact mode distinguishes not found from unsafe paths", async () => {
++  const root = await makeRoot();
++  const outside = await makeRoot();
++  try {
++    const empty = await debate(root, "debate-empty");
++    const outsideDebate = await debate(outside, "source");
++    await writeFile(join(outsideDebate, "debate.md"), "outside transcript");
++    await writeFile(join(outsideDebate, "respondeo-9.md"), "STATUS: RESOLVED");
++
++    for (const id of ["debate-missing", "debate-empty"]) {
++      const result = await runCli(["--root", root, "--id", id, "--artifact", "transcript"]);
++      assert.equal(result.code, 2, result.stderr);
++      assert.equal(result.stdout, "");
++      assert.match(result.stderr, /NOT_FOUND/i);
++    }
++
++    const onlySymlink = await debate(root, "debate-only-symlink-determination");
++    await symlink(join(outsideDebate, "respondeo-9.md"), join(onlySymlink, "respondeo-9.md"), "file");
++    const missingDetermination = await runCli(["--id", "debate-only-symlink-determination", "--artifact", "determination", "--root", root]);
++    assert.equal(missingDetermination.code, 2, missingDetermination.stderr);
++    assert.equal(missingDetermination.stdout, "");
++    assert.match(missingDetermination.stderr, /NOT_FOUND/i);
++
++    const linkedArtifacts = await debate(root, "debate-linked-artifacts");
++    await symlink(join(outsideDebate, "debate.md"), join(linkedArtifacts, "debate.md"), "file");
++    await symlink(join(outside, "missing-report.md"), join(linkedArtifacts, "final-report.md"), "file");
++    const unsafeArtifact = await runCli(["--root", root, "--id", "debate-linked-artifacts", "--artifact", "transcript"]);
++    assert.equal(unsafeArtifact.code, 1, unsafeArtifact.stderr);
++    assert.equal(unsafeArtifact.stdout, "");
++    assert.match(unsafeArtifact.stderr, /UNSAFE_PATH/i);
++    const unsafeReport = await runCli(["--root", root, "--id", "debate-linked-artifacts", "--artifact", "final-report"]);
++    assert.equal(unsafeReport.code, 1, unsafeReport.stderr);
++    assert.equal(unsafeReport.stdout, "");
++    assert.match(unsafeReport.stderr, /UNSAFE_PATH/i);
++
++    await symlink(outsideDebate, join(root, "debate-linked-directory"), "dir");
++    const unsafeDirectory = await runCli(["--artifact", "determination", "--id", "debate-linked-directory", "--root", root]);
++    assert.equal(unsafeDirectory.code, 1, unsafeDirectory.stderr);
++    assert.equal(unsafeDirectory.stdout, "");
++    assert.match(unsafeDirectory.stderr, /UNSAFE_PATH/i);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++    await rm(outside, { recursive: true, force: true });
++  }
++});
++
++test("catalog CLI validates artifact mode arguments and incompatible list filters", async () => {
++  const root = await makeRoot();
++  try {
++    const invalidArguments = [
++      ["--root", root, "--artifact", "transcript"],
++      ["--root", root, "--id", "debate-valid"],
++      ["--root", root, "--id", "not-a-debate", "--artifact", "transcript"],
++      ["--root", root, "--id", "debate-valid", "--artifact", "report"],
++      ["--root", root, "--id", "debate-valid", "--artifact", "transcript", "--status", "resolved"],
++      ["--root", root, "--id", "debate-valid", "--artifact", "transcript", "--has-final-report", "no"],
++      ["--root", root, "--id", "debate-valid", "--artifact", "transcript", "--offset", "0"],
++      ["--root", root, "--id", "debate-valid", "--artifact", "transcript", "--limit", "0"],
++    ];
++
++    for (const args of invalidArguments) {
++      const result = await runCli(args);
++      assert.equal(result.code, 1, `${args.join(" ")}\n${result.stderr}`);
++      assert.equal(result.stdout, "", `${args.join(" ")} unexpectedly wrote stdout`);
++      assert.match(result.stderr, /INVALID_(ID|QUERY)/i, `${args.join(" ")}\n${result.stderr}`);
++    }
++  } finally {
++    await rm(root, { recursive: true, force: true });
++  }
++});
++
++test("catalog CLI rejects malformed flags and values without writing stdout", async () => {
++  const root = await makeRoot();
++  try {
++    const invalidArguments = [
++      [],
++      ["--root"],
++      ["--unknown", "value", "--root", root],
++      ["--root", root, "--has-final-report", "maybe"],
++      ["--root", root, "--offset", "one"],
++      ["--root", root, "--limit", "-1"],
++      ["--root", root, "--status", "RESOLVED"],
++      ["--root", root, "--status"],
++      ["--root", root, "--limit"],
++    ];
++
++    for (const args of invalidArguments) {
++      const result = await runCli(args);
++      assert.equal(result.code, 1, `${args.join(" ")}\n${result.stderr}`);
++      assert.equal(result.stdout, "", `${args.join(" ")} unexpectedly wrote stdout`);
++      assert.match(result.stderr, /INVALID_QUERY/i, `${args.join(" ")}\n${result.stderr}`);
++    }
++  } finally {
++    await rm(root, { recursive: true, force: true });
++  }
++});
+--- a/test/catalog.test.ts
++++ b/test/catalog.test.ts
+@@ -0,0 +1,413 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { chmod, lstat, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
++import { join, relative, resolve } from "node:path";
++import { classifyDetermination, listDebates, readDebateArtifact } from "../src/catalog.ts";
++
++async function makeRoot() {
++  return mkdtemp(join(process.cwd(), ".disputatio-catalog-"));
++}
++
++async function debate(root: string, id: string) {
++  const path = join(root, id);
++  await mkdir(path, { recursive: true });
++  return path;
++}
++
++test("listDebates catalogs only immediate matching real directories in descending code-point order", async () => {
++  const root = await makeRoot();
++  try {
++    await debate(root, "debate-z");
++    await debate(root, "debate-Az");
++    await debate(root, "debate-10");
++    const complete = await debate(root, "debate-aa");
++    await writeFile(join(complete, "debate.md"), "transcript");
++    await writeFile(join(complete, "final-report.md"), "report");
++
++    await mkdir(join(root, "notes"));
++    await debate(join(root, "notes"), "debate-nested");
++    await mkdir(join(root, "debate-"));
++    await mkdir(join(root, "debate-.hidden"));
++    await mkdir(join(root, "Debate-wrong-case"));
++    await writeFile(join(root, "debate-file"), "not a directory");
++    const linkedTarget = await debate(root, "not-a-debate-target");
++    await symlink(linkedTarget, join(root, "debate-linked-page"), "dir");
++
++    const entries = await listDebates(root);
++
++    assert.deepEqual(entries, [
++      { id: "debate-z", path: join(root, "debate-z"), hasTranscript: false, hasFinalReport: false, determination: null, status: "unjudged" },
++      { id: "debate-aa", path: join(root, "debate-aa"), hasTranscript: true, hasFinalReport: true, determination: null, status: "unjudged" },
++      { id: "debate-Az", path: join(root, "debate-Az"), hasTranscript: false, hasFinalReport: false, determination: null, status: "unjudged" },
++      { id: "debate-10", path: join(root, "debate-10"), hasTranscript: false, hasFinalReport: false, determination: null, status: "unjudged" },
++    ]);
++    assert.deepEqual(await listDebates(root, undefined), entries);
++    assert.deepEqual(await listDebates(root, { offset: undefined, limit: undefined }), entries);
++    assert.deepEqual(await listDebates(root, { limit: 2 }), entries.slice(0, 2));
++    assert.deepEqual(await listDebates(root, { offset: 1, limit: 2 }), entries.slice(1, 3));
++    assert.deepEqual(await listDebates(root, { offset: 2 }), entries.slice(2));
++    assert.deepEqual(await listDebates(root, { offset: 0, limit: 0 }), []);
++    assert.deepEqual(await listDebates(root, { offset: 99 }), []);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++  }
++});
++
++test("listDebates resolves a relative root and treats a missing root as empty", async () => {
++  const root = await makeRoot();
++  try {
++    await debate(root, "debate-relative");
++    const relativeRoot = relative(process.cwd(), root);
++
++    assert.deepEqual(await listDebates(relativeRoot), [
++      {
++        id: "debate-relative",
++        path: resolve(relativeRoot, "debate-relative"),
++        hasTranscript: false,
++        hasFinalReport: false,
++        determination: null,
++        status: "unjudged",
++      },
++    ]);
++    assert.deepEqual(await listDebates(join(root, "not-here")), []);
++
++    const fileRoot = join(root, "not-a-directory");
++    await writeFile(fileRoot, "file");
++    await assert.rejects(() => listDebates(fileRoot), { code: "ENOTDIR" });
++  } finally {
++    await rm(root, { recursive: true, force: true });
++  }
++});
++
++test("listDebates rejects every invalid page field before looking up the root", async () => {
++  const missingRoot = join(process.cwd(), ".disputatio-catalog-missing-root");
++  const listWithUnknownOptions = listDebates as unknown as (root: string, options: unknown) => Promise<unknown>;
++  const invalidOptions: unknown[] = [
++    { offset: -1 }, { limit: -1 },
++    { offset: 1.5 }, { limit: 1.5 },
++    { offset: Number.NaN }, { limit: Number.NaN },
++    { offset: Number.POSITIVE_INFINITY }, { limit: Number.POSITIVE_INFINITY },
++    { offset: null }, { limit: null },
++    { offset: "1" }, { limit: "1" },
++    { offset: true }, { limit: false },
++    { offset: {} }, { limit: [] },
++    { status: "RESOLVED" }, { status: "not-a-status" },
++    { status: null }, { status: true }, { status: {} },
++    { hasFinalReport: "true" }, { hasFinalReport: null },
++    { hasFinalReport: 1 }, { hasFinalReport: {} },
++    { limit: 0, status: "resolved-ish" },
++    { limit: 0, hasFinalReport: "false" },
++  ];
++
++  for (const options of invalidOptions) {
++    await assert.rejects(() => listWithUnknownOptions(missingRoot, options), { code: "INVALID_QUERY" });
++  }
++});
++
++test("readDebateArtifact validates IDs and kinds before accessing a missing root", async () => {
++  const missingRoot = join(process.cwd(), ".disputatio-catalog-missing-artifact-root");
++  const readWithUnknownArguments = readDebateArtifact as unknown as (
++    root: string, id: unknown, kind: unknown,
++  ) => Promise<unknown>;
++
++  for (const id of ["debate-", "not-a-debate", "debate/a", "../debate-safe", "debate-💥"]) {
++    await assert.rejects(() => readWithUnknownArguments(missingRoot, id, "transcript"), { code: "INVALID_ID" });
++  }
++  for (const kind of ["", "report", "TRANSCRIPT", null, true, {}]) {
++    await assert.rejects(() => readWithUnknownArguments(missingRoot, "debate-valid", kind), { code: "INVALID_QUERY" });
++  }
++});
++
++test("readDebateArtifact returns exact regular artifacts and null for absent or nonregular paths", async () => {
++  const root = await makeRoot();
++  try {
++    const path = await debate(root, "debate-artifacts");
++    const transcript = "  transcript whitespace\r\n\n";
++    const report = "final report\n  still exact\n";
++    const prior = "STATUS: NEEDS_INPUT\nprior";
++    const latest = "\nSTATUS: RESOLVED\r\n latest determination \n";
++    await writeFile(join(path, "debate.md"), transcript);
++    await writeFile(join(path, "final-report.md"), report);
++    await writeFile(join(path, "respondeo.md"), prior);
++    await writeFile(join(path, "respondeo-2.md"), latest);
++
++    assert.equal((await listDebates(root))[0]?.determination, "respondeo-2.md");
++    assert.equal(await readDebateArtifact(root, "debate-artifacts", "transcript"), transcript);
++    assert.equal(await readDebateArtifact(root, "debate-artifacts", "final-report"), report);
++    assert.equal(await readDebateArtifact(root, "debate-artifacts", "determination"), latest);
++    assert.equal(await readDebateArtifact(root, "debate-missing", "transcript"), null);
++
++    const empty = await debate(root, "debate-empty");
++    assert.equal(await readDebateArtifact(root, "debate-empty", "transcript"), null);
++    assert.equal(await readDebateArtifact(root, "debate-empty", "final-report"), null);
++    assert.equal(await readDebateArtifact(root, "debate-empty", "determination"), null);
++    await mkdir(join(empty, "debate.md"));
++    await mkdir(join(empty, "final-report.md"));
++    await mkdir(join(empty, "respondeo-4.md"));
++    assert.equal(await readDebateArtifact(root, "debate-empty", "transcript"), null);
++    assert.equal(await readDebateArtifact(root, "debate-empty", "final-report"), null);
++    assert.equal(await readDebateArtifact(root, "debate-empty", "determination"), null);
++
++    await writeFile(join(root, "debate-file-instead-of-directory"), "not a directory");
++    assert.equal(await readDebateArtifact(root, "debate-file-instead-of-directory", "transcript"), null);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++  }
++});
++
++test("readDebateArtifact rejects direct symlink traversal but skips symlink determinations", async () => {
++  const root = await makeRoot();
++  const outside = await makeRoot();
++  try {
++    const outsideDebate = await debate(outside, "source");
++    await writeFile(join(outsideDebate, "debate.md"), "outside transcript");
++    await writeFile(join(outsideDebate, "final-report.md"), "outside report");
++    await writeFile(join(outsideDebate, "respondeo-9.md"), "STATUS: RESOLVED\noutside determination");
++
++    const linkedArtifacts = await debate(root, "debate-linked-artifacts");
++    await symlink(join(outsideDebate, "debate.md"), join(linkedArtifacts, "debate.md"), "file");
++    await symlink(join(outside, "missing-report.md"), join(linkedArtifacts, "final-report.md"), "file");
++    await assert.rejects(() => readDebateArtifact(root, "debate-linked-artifacts", "transcript"), { code: "UNSAFE_PATH" });
++    await assert.rejects(() => readDebateArtifact(root, "debate-linked-artifacts", "final-report"), { code: "UNSAFE_PATH" });
++
++    await symlink(outsideDebate, join(root, "debate-linked-directory"), "dir");
++    for (const kind of ["transcript", "final-report", "determination"] as const) {
++      await assert.rejects(() => readDebateArtifact(root, "debate-linked-directory", kind), { code: "UNSAFE_PATH" });
++    }
++
++    const onlySymlink = await debate(root, "debate-only-symlink-determination");
++    await symlink(join(outsideDebate, "respondeo-9.md"), join(onlySymlink, "respondeo-9.md"), "file");
++    assert.equal(await readDebateArtifact(root, "debate-only-symlink-determination", "determination"), null);
++
++    const lowerRegular = await debate(root, "debate-regular-determination");
++    const lowerText = "STATUS: NEEDS_INPUT\nlower regular file\n";
++    await writeFile(join(lowerRegular, "respondeo-2.md"), lowerText);
++    await symlink(join(outsideDebate, "respondeo-9.md"), join(lowerRegular, "respondeo-9.md"), "file");
++    assert.equal((await listDebates(root)).find((entry) => entry.id === "debate-regular-determination")?.determination, "respondeo-2.md");
++    assert.equal(await readDebateArtifact(root, "debate-regular-determination", "determination"), lowerText);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++    await rm(outside, { recursive: true, force: true });
++  }
++});
++
++test("listDebates filters the full catalog before paginating matching debates", async () => {
++  const root = await makeRoot();
++  try {
++    const unjudged = await debate(root, "debate-z");
++    await writeFile(join(unjudged, "final-report.md"), "report");
++
++    const resolved = await debate(root, "debate-y");
++    await writeFile(join(resolved, "respondeo.md"), "STATUS: RESOLVED");
++
++    const failed = await debate(root, "debate-x");
++    await writeFile(join(failed, "respondeo.md"), "Respondeo turn failed: timeout");
++    await writeFile(join(failed, "final-report.md"), "report");
++
++    const secondResolved = await debate(root, "debate-w");
++    await writeFile(join(secondResolved, "respondeo.md"), "STATUS: RESOLVED");
++
++    const needsInput = await debate(root, "debate-v");
++    await writeFile(join(needsInput, "respondeo.md"), "STATUS: NEEDS_INPUT");
++    await writeFile(join(needsInput, "final-report.md"), "report");
++
++    const unknown = await debate(root, "debate-u");
++    await writeFile(join(unknown, "respondeo.md"), "STATUS: resolved");
++
++    const ids = async (options?: Parameters<typeof listDebates>[1]) =>
++      (await listDebates(root, options)).map((entry) => entry.id);
++    const full = ["debate-z", "debate-y", "debate-x", "debate-w", "debate-v", "debate-u"];
++
++    assert.deepEqual(await ids(), full);
++    assert.deepEqual(await ids({ status: undefined, hasFinalReport: undefined }), full);
++    assert.deepEqual(await ids({ status: "unjudged" }), ["debate-z"]);
++    assert.deepEqual(await ids({ status: "resolved" }), ["debate-y", "debate-w"]);
++    assert.deepEqual(await ids({ status: "needs-input" }), ["debate-v"]);
++    assert.deepEqual(await ids({ status: "failed" }), ["debate-x"]);
++    assert.deepEqual(await ids({ status: "unknown" }), ["debate-u"]);
++    assert.deepEqual(await ids({ hasFinalReport: true }), ["debate-z", "debate-x", "debate-v"]);
++    assert.deepEqual(await ids({ hasFinalReport: false }), ["debate-y", "debate-w", "debate-u"]);
++    assert.deepEqual(await ids({ status: "needs-input", hasFinalReport: true }), ["debate-v"]);
++    assert.deepEqual(await ids({ status: "needs-input", hasFinalReport: false }), []);
++
++    // Status filtering produces y/w before applying limit and offset.
++    assert.deepEqual(await ids({ limit: 2, status: "resolved" }), ["debate-y", "debate-w"]);
++    assert.deepEqual(await ids({ offset: 1, limit: 2, status: "resolved" }), ["debate-w"]);
++    // Report filtering similarly precedes pagination: matching ids are z/x/v.
++    assert.deepEqual(await ids({ limit: 2, hasFinalReport: true }), ["debate-z", "debate-x"]);
++    assert.deepEqual(await ids({ offset: 1, limit: 2, hasFinalReport: true }), ["debate-x", "debate-v"]);
++    // Both filters apply as an AND to the full catalog before selecting the page.
++    assert.deepEqual(await ids({ limit: 1, status: "resolved", hasFinalReport: false }), ["debate-y"]);
++    assert.deepEqual(await ids({ offset: 1, limit: 1, status: "resolved", hasFinalReport: false }), ["debate-w"]);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++  }
++});
++
++test("listDebates reads metadata without modifying read-only artifacts", async () => {
++  const root = await makeRoot();
++  const path = await debate(root, "debate-read-only");
++  const transcript = join(path, "debate.md");
++  const report = join(path, "final-report.md");
++  const determination = join(path, "respondeo.md");
++  await writeFile(transcript, "immutable transcript");
++  await writeFile(report, "immutable report");
++  await writeFile(determination, "STATUS: RESOLVED\nimmutable determination");
++  await chmod(transcript, 0o444);
++  await chmod(report, 0o444);
++  await chmod(determination, 0o444);
++  await chmod(path, 0o555);
++  const [transcriptBefore, reportBefore] = await Promise.all([lstat(transcript), lstat(report)]);
++  try {
++    assert.deepEqual(await listDebates(root), [{
++      id: "debate-read-only",
++      path,
++      hasTranscript: true,
++      hasFinalReport: true,
++      determination: "respondeo.md",
++      status: "resolved",
++    }]);
++    assert.equal(await readFile(transcript, "utf8"), "immutable transcript");
++    assert.equal(await readFile(report, "utf8"), "immutable report");
++    assert.equal(await readFile(determination, "utf8"), "STATUS: RESOLVED\nimmutable determination");
++    assert.equal(await readDebateArtifact(root, "debate-read-only", "transcript"), "immutable transcript");
++    assert.equal(await readDebateArtifact(root, "debate-read-only", "final-report"), "immutable report");
++    assert.equal(await readDebateArtifact(root, "debate-read-only", "determination"), "STATUS: RESOLVED\nimmutable determination");
++    assert.equal((await lstat(determination)).mode & 0o777, 0o444);
++    const [transcriptAfter, reportAfter] = await Promise.all([lstat(transcript), lstat(report)]);
++    assert.equal(transcriptAfter.mode, transcriptBefore.mode);
++    assert.equal(reportAfter.mode, reportBefore.mode);
++  } finally {
++    await chmod(path, 0o755);
++    await rm(root, { recursive: true, force: true });
++  }
++});
++
++test("classifyDetermination uses only the first nonempty trimmed line", () => {
++  assert.equal(classifyDetermination("\n  STATUS: RESOLVED\r\nbody"), "resolved");
++  assert.equal(classifyDetermination("\r\n\tSTATUS: NEEDS_INPUT\nbody"), "needs-input");
++  assert.equal(classifyDetermination("  Respondeo turn failed: judge timed out\nbody"), "failed");
++
++  for (const text of [
++    "",
++    " \r\n\t",
++    "STATUS:RESOLVED",
++    "STATUS:  RESOLVED",
++    "STATUS: RESOLVED extra",
++    "status: RESOLVED",
++    "STATUS: resolved",
++    "STATUS: NEEDS_INPUT later",
++    "some preamble\nSTATUS: RESOLVED",
++    "respondeo turn failed: lower-case prefix",
++  ]) assert.equal(classifyDetermination(text), "unknown", text);
++});
++
++test("listDebates selects the highest regular respondeo version and reports its status", async () => {
++  const root = await makeRoot();
++  const outside = await makeRoot();
++  try {
++    const unnumbered = await debate(root, "debate-unnumbered");
++    await writeFile(join(unnumbered, "respondeo.md"), "Respondeo turn failed: offline");
++
++    const versions = await debate(root, "debate-versions");
++    await writeFile(join(versions, "respondeo.md"), "STATUS: NEEDS_INPUT");
++    await writeFile(join(versions, "respondeo-2.md"), "STATUS: NEEDS_INPUT");
++    await writeFile(join(versions, "respondeo-10.md"), "unrecognized");
++    await writeFile(join(versions, "respondeo-9007199254740992.md"), "STATUS: NEEDS_INPUT");
++    await writeFile(join(versions, "respondeo-9007199254740993.md"), "STATUS: RESOLVED");
++
++    const tie = await debate(root, "debate-leading-zero");
++    await writeFile(join(tie, "respondeo.md"), "STATUS: NEEDS_INPUT");
++    await writeFile(join(tie, "respondeo-1.md"), "STATUS: NEEDS_INPUT");
++    await writeFile(join(tie, "respondeo-01.md"), "STATUS: RESOLVED");
++
++    const needsInput = await debate(root, "debate-needs-input");
++    await writeFile(join(needsInput, "respondeo.md"), "STATUS: NEEDS_INPUT");
++
++    const unknown = await debate(root, "debate-unknown");
++    await writeFile(join(unknown, "respondeo.md"), "STATUS: resolved");
++
++    const ignored = await debate(root, "debate-ignored-determinations");
++    await writeFile(join(ignored, "respondeo-0.md"), "STATUS: RESOLVED");
++    await writeFile(join(ignored, "respondeo--1.md"), "STATUS: RESOLVED");
++    await writeFile(join(ignored, "respondeo-nope.md"), "STATUS: RESOLVED");
++    await mkdir(join(ignored, "respondeo-999.md"));
++    const outsideDetermination = join(outside, "respondeo-1000.md");
++    await writeFile(outsideDetermination, "STATUS: RESOLVED");
++    await symlink(outsideDetermination, join(ignored, "respondeo-1000.md"), "file");
++    await symlink(join(outside, "missing.md"), join(ignored, "respondeo-1001.md"), "file");
++
++    const numeric = await debate(root, "debate-numeric");
++    await writeFile(join(numeric, "respondeo-2.md"), "STATUS: RESOLVED");
++    await writeFile(join(numeric, "respondeo-10.md"), "STATUS: NEEDS_INPUT");
++    await symlink(outsideDetermination, join(numeric, "respondeo-11.md"), "file");
++    await mkdir(join(numeric, "respondeo-12.md"));
++
++    assert.deepEqual(await listDebates(root), [
++      { id: "debate-versions", path: versions, hasTranscript: false, hasFinalReport: false, determination: "respondeo-9007199254740993.md", status: "resolved" },
++      { id: "debate-unnumbered", path: unnumbered, hasTranscript: false, hasFinalReport: false, determination: "respondeo.md", status: "failed" },
++      { id: "debate-unknown", path: unknown, hasTranscript: false, hasFinalReport: false, determination: "respondeo.md", status: "unknown" },
++      { id: "debate-numeric", path: numeric, hasTranscript: false, hasFinalReport: false, determination: "respondeo-10.md", status: "needs-input" },
++      { id: "debate-needs-input", path: needsInput, hasTranscript: false, hasFinalReport: false, determination: "respondeo.md", status: "needs-input" },
++      { id: "debate-leading-zero", path: tie, hasTranscript: false, hasFinalReport: false, determination: "respondeo-01.md", status: "resolved" },
++      { id: "debate-ignored-determinations", path: ignored, hasTranscript: false, hasFinalReport: false, determination: null, status: "unjudged" },
++    ]);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++    await rm(outside, { recursive: true, force: true });
++  }
++});
++
++test("listDebates does not follow directory or artifact symlinks and requires regular artifact files", async () => {
++  const root = await makeRoot();
++  const outside = await makeRoot();
++  try {
++    const target = await debate(outside, "source-debate");
++    await writeFile(join(target, "debate.md"), "transcript");
++    await writeFile(join(target, "final-report.md"), "report");
++    await symlink(target, join(root, "debate-linked-directory"), "dir");
++    await symlink(join(root, "missing-directory"), join(root, "debate-broken-directory"), "dir");
++
++    const directoryArtifacts = await debate(root, "debate-directory-artifacts");
++    await mkdir(join(directoryArtifacts, "debate.md"));
++    await mkdir(join(directoryArtifacts, "final-report.md"));
++
++    const symlinkArtifacts = await debate(root, "debate-symlink-artifacts");
++    await symlink(join(target, "debate.md"), join(symlinkArtifacts, "debate.md"), "file");
++    await symlink(join(root, "missing-report.md"), join(symlinkArtifacts, "final-report.md"), "file");
++
++    const otherSymlinks = await debate(root, "debate-other-symlinks");
++    await symlink(join(outside, "missing-transcript.md"), join(otherSymlinks, "debate.md"), "file");
++    await symlink(join(target, "final-report.md"), join(otherSymlinks, "final-report.md"), "file");
++
++    assert.deepEqual(await listDebates(root), [
++      {
++        id: "debate-symlink-artifacts",
++        path: join(root, "debate-symlink-artifacts"),
++        hasTranscript: false,
++        hasFinalReport: false,
++        determination: null,
++        status: "unjudged",
++      },
++      {
++        id: "debate-other-symlinks",
++        path: otherSymlinks,
++        hasTranscript: false,
++        hasFinalReport: false,
++        determination: null,
++        status: "unjudged",
++      },
++      {
++        id: "debate-directory-artifacts",
++        path: join(root, "debate-directory-artifacts"),
++        hasTranscript: false,
++        hasFinalReport: false,
++        determination: null,
++        status: "unjudged",
++      },
++    ]);
++  } finally {
++    await rm(root, { recursive: true, force: true });
++    await rm(outside, { recursive: true, force: true });
++  }
++});

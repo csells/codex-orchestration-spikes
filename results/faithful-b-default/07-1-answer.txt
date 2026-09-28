@@ -1,0 +1,3 @@
+Added `src/catalog-cli.ts` with JSON output, flags in any order, strict validation, and stderr diagnostics. It uses only the read-only catalog API.
+
+Validation: 101 tests passed, including five new CLI tests. One build test skipped because esbuild isn’t installed. No network or real model services used.

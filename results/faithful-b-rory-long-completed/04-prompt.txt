@@ -1,0 +1,3 @@
+Add optional catalog filters `status` (one of the five catalog statuses) and `hasFinalReport` (boolean). Invalid filter values must throw `INVALID_QUERY`. For this first UI version, the scan window is the requested newest-first offset/limit page: apply pagination first, then filter that page. This supports filtering just the currently loaded window. Keep that behavior explicit in the API implementation and tests; no omitted option should filter anything.
+
+Keep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.

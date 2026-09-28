@@ -1,5 +1,7 @@
 # What a complete evaluation of Rory's assertions requires
 
+Historical requirements written before the faithful follow-up. See [current executed results and remaining limits](../FOLLOWUP.md); this document is not a claim that those follow-up tests are still unexecuted.
+
 Status: requirements and proposed completion criteria, not executed results. The existing trials are a **diagnostic pilot**. They establish useful behavior and accounting observations, but do not settle the article's central claim: more useful work from a subscription allowance during sustained sessions.
 
 The central missing experiments are faithful related-worker reuse, sufficiently long sessions to encounter compaction, and attributable allowance measurement. These are required primary comparisons, not optional caveats after an overall verdict.

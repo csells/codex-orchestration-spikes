@@ -1,0 +1,15 @@
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
+import { parseDebateConfig, serializeDebateConfig } from './config.ts';
+const STAGE = 8;
+const obj = x => x !== null && typeof x === 'object' && !Array.isArray(x);
+const fail=(code,msg)=>{throw Object.assign(new Error(msg),{code});};
+async function envelope(file){let d;try{d=JSON.parse(await fs.readFile(file,'utf8'));}catch(e){if(e.code)throw e;fail('INVALID_BUNDLE','Invalid JSON');}if(!obj(d)||d.version!==1||!obj(d.profiles))fail('INVALID_BUNDLE','Invalid bundle envelope');return d;}
+function merge(parent,child){const out={...parent,...child};if(STAGE<4 && child.participants && parent.participants){out.participants=parent.participants.map(p=>({...p}));for(const p of child.participants){const i=out.participants.findIndex(x=>x.adapter===p.adapter);if(i<0)out.participants.push({...p});else out.participants[i]={...p};}}if(out.judge===null)delete out.judge;return out;}
+function overrides(d){if(!obj(d))fail('INVALID_BUNDLE','overrides must be an object');for(const k of Object.keys(d))if(!['rounds','repo','timeoutMinutes','participants','judge'].includes(k))fail('INVALID_BUNDLE','unknown override '+k);for(const key of ['rounds','timeoutMinutes'])if(key in d && (typeof d[key]!=='number'||!Number.isFinite(d[key])))fail('INVALID_BUNDLE','invalid numeric override');if('repo' in d && typeof d.repo!=='string')fail('INVALID_BUNDLE','invalid repo');if('participants' in d && !Array.isArray(d.participants))fail('INVALID_BUNDLE','invalid participants');const plain={...d};if(plain.judge===null)delete plain.judge;parseDebateConfig(serializeDebateConfig(plain));return d;}
+export async function loadProfileBundle(file,name){const d=await envelope(file);if(name===undefined){name=d.defaultProfile;if(name===undefined)fail('PROFILE_REQUIRED','Select a profile');}const realFile=await fs.realpath(file),root=path.dirname(realFile);
+ const inside=p=>p===root||p.startsWith(root+path.sep);
+ async function resolve(n,ancestors){if(typeof n!=='string'||!Object.hasOwn(d.profiles,n))fail('UNKNOWN_PROFILE','Unknown profile '+n);if(ancestors.includes(n))fail('PROFILE_CYCLE','Profile cycle');const p=d.profiles[n];if(!obj(p))fail('INVALID_BUNDLE','Invalid profile');if(!('config'in p)&&!('extends'in p)&&!('overrides'in p))fail('INVALID_BUNDLE','Empty profile');let result={};if('extends'in p)result=await resolve(p.extends,[...ancestors,n]);if('config'in p){if(typeof p.config!=='string')fail('INVALID_BUNDLE','Invalid config path');let target=path.resolve(root,p.config);if(STAGE>=6){if(path.isAbsolute(p.config)||!inside(target))fail('UNSAFE_CONFIG_PATH','Outside bundle');target=await fs.realpath(target);if(!inside(target))fail('UNSAFE_CONFIG_PATH','Outside bundle');}result=merge(result,parseDebateConfig(await fs.readFile(target,'utf8')));}if('overrides'in p)result=merge(result,overrides(p.overrides));return result;}
+ return structuredClone(await resolve(name,[]));
+}
+export async function listProfiles(file){const d=await envelope(file);return Object.keys(d.profiles).sort();}

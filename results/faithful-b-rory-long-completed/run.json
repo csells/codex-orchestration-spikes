@@ -1,0 +1,176 @@
+{
+  "run_id": "faithful-b-rory-long-completed",
+  "task": "sustained-b",
+  "policy": "rory-long",
+  "started_at": "2026-09-28T03:44:59.403685+00:00",
+  "status": "completed",
+  "account_coordination": "unconfirmed",
+  "supervision": "quiet",
+  "stages": [
+    {
+      "stage": 1,
+      "prompt_sha256": "3c74892e526d8214a94cf29b1367becc80d9bf7fd144dd3f079aaaa5b5e1a3ab",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 190.986,
+          "status": "completed",
+          "cumulative_credit_estimate": 29.195320000000002,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 2,
+      "prompt_sha256": "d93c8c78fdf993afab34af3d9ae4c7028f51f126a53ba235935af8fb1a3031f7",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 167.592,
+          "status": "completed",
+          "cumulative_credit_estimate": 50.69629,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 3,
+      "prompt_sha256": "ecf5be6031465418647ef129df29ae5981e87426d3510fd903f6bd87436ec5eb",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 155.85,
+          "status": "completed",
+          "cumulative_credit_estimate": 83.36558,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 4,
+      "prompt_sha256": "5702300c121f8f2b06d9bd660dcda08dcabadfc78f8a9f7f99771cc2a6515f94",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 159.945,
+          "status": "completed",
+          "cumulative_credit_estimate": 102.67328,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 5,
+      "prompt_sha256": "409d0f2715cb8c790c42a36e87d3623df506876c6addc8e9ad9b2d6685187315",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 192.77,
+          "status": "completed",
+          "cumulative_credit_estimate": 132.83231,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 6,
+      "prompt_sha256": "cd372d3a7c78fd8c703c4b6232ded5026f9608c35cd2f234a7b0f8ed8033c9ee",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 109.408,
+          "status": "completed",
+          "cumulative_credit_estimate": 156.64091000000002,
+          "extension_credit_estimate": 23.808600000000013,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 7,
+      "prompt_sha256": "f0e4b1797f4b0b8e6e5c5815deec053b12a525a0b536681ca97ba5e7ed137d9a",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 196.823,
+          "status": "completed",
+          "cumulative_credit_estimate": 190.57716,
+          "extension_credit_estimate": 57.744849999999985,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 8,
+      "prompt_sha256": "5bb0bec393726b62384bde7a6af8e22ca78a81439a8e212b585fda2933ac78d5",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 203.183,
+          "status": "completed",
+          "cumulative_credit_estimate": 231.05292,
+          "extension_credit_estimate": 98.22061,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "root_thread_id": "01a0e61d-b2f5-79e3-8519-52325d6ed8fd",
+  "elapsed_seconds": 1376.557,
+  "ended_at": "2026-09-28T04:23:32.553459+00:00",
+  "credit_estimate": {
+    "by_model": {
+      "gpt-6-astra": 197.6653,
+      "gpt-5.6-terra": 33.38762
+    },
+    "total": 231.05292
+  },
+  "usage_scope": "Persisted full tree after transport shutdown; failed/interrupted requests may have unreported provider usage.",
+  "extends_run_id": "faithful-b-rory-long",
+  "extension_started_at": "2026-09-28T04:13:13.510864+00:00",
+  "baseline_credit_estimate": 132.83231,
+  "baseline_stage_count": 5,
+  "baseline_artifact_sha256": {
+    "quota-settled.json": "94dfafd71c269a7b2cd3e899c2f1b0def58552273f1127077f0be9cca4a6987e",
+    "05-prompt.txt": "409d0f2715cb8c790c42a36e87d3623df506876c6addc8e9ad9b2d6685187315",
+    "02-1-turn.json": "69dc0291696cc8cb8cb0d8c0d179d909ba48ab4d4f2f0c6d0dd64ffb9cee8583",
+    "01-1-answer.txt": "5dbdcc61de8dfdabbc4387ef3221a52c9f2a86581a4754c654469f1309549495",
+    "quota-after.json": "f219205d5296feae3fd779d1c9b6d24d267fa6a35208ef0f67d944b325a0dee2",
+    "changes.patch": "374400a4b53b5856a2a6c888c74eed8234ea97e941115f844fd31ca0bbf57994",
+    "01-1-turn.json": "4878b80374d5aeb9c119b635a7324bc2b05ce30d1ef4b9c5257f9839ad473e72",
+    "02-prompt.txt": "d93c8c78fdf993afab34af3d9ae4c7028f51f126a53ba235935af8fb1a3031f7",
+    "04-1-turn.json": "5fbbbf02eb4c788b183760a62ec06e16c75ad6943acc4e6897ac009266e45f72",
+    "quota-before.json": "38d4e273d30a33cdd45c8d72c570bfedd4cde9597eb1393c6aff3e786df23b72",
+    "05-1-validation.json": "cd4c15238429b4d29dd01e19cd1cfd9bf07fa5937f9c8a1d6a5693048874757b",
+    "04-prompt.txt": "5702300c121f8f2b06d9bd660dcda08dcabadfc78f8a9f7f99771cc2a6515f94",
+    "03-1-turn.json": "683cfe5ff52353065087a11d574fb821add2d6e7fe30cf60d13b98d9748d4f5b",
+    "04-1-validation.json": "9652cd9282396b18fb535cdb516c8c8aa10ebf4cdfb80b5d8b8f6aae6b593a53",
+    "telemetry.json": "6f4d3d2db28a90a04745d291c7105d2a53e4af4db7ad8ebe4b8577581ac08e1d",
+    "01-1-validation.json": "472a7d0a0a867302713f509795dc1153b97dc2020395d83d6a882d0844c0cfbd",
+    "01-prompt.txt": "3c74892e526d8214a94cf29b1367becc80d9bf7fd144dd3f079aaaa5b5e1a3ab",
+    "trace.jsonl": "ca746ce24a312be7621abbbed87b2eb28df900d50474809137ed11e9462d6759",
+    "03-1-answer.txt": "8ad0e828912c8650bc9fbdb14915b44db44d1d55af9459924e7b41c225fe0dd8",
+    "02-1-validation.json": "6c4d67e794cad5c83fefb6d13720e70927b1e6e1621577edc8d1f5e1a1a12e30",
+    "04-1-answer.txt": "196dfba1b148c9f2ce2d9f483a8031ab6996ad401f1d2064ed426651d68e6511",
+    "05-1-turn.json": "d888c4076b759269ca1c4ad27c5328ef1141f8308977ec50db3e6d357c545894",
+    "run.json": "a94414a1988766ba00f4b4b0453381423bd91dde6d4e909b5d45789620fa439a",
+    "AGENTS.md.txt": "e0591c14c0ecf45b5f6f346675d2dc8f041261fbfc722033781bc06b6c32b186",
+    "03-1-validation.json": "6d0b9ebe240b0bc21abcfb282ad7bbd1e5d7ee26db9c5d61e05997d2fccf4b01",
+    "03-prompt.txt": "ecf5be6031465418647ef129df29ae5981e87426d3510fd903f6bd87436ec5eb",
+    "05-1-answer.txt": "9a2f57f01b3b6ce5e590c5f04177f8f0b1cfbd0e241c7b42729c262ed02bf870",
+    "02-1-answer.txt": "cc289c555fe08fb312bfc397eeae8a3b6c602bb7d18c474040acbcc1a0d62958"
+  },
+  "transport_boundary_after_stage": 5,
+  "transport_events": [
+    {
+      "after_stage": 5,
+      "closed_at": "2026-09-28T04:00:39.008604+00:00",
+      "resumed_at": "2026-09-28T04:13:18.071812+00:00",
+      "root_thread_id": "01a0e61d-b2f5-79e3-8519-52325d6ed8fd",
+      "interruption": "Original campaign budget cap; pause excluded from active-session time."
+    }
+  ],
+  "extension_elapsed_seconds": 509.414,
+  "active_session_elapsed_seconds": 1557.008,
+  "additional_credit_estimate": 98.22061
+}

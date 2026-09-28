@@ -1,0 +1,5 @@
+Added artifact mode with exact text output, exit 2 and `NOT_FOUND` for absent artifacts, and coded errors on stderr with empty stdout. Paired flags are required; list options are rejected in artifact mode.
+
+List behavior and read-only/symlink protections remain intact.
+
+Validation: 97 tests passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

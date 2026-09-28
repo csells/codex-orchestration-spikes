@@ -1,0 +1,149 @@
+{
+  "run_id": "faithful-b-rory",
+  "task": "sustained-b",
+  "policy": "rory",
+  "started_at": "2026-09-28T04:24:45.805430+00:00",
+  "status": "completed",
+  "stages": [
+    {
+      "stage": 1,
+      "prompt_sha256": "3c74892e526d8214a94cf29b1367becc80d9bf7fd144dd3f079aaaa5b5e1a3ab",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 256.506,
+          "status": "completed",
+          "cumulative_credit_estimate": 28.820539999999998,
+          "extension_credit_estimate": 28.820539999999998,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 2,
+      "prompt_sha256": "d93c8c78fdf993afab34af3d9ae4c7028f51f126a53ba235935af8fb1a3031f7",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 167.36,
+          "status": "completed",
+          "cumulative_credit_estimate": 49.41782,
+          "extension_credit_estimate": 49.41782,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 3,
+      "prompt_sha256": "ecf5be6031465418647ef129df29ae5981e87426d3510fd903f6bd87436ec5eb",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 140.34,
+          "status": "completed",
+          "cumulative_credit_estimate": 67.61397,
+          "extension_credit_estimate": 67.61397,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 4,
+      "prompt_sha256": "5702300c121f8f2b06d9bd660dcda08dcabadfc78f8a9f7f99771cc2a6515f94",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 134.788,
+          "status": "completed",
+          "cumulative_credit_estimate": 89.44659,
+          "extension_credit_estimate": 89.44659,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 5,
+      "prompt_sha256": "409d0f2715cb8c790c42a36e87d3623df506876c6addc8e9ad9b2d6685187315",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 211.388,
+          "status": "completed",
+          "cumulative_credit_estimate": 122.79720999999999,
+          "extension_credit_estimate": 122.79720999999999,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 6,
+      "prompt_sha256": "cd372d3a7c78fd8c703c4b6232ded5026f9608c35cd2f234a7b0f8ed8033c9ee",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 116.01,
+          "status": "completed",
+          "cumulative_credit_estimate": 145.73182,
+          "extension_credit_estimate": 145.73182,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 7,
+      "prompt_sha256": "f0e4b1797f4b0b8e6e5c5815deec053b12a525a0b536681ca97ba5e7ed137d9a",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 190.78,
+          "status": "completed",
+          "cumulative_credit_estimate": 184.73693,
+          "extension_credit_estimate": 184.73693,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 8,
+      "prompt_sha256": "5bb0bec393726b62384bde7a6af8e22ca78a81439a8e212b585fda2933ac78d5",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 144.945,
+          "status": "completed",
+          "cumulative_credit_estimate": 220.47091,
+          "extension_credit_estimate": 220.47091,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "baseline_credit_estimate": 0.0,
+  "baseline_stage_count": 0,
+  "account_coordination": "unconfirmed",
+  "supervision": "quiet",
+  "transport_boundary_after_stage": 5,
+  "transport_events": [
+    {
+      "after_stage": 5,
+      "closed_at": "2026-09-28T04:41:55.259429+00:00",
+      "resumed_at": "2026-09-28T04:41:56.980980+00:00",
+      "root_thread_id": "01a0e642-27cb-7092-befd-c6003729980b",
+      "interruption": "Matched stage-five transport restart."
+    }
+  ],
+  "root_thread_id": "01a0e642-27cb-7092-befd-c6003729980b",
+  "elapsed_seconds": 1362.117,
+  "ended_at": "2026-09-28T04:50:21.146358+00:00",
+  "extension_elapsed_seconds": 1362.117,
+  "active_session_elapsed_seconds": 1532.995,
+  "credit_estimate": {
+    "by_model": {
+      "gpt-6-astra": 195.35655,
+      "gpt-5.6-terra": 25.11436
+    },
+    "total": 220.47091
+  },
+  "additional_credit_estimate": 220.47091,
+  "usage_scope": "Persisted full tree after transport shutdown; failed/interrupted requests may have unreported provider usage."
+}

@@ -1,0 +1,3 @@
+Support newest-first pages. Extend listDebates(root, options?) with optional `offset` and `limit`; both must be nonnegative integers when supplied, otherwise throw an Error with code `INVALID_QUERY`. Change default ordering to descending id code-point lexical order, so timestamp-style IDs naturally show newest first. Apply offset (default 0) and then limit; limit 0 returns no entries. Omitted limit returns the remainder. Preserve all metadata, symlink handling, and read-only behavior.
+
+Keep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.

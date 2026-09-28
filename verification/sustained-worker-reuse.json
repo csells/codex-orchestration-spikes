@@ -1,0 +1,1157 @@
+{
+  "schema_version": 1,
+  "purpose": "Verify actual native worker identity and model/effort continuity across the matched stage-five B-arm transport restart.",
+  "runs": [
+    {
+      "run_id": "faithful-b-rory-long-completed",
+      "status": "verified",
+      "root_thread_sha256": "94f05166acd06080aef70d30134e70acfd2a07edf13e4f9ccea8250dc67d6b76",
+      "root_models": [
+        "gpt-6-astra"
+      ],
+      "root_reasoning_efforts": [
+        "high"
+      ],
+      "native_thread_count": 2,
+      "native_transport_initializations": 2,
+      "root_rpc_identity_evidence": [
+        {
+          "method": "thread/start",
+          "requested_at": "2026-09-28T03:45:01.071016+00:00",
+          "acknowledged_at": "2026-09-28T03:45:01.773898+00:00",
+          "returned_root_sha256": "94f05166acd06080aef70d30134e70acfd2a07edf13e4f9ccea8250dc67d6b76",
+          "requested_root_sha256": null
+        },
+        {
+          "method": "thread/resume",
+          "requested_at": "2026-09-28T04:13:15.702808+00:00",
+          "acknowledged_at": "2026-09-28T04:13:18.070381+00:00",
+          "returned_root_sha256": "94f05166acd06080aef70d30134e70acfd2a07edf13e4f9ccea8250dc67d6b76",
+          "requested_root_sha256": "94f05166acd06080aef70d30134e70acfd2a07edf13e4f9ccea8250dc67d6b76"
+        }
+      ],
+      "stage_five_boundary": {
+        "after_stage": 5,
+        "closed_at": "2026-09-28T04:00:39.008604+00:00",
+        "resumed_at": "2026-09-28T04:13:18.071812+00:00",
+        "interruption": "Original campaign budget cap; pause excluded from active-session time."
+      },
+      "worker_count": 1,
+      "workers": [
+        {
+          "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "parent_sha256": "94f05166acd06080aef70d30134e70acfd2a07edf13e4f9ccea8250dc67d6b76",
+          "agent_path": "/root/catalog_tests",
+          "turn_count_before_restart": 5,
+          "turn_count_after_restart": 3,
+          "models_and_efforts_before": [
+            [
+              "gpt-5.6-terra",
+              "high"
+            ]
+          ],
+          "models_and_efforts_after": [
+            [
+              "gpt-5.6-terra",
+              "high"
+            ]
+          ],
+          "same_native_thread_across_boundary": true
+        }
+      ],
+      "root_tool_call_counts": {
+        "exec": 47,
+        "spawn_agent": 1,
+        "send_message": 10,
+        "wait_agent": 11,
+        "followup_task": 7
+      },
+      "root_turns": [
+        {
+          "stage": 1,
+          "attempt": 1,
+          "root_turn_sha256": "170364acdec070520cbb48ddbe65528393635624e4ddc5d0a6b2afd53e7e7b7a",
+          "started_at": "2026-09-28T03:45:01.782099+00:00",
+          "ended_at": "2026-09-28T03:48:12.768752+00:00",
+          "artifact": "results/faithful-b-rory-long-completed/01-1-turn.json",
+          "artifact_sha256": "4878b80374d5aeb9c119b635a7324bc2b05ce30d1ef4b9c5257f9839ad473e72",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+              "turn_sha256": "19ee9a45f450f7d8b7c64e027956577d1efc56636abe01305e9e6b0eaef1cfbf",
+              "root_turn_sha256": "170364acdec070520cbb48ddbe65528393635624e4ddc5d0a6b2afd53e7e7b7a",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T03:45:27.177Z",
+              "stage": 1
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "attempt": 1,
+          "root_turn_sha256": "6bfc4994bb265e2deba5f165f20b1965963acc5f55d8b2cdc24616841267ff8d",
+          "started_at": "2026-09-28T03:48:19.437186+00:00",
+          "ended_at": "2026-09-28T03:51:07.029909+00:00",
+          "artifact": "results/faithful-b-rory-long-completed/02-1-turn.json",
+          "artifact_sha256": "69dc0291696cc8cb8cb0d8c0d179d909ba48ab4d4f2f0c6d0dd64ffb9cee8583",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+              "turn_sha256": "47b11ca4d002ff1c04af739a422f2eed79495a3a5d6e0d1f7ac8a6b5dbf9adfe",
+              "root_turn_sha256": "6bfc4994bb265e2deba5f165f20b1965963acc5f55d8b2cdc24616841267ff8d",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T03:48:32.116Z",
+              "stage": 2
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "attempt": 1,
+          "root_turn_sha256": "7fe31f3b66ba23652967c81749af0d7bf796d3c967fe09625aec4ab350a136b5",
+          "started_at": "2026-09-28T03:51:25.303466+00:00",
+          "ended_at": "2026-09-28T03:54:01.154687+00:00",
+          "artifact": "results/faithful-b-rory-long-completed/03-1-turn.json",
+          "artifact_sha256": "683cfe5ff52353065087a11d574fb821add2d6e7fe30cf60d13b98d9748d4f5b",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+              "turn_sha256": "b7449213c8009937b8e3dcf0e58c9c0ad03df512c326c806a956bd7c3b5374ec",
+              "root_turn_sha256": "7fe31f3b66ba23652967c81749af0d7bf796d3c967fe09625aec4ab350a136b5",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T03:51:43.460Z",
+              "stage": 3
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "attempt": 1,
+          "root_turn_sha256": "171668b0cb26f0a218a7887b99e7a8d96f3d9f48b394aebad4b52be8b53cbb5f",
+          "started_at": "2026-09-28T03:54:13.467208+00:00",
+          "ended_at": "2026-09-28T03:56:53.412655+00:00",
+          "artifact": "results/faithful-b-rory-long-completed/04-1-turn.json",
+          "artifact_sha256": "5fbbbf02eb4c788b183760a62ec06e16c75ad6943acc4e6897ac009266e45f72",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+              "turn_sha256": "b4d5896d596316d0d3a6a0721ffd2b3beeed1d353b3bbf1a83e76fe18298b05e",
+              "root_turn_sha256": "171668b0cb26f0a218a7887b99e7a8d96f3d9f48b394aebad4b52be8b53cbb5f",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T03:54:26.644Z",
+              "stage": 4
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "attempt": 1,
+          "root_turn_sha256": "b4a1cc9d4f06fb1f90657eef4854c236f053977994e74a20ee413ea81a7ca757",
+          "started_at": "2026-09-28T03:57:11.378209+00:00",
+          "ended_at": "2026-09-28T04:00:24.149246+00:00",
+          "artifact": "results/faithful-b-rory-long-completed/05-1-turn.json",
+          "artifact_sha256": "d888c4076b759269ca1c4ad27c5328ef1141f8308977ec50db3e6d357c545894",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+              "turn_sha256": "de2d5a0ca8fee3455990e3b8ff628c076e3771e5acdc32e89522f838e482052b",
+              "root_turn_sha256": "b4a1cc9d4f06fb1f90657eef4854c236f053977994e74a20ee413ea81a7ca757",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T03:57:27.314Z",
+              "stage": 5
+            }
+          ]
+        },
+        {
+          "stage": 6,
+          "attempt": 1,
+          "root_turn_sha256": "0550d060429d016f92dd383d628deb98774766c40dc49630de8faeefa64008a4",
+          "started_at": "2026-09-28T04:13:18.080378+00:00",
+          "ended_at": "2026-09-28T04:15:07.481461+00:00",
+          "artifact": "results/faithful-b-rory-long-completed/06-1-turn.json",
+          "artifact_sha256": "2fa864daa78044815c61aa40346da5a1862912aeb023dc5ee746831d804639a6",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+              "turn_sha256": "ad5ab6a453eb0eed8740fc9f0ec2e3ecf3bfe70a6a947491e41f4ad6e24821e1",
+              "root_turn_sha256": "0550d060429d016f92dd383d628deb98774766c40dc49630de8faeefa64008a4",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:13:34.150Z",
+              "stage": 6
+            }
+          ]
+        },
+        {
+          "stage": 7,
+          "attempt": 1,
+          "root_turn_sha256": "50d7439c2da3fff6ce8a4756c4b86ff75ea548eee033b1a57174e7d447445538",
+          "started_at": "2026-09-28T04:15:32.036348+00:00",
+          "ended_at": "2026-09-28T04:18:48.860272+00:00",
+          "artifact": "results/faithful-b-rory-long-completed/07-1-turn.json",
+          "artifact_sha256": "a650fbda7d8caf6b648c07f76422663caa348ff9d1c6c3847fa7c46015f7ee8a",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+              "turn_sha256": "7f7a1f31b63d02ac5a4300b1a7d1961e03dfab8d895c6505394f133069b305fd",
+              "root_turn_sha256": "50d7439c2da3fff6ce8a4756c4b86ff75ea548eee033b1a57174e7d447445538",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:15:59.594Z",
+              "stage": 7
+            }
+          ]
+        },
+        {
+          "stage": 8,
+          "attempt": 1,
+          "root_turn_sha256": "8d547ab4983c1ae7b2c91c2dfedf3f6f88d3d8effcc4daa9f52f20fda0fc1918",
+          "started_at": "2026-09-28T04:19:36.573291+00:00",
+          "ended_at": "2026-09-28T04:22:59.756793+00:00",
+          "artifact": "results/faithful-b-rory-long-completed/08-1-turn.json",
+          "artifact_sha256": "6d0804b80937500ee4437184beae7a05e1a60680720cb84b85f8491d38c641a9",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+              "turn_sha256": "649998146d12a1fc07cd79fa51f9c6440f9e3f868d210180046e1ef591a3b2f4",
+              "root_turn_sha256": "8d547ab4983c1ae7b2c91c2dfedf3f6f88d3d8effcc4daa9f52f20fda0fc1918",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:19:48.572Z",
+              "stage": 8
+            }
+          ]
+        }
+      ],
+      "root_child_activity": [
+        {
+          "kind": "started",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "170364acdec070520cbb48ddbe65528393635624e4ddc5d0a6b2afd53e7e7b7a",
+          "stage": 1,
+          "observed_at": "2026-09-28T03:45:24.439323+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "170364acdec070520cbb48ddbe65528393635624e4ddc5d0a6b2afd53e7e7b7a",
+          "stage": 1,
+          "observed_at": "2026-09-28T03:46:14.498118+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "170364acdec070520cbb48ddbe65528393635624e4ddc5d0a6b2afd53e7e7b7a",
+          "stage": 1,
+          "observed_at": "2026-09-28T03:46:43.080826+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "170364acdec070520cbb48ddbe65528393635624e4ddc5d0a6b2afd53e7e7b7a",
+          "stage": 1,
+          "observed_at": "2026-09-28T03:47:35.960852+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "6bfc4994bb265e2deba5f165f20b1965963acc5f55d8b2cdc24616841267ff8d",
+          "stage": 2,
+          "observed_at": "2026-09-28T03:48:31.983140+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "6bfc4994bb265e2deba5f165f20b1965963acc5f55d8b2cdc24616841267ff8d",
+          "stage": 2,
+          "observed_at": "2026-09-28T03:49:28.561306+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "6bfc4994bb265e2deba5f165f20b1965963acc5f55d8b2cdc24616841267ff8d",
+          "stage": 2,
+          "observed_at": "2026-09-28T03:50:21.650969+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "7fe31f3b66ba23652967c81749af0d7bf796d3c967fe09625aec4ab350a136b5",
+          "stage": 3,
+          "observed_at": "2026-09-28T03:51:43.302891+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "7fe31f3b66ba23652967c81749af0d7bf796d3c967fe09625aec4ab350a136b5",
+          "stage": 3,
+          "observed_at": "2026-09-28T03:52:20.062587+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "7fe31f3b66ba23652967c81749af0d7bf796d3c967fe09625aec4ab350a136b5",
+          "stage": 3,
+          "observed_at": "2026-09-28T03:53:36.735115+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "171668b0cb26f0a218a7887b99e7a8d96f3d9f48b394aebad4b52be8b53cbb5f",
+          "stage": 4,
+          "observed_at": "2026-09-28T03:54:26.027024+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "171668b0cb26f0a218a7887b99e7a8d96f3d9f48b394aebad4b52be8b53cbb5f",
+          "stage": 4,
+          "observed_at": "2026-09-28T03:55:28.499707+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "171668b0cb26f0a218a7887b99e7a8d96f3d9f48b394aebad4b52be8b53cbb5f",
+          "stage": 4,
+          "observed_at": "2026-09-28T03:56:07.687619+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "b4a1cc9d4f06fb1f90657eef4854c236f053977994e74a20ee413ea81a7ca757",
+          "stage": 5,
+          "observed_at": "2026-09-28T03:57:25.833826+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "b4a1cc9d4f06fb1f90657eef4854c236f053977994e74a20ee413ea81a7ca757",
+          "stage": 5,
+          "observed_at": "2026-09-28T03:58:14.648117+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "b4a1cc9d4f06fb1f90657eef4854c236f053977994e74a20ee413ea81a7ca757",
+          "stage": 5,
+          "observed_at": "2026-09-28T03:59:29.828902+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "b4a1cc9d4f06fb1f90657eef4854c236f053977994e74a20ee413ea81a7ca757",
+          "stage": 5,
+          "observed_at": "2026-09-28T04:00:01.202246+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "0550d060429d016f92dd383d628deb98774766c40dc49630de8faeefa64008a4",
+          "stage": 6,
+          "observed_at": "2026-09-28T04:13:31.835942+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "0550d060429d016f92dd383d628deb98774766c40dc49630de8faeefa64008a4",
+          "stage": 6,
+          "observed_at": "2026-09-28T04:14:01.271370+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "0550d060429d016f92dd383d628deb98774766c40dc49630de8faeefa64008a4",
+          "stage": 6,
+          "observed_at": "2026-09-28T04:14:12.454349+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "50d7439c2da3fff6ce8a4756c4b86ff75ea548eee033b1a57174e7d447445538",
+          "stage": 7,
+          "observed_at": "2026-09-28T04:15:56.240562+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "50d7439c2da3fff6ce8a4756c4b86ff75ea548eee033b1a57174e7d447445538",
+          "stage": 7,
+          "observed_at": "2026-09-28T04:17:19.041845+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "50d7439c2da3fff6ce8a4756c4b86ff75ea548eee033b1a57174e7d447445538",
+          "stage": 7,
+          "observed_at": "2026-09-28T04:18:20.716015+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "8d547ab4983c1ae7b2c91c2dfedf3f6f88d3d8effcc4daa9f52f20fda0fc1918",
+          "stage": 8,
+          "observed_at": "2026-09-28T04:19:48.525658+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "8d547ab4983c1ae7b2c91c2dfedf3f6f88d3d8effcc4daa9f52f20fda0fc1918",
+          "stage": 8,
+          "observed_at": "2026-09-28T04:20:34.428642+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "6c8751a335938dd92bbc8082198a3ddca686b5511771ed4bdf8450ed34e8f84c",
+          "root_turn_sha256": "8d547ab4983c1ae7b2c91c2dfedf3f6f88d3d8effcc4daa9f52f20fda0fc1918",
+          "stage": 8,
+          "observed_at": "2026-09-28T04:21:55.256349+00:00"
+        }
+      ],
+      "new_worker_threads_after_boundary": 0,
+      "root_id_changed_at_boundary": false,
+      "telemetry_warnings": [],
+      "public_trace": {
+        "path": "results/faithful-b-rory-long-completed/trace.jsonl",
+        "sha256": "2c2be5899d9e6c516b9b13994b415c016fe5e8f3dbcaf635ae129352edc8078f",
+        "row_count": 595,
+        "spawn_and_followup_rows": [
+          {
+            "row": 8,
+            "thread": "root",
+            "timestamp": "2026-09-28T03:45:22.916Z",
+            "tool": "spawn_agent"
+          },
+          {
+            "row": 68,
+            "thread": "root",
+            "timestamp": "2026-09-28T03:48:31.856Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 110,
+            "thread": "root",
+            "timestamp": "2026-09-28T03:51:43.100Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 147,
+            "thread": "root",
+            "timestamp": "2026-09-28T03:54:25.333Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 181,
+            "thread": "root",
+            "timestamp": "2026-09-28T03:57:24.628Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 224,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:13:31.334Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 260,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:15:52.830Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 303,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:19:48.499Z",
+            "tool": "followup_task"
+          }
+        ]
+      },
+      "private_protocol_sha256": [
+        {
+          "segment": "original-five-stages",
+          "sha256": "de3bab589f4663c38c36727ab95f932d0f3d034e1a18195cfba262ede803674c"
+        },
+        {
+          "segment": "completed-segment-or-full-arm",
+          "sha256": "7df8cd23a7ced97a2ee875245cd20ddcd6d072eb4e6d7f7dcb5e5363120887e2"
+        }
+      ]
+    },
+    {
+      "run_id": "faithful-b-rory",
+      "status": "verified",
+      "root_thread_sha256": "47d55f6171db5f61cee85c142e0ae1a73557c7a4e6bfc7899740715fd6f3cdc3",
+      "root_models": [
+        "gpt-6-astra"
+      ],
+      "root_reasoning_efforts": [
+        "high"
+      ],
+      "native_thread_count": 2,
+      "native_transport_initializations": 2,
+      "root_rpc_identity_evidence": [
+        {
+          "method": "thread/start",
+          "requested_at": "2026-09-28T04:24:50.149964+00:00",
+          "acknowledged_at": "2026-09-28T04:24:54.339793+00:00",
+          "returned_root_sha256": "47d55f6171db5f61cee85c142e0ae1a73557c7a4e6bfc7899740715fd6f3cdc3",
+          "requested_root_sha256": null
+        },
+        {
+          "method": "thread/resume",
+          "requested_at": "2026-09-28T04:41:55.553100+00:00",
+          "acknowledged_at": "2026-09-28T04:41:56.978627+00:00",
+          "returned_root_sha256": "47d55f6171db5f61cee85c142e0ae1a73557c7a4e6bfc7899740715fd6f3cdc3",
+          "requested_root_sha256": "47d55f6171db5f61cee85c142e0ae1a73557c7a4e6bfc7899740715fd6f3cdc3"
+        }
+      ],
+      "stage_five_boundary": {
+        "after_stage": 5,
+        "closed_at": "2026-09-28T04:41:55.259429+00:00",
+        "resumed_at": "2026-09-28T04:41:56.980980+00:00",
+        "interruption": "Matched stage-five transport restart."
+      },
+      "worker_count": 1,
+      "workers": [
+        {
+          "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "parent_sha256": "47d55f6171db5f61cee85c142e0ae1a73557c7a4e6bfc7899740715fd6f3cdc3",
+          "agent_path": "/root/catalog",
+          "turn_count_before_restart": 5,
+          "turn_count_after_restart": 3,
+          "models_and_efforts_before": [
+            [
+              "gpt-5.6-terra",
+              "high"
+            ]
+          ],
+          "models_and_efforts_after": [
+            [
+              "gpt-5.6-terra",
+              "high"
+            ]
+          ],
+          "same_native_thread_across_boundary": true
+        }
+      ],
+      "root_tool_call_counts": {
+        "exec": 52,
+        "spawn_agent": 1,
+        "send_message": 10,
+        "wait_agent": 11,
+        "followup_task": 7
+      },
+      "root_turns": [
+        {
+          "stage": 1,
+          "attempt": 1,
+          "root_turn_sha256": "a726f3bb19d91e18a8266a53df7c15284f2119bf72071c9a1cc3309aec2ccc05",
+          "started_at": "2026-09-28T04:24:54.351875+00:00",
+          "ended_at": "2026-09-28T04:29:10.858747+00:00",
+          "artifact": "results/faithful-b-rory/01-1-turn.json",
+          "artifact_sha256": "0bf80a0963e791f2d47bff99febec7f9cadce05c0507680b7565f0866851147e",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+              "turn_sha256": "bb76f51c8b2d5df84bf9558a7ba6533662b1e4e002344d0648aa598eaebe0a30",
+              "root_turn_sha256": "a726f3bb19d91e18a8266a53df7c15284f2119bf72071c9a1cc3309aec2ccc05",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:25:38.088Z",
+              "stage": 1
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "attempt": 1,
+          "root_turn_sha256": "c9b279716b4cdedadc769c18bb18cdf478825f636a2c7e3991d394aad2fd577c",
+          "started_at": "2026-09-28T04:29:28.872549+00:00",
+          "ended_at": "2026-09-28T04:32:16.234252+00:00",
+          "artifact": "results/faithful-b-rory/02-1-turn.json",
+          "artifact_sha256": "12f764216bae1e25cfbbab94bb0b992e830110f29770ceae688de56c71f54fa9",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+              "turn_sha256": "a95c634a6839ba0fd8f5e07b397d6e4ecaf395470d681578c39fa8c54b36b402",
+              "root_turn_sha256": "c9b279716b4cdedadc769c18bb18cdf478825f636a2c7e3991d394aad2fd577c",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:29:46.590Z",
+              "stage": 2
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "attempt": 1,
+          "root_turn_sha256": "97a8e3b2569fecad2fd856680e2f67e5d7fb62ec2f3b012a70739acc927c3979",
+          "started_at": "2026-09-28T04:32:43.607484+00:00",
+          "ended_at": "2026-09-28T04:35:03.948613+00:00",
+          "artifact": "results/faithful-b-rory/03-1-turn.json",
+          "artifact_sha256": "e11106fddee4667b3a975e38f9c059875fc31ca9c485c1af03b752234c2062e3",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+              "turn_sha256": "69af476381e3ca160b53e312f28fc808d0f68a3aecf55e6db6ed1c1806bceb92",
+              "root_turn_sha256": "97a8e3b2569fecad2fd856680e2f67e5d7fb62ec2f3b012a70739acc927c3979",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:33:04.148Z",
+              "stage": 3
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "attempt": 1,
+          "root_turn_sha256": "bbadd940185a2b9df8af51216c916491d147890ce73787fe539ed796b0f670e6",
+          "started_at": "2026-09-28T04:35:26.111523+00:00",
+          "ended_at": "2026-09-28T04:37:40.899731+00:00",
+          "artifact": "results/faithful-b-rory/04-1-turn.json",
+          "artifact_sha256": "d9dd47bb01904c090888670bb2cb66934ef3b36ca3bf9d91dfa5420c5de8fb04",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+              "turn_sha256": "7f5e986a2aeab7e160c9d0aec03a6297cc38d7fb71e72e02a5b00cf49edcc6a0",
+              "root_turn_sha256": "bbadd940185a2b9df8af51216c916491d147890ce73787fe539ed796b0f670e6",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:35:40.626Z",
+              "stage": 4
+            }
+          ]
+        },
+        {
+          "stage": 5,
+          "attempt": 1,
+          "root_turn_sha256": "4dae2440af8bb471d2209d1d79f2fd2cc03b232fe5e942e4582002e546b252f9",
+          "started_at": "2026-09-28T04:37:57.634396+00:00",
+          "ended_at": "2026-09-28T04:41:29.023878+00:00",
+          "artifact": "results/faithful-b-rory/05-1-turn.json",
+          "artifact_sha256": "d9670209fa30d6b9dbb89d6b43f1d7f2e2f00d3d8a1adb108158c4b729dee329",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+              "turn_sha256": "fabd4cc5ed128b0d3ab1924c9273b72ca0b85949c7f6b71f33b18ce41431d067",
+              "root_turn_sha256": "4dae2440af8bb471d2209d1d79f2fd2cc03b232fe5e942e4582002e546b252f9",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:38:24.821Z",
+              "stage": 5
+            }
+          ]
+        },
+        {
+          "stage": 6,
+          "attempt": 1,
+          "root_turn_sha256": "1cb30ae7fe532f72b5cf6917757f194fc119913ee865c854cf137a7e1ffa3260",
+          "started_at": "2026-09-28T04:41:56.993701+00:00",
+          "ended_at": "2026-09-28T04:43:53.004136+00:00",
+          "artifact": "results/faithful-b-rory/06-1-turn.json",
+          "artifact_sha256": "1237f3f495cfbf8c8765efa73d67cb4774d4337c2068211c4f2149c5b9be4a9f",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+              "turn_sha256": "1f05a6aa29cedd9cd352abe7210eb09c9bbce60934b20b2ce3d1ad476dcccac4",
+              "root_turn_sha256": "1cb30ae7fe532f72b5cf6917757f194fc119913ee865c854cf137a7e1ffa3260",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:42:25.125Z",
+              "stage": 6
+            }
+          ]
+        },
+        {
+          "stage": 7,
+          "attempt": 1,
+          "root_turn_sha256": "bb6fd52f9a837d54c415c4114caa24c42d5ea2e902a6571a4113b6624a012ab9",
+          "started_at": "2026-09-28T04:44:08.662094+00:00",
+          "ended_at": "2026-09-28T04:47:19.443476+00:00",
+          "artifact": "results/faithful-b-rory/07-1-turn.json",
+          "artifact_sha256": "69821654b51d2dda6abbf203b35e43f50ac96753a4243814051d8d1f369a35d3",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+              "turn_sha256": "78aa37847695d2662d38cf9b0ea32dbfac1f38579e2488158c38afe6bacfabdd",
+              "root_turn_sha256": "bb6fd52f9a837d54c415c4114caa24c42d5ea2e902a6571a4113b6624a012ab9",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:44:28.319Z",
+              "stage": 7
+            }
+          ]
+        },
+        {
+          "stage": 8,
+          "attempt": 1,
+          "root_turn_sha256": "1af0f53ee0b08addda15713c443e90ac0ffa416283b846aa0ce7035dc87f2e81",
+          "started_at": "2026-09-28T04:47:32.145237+00:00",
+          "ended_at": "2026-09-28T04:49:57.091204+00:00",
+          "artifact": "results/faithful-b-rory/08-1-turn.json",
+          "artifact_sha256": "41febd1297a5ab7f964eb20fe58e9042bcfd2d2dd37df7d2b0bbf3f8f8aa2148",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": [
+            {
+              "thread_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+              "turn_sha256": "33d436f7a725c2413d74c4c2b1457e66b0aecc7c1ab349e660661f9c12ba0aa2",
+              "root_turn_sha256": "1af0f53ee0b08addda15713c443e90ac0ffa416283b846aa0ce7035dc87f2e81",
+              "model": "gpt-5.6-terra",
+              "effort": "high",
+              "observed_at": "2026-09-28T04:47:46.453Z",
+              "stage": 8
+            }
+          ]
+        }
+      ],
+      "root_child_activity": [
+        {
+          "kind": "started",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "a726f3bb19d91e18a8266a53df7c15284f2119bf72071c9a1cc3309aec2ccc05",
+          "stage": 1,
+          "observed_at": "2026-09-28T04:25:31.780260+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "a726f3bb19d91e18a8266a53df7c15284f2119bf72071c9a1cc3309aec2ccc05",
+          "stage": 1,
+          "observed_at": "2026-09-28T04:26:00.983184+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "a726f3bb19d91e18a8266a53df7c15284f2119bf72071c9a1cc3309aec2ccc05",
+          "stage": 1,
+          "observed_at": "2026-09-28T04:26:24.452596+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "a726f3bb19d91e18a8266a53df7c15284f2119bf72071c9a1cc3309aec2ccc05",
+          "stage": 1,
+          "observed_at": "2026-09-28T04:28:05.342019+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "c9b279716b4cdedadc769c18bb18cdf478825f636a2c7e3991d394aad2fd577c",
+          "stage": 2,
+          "observed_at": "2026-09-28T04:29:46.449926+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "c9b279716b4cdedadc769c18bb18cdf478825f636a2c7e3991d394aad2fd577c",
+          "stage": 2,
+          "observed_at": "2026-09-28T04:30:42.644524+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "c9b279716b4cdedadc769c18bb18cdf478825f636a2c7e3991d394aad2fd577c",
+          "stage": 2,
+          "observed_at": "2026-09-28T04:31:41.251830+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "97a8e3b2569fecad2fd856680e2f67e5d7fb62ec2f3b012a70739acc927c3979",
+          "stage": 3,
+          "observed_at": "2026-09-28T04:33:03.817459+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "97a8e3b2569fecad2fd856680e2f67e5d7fb62ec2f3b012a70739acc927c3979",
+          "stage": 3,
+          "observed_at": "2026-09-28T04:33:29.823852+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "97a8e3b2569fecad2fd856680e2f67e5d7fb62ec2f3b012a70739acc927c3979",
+          "stage": 3,
+          "observed_at": "2026-09-28T04:34:36.235900+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "bbadd940185a2b9df8af51216c916491d147890ce73787fe539ed796b0f670e6",
+          "stage": 4,
+          "observed_at": "2026-09-28T04:35:40.534048+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "bbadd940185a2b9df8af51216c916491d147890ce73787fe539ed796b0f670e6",
+          "stage": 4,
+          "observed_at": "2026-09-28T04:36:05.474542+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "bbadd940185a2b9df8af51216c916491d147890ce73787fe539ed796b0f670e6",
+          "stage": 4,
+          "observed_at": "2026-09-28T04:36:51.778234+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "4dae2440af8bb471d2209d1d79f2fd2cc03b232fe5e942e4582002e546b252f9",
+          "stage": 5,
+          "observed_at": "2026-09-28T04:38:22.668678+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "4dae2440af8bb471d2209d1d79f2fd2cc03b232fe5e942e4582002e546b252f9",
+          "stage": 5,
+          "observed_at": "2026-09-28T04:39:29.044976+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "4dae2440af8bb471d2209d1d79f2fd2cc03b232fe5e942e4582002e546b252f9",
+          "stage": 5,
+          "observed_at": "2026-09-28T04:40:29.841808+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "1cb30ae7fe532f72b5cf6917757f194fc119913ee865c854cf137a7e1ffa3260",
+          "stage": 6,
+          "observed_at": "2026-09-28T04:42:20.245618+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "1cb30ae7fe532f72b5cf6917757f194fc119913ee865c854cf137a7e1ffa3260",
+          "stage": 6,
+          "observed_at": "2026-09-28T04:42:41.335674+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "1cb30ae7fe532f72b5cf6917757f194fc119913ee865c854cf137a7e1ffa3260",
+          "stage": 6,
+          "observed_at": "2026-09-28T04:43:35.180747+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "bb6fd52f9a837d54c415c4114caa24c42d5ea2e902a6571a4113b6624a012ab9",
+          "stage": 7,
+          "observed_at": "2026-09-28T04:44:28.087592+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "bb6fd52f9a837d54c415c4114caa24c42d5ea2e902a6571a4113b6624a012ab9",
+          "stage": 7,
+          "observed_at": "2026-09-28T04:44:49.177879+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "bb6fd52f9a837d54c415c4114caa24c42d5ea2e902a6571a4113b6624a012ab9",
+          "stage": 7,
+          "observed_at": "2026-09-28T04:45:23.125035+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "bb6fd52f9a837d54c415c4114caa24c42d5ea2e902a6571a4113b6624a012ab9",
+          "stage": 7,
+          "observed_at": "2026-09-28T04:45:59.939463+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "1af0f53ee0b08addda15713c443e90ac0ffa416283b846aa0ce7035dc87f2e81",
+          "stage": 8,
+          "observed_at": "2026-09-28T04:47:46.370316+00:00"
+        },
+        {
+          "kind": "interacted",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "1af0f53ee0b08addda15713c443e90ac0ffa416283b846aa0ce7035dc87f2e81",
+          "stage": 8,
+          "observed_at": "2026-09-28T04:48:25.312997+00:00"
+        },
+        {
+          "kind": "completed",
+          "child_sha256": "ae94dae2ff0d7c4fb208506056d5e35ea13ff27495f6464b5103e7a482878baf",
+          "root_turn_sha256": "1af0f53ee0b08addda15713c443e90ac0ffa416283b846aa0ce7035dc87f2e81",
+          "stage": 8,
+          "observed_at": "2026-09-28T04:49:16.283220+00:00"
+        }
+      ],
+      "new_worker_threads_after_boundary": 0,
+      "root_id_changed_at_boundary": false,
+      "telemetry_warnings": [],
+      "public_trace": {
+        "path": "results/faithful-b-rory/trace.jsonl",
+        "sha256": "1bf5795280e08a9abb8b5446ee3b7e3d1e0b94f51fc31bd636c5276139e2eeef",
+        "row_count": 546,
+        "spawn_and_followup_rows": [
+          {
+            "row": 12,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:25:30.784Z",
+            "tool": "spawn_agent"
+          },
+          {
+            "row": 82,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:29:46.305Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 122,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:33:03.480Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 156,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:35:40.391Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 192,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:38:22.378Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 234,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:42:19.240Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 265,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:44:27.643Z",
+            "tool": "followup_task"
+          },
+          {
+            "row": 310,
+            "thread": "root",
+            "timestamp": "2026-09-28T04:47:46.234Z",
+            "tool": "followup_task"
+          }
+        ]
+      },
+      "private_protocol_sha256": [
+        {
+          "segment": "completed-segment-or-full-arm",
+          "sha256": "18f47c6152b553ee1e0f759e7a7a006304fbe167aa757b76df7df846ba27f575"
+        }
+      ]
+    },
+    {
+      "run_id": "faithful-b-default",
+      "status": "verified",
+      "root_thread_sha256": "c15a56b6a8095672537ba67bd1b0c38f5dbe23ffa13ca974473d145567f69311",
+      "root_models": [
+        "gpt-6-astra"
+      ],
+      "root_reasoning_efforts": [
+        "high"
+      ],
+      "native_thread_count": 1,
+      "native_transport_initializations": 2,
+      "root_rpc_identity_evidence": [
+        {
+          "method": "thread/start",
+          "requested_at": "2026-09-28T04:51:28.816578+00:00",
+          "acknowledged_at": "2026-09-28T04:51:29.340995+00:00",
+          "returned_root_sha256": "c15a56b6a8095672537ba67bd1b0c38f5dbe23ffa13ca974473d145567f69311",
+          "requested_root_sha256": null
+        },
+        {
+          "method": "thread/resume",
+          "requested_at": "2026-09-28T05:01:37.163691+00:00",
+          "acknowledged_at": "2026-09-28T05:01:38.030950+00:00",
+          "returned_root_sha256": "c15a56b6a8095672537ba67bd1b0c38f5dbe23ffa13ca974473d145567f69311",
+          "requested_root_sha256": "c15a56b6a8095672537ba67bd1b0c38f5dbe23ffa13ca974473d145567f69311"
+        }
+      ],
+      "stage_five_boundary": {
+        "after_stage": 5,
+        "closed_at": "2026-09-28T05:01:36.644938+00:00",
+        "resumed_at": "2026-09-28T05:01:38.032013+00:00",
+        "interruption": "Matched stage-five transport restart."
+      },
+      "worker_count": 0,
+      "workers": [],
+      "root_tool_call_counts": {
+        "exec": 54
+      },
+      "root_turns": [
+        {
+          "stage": 1,
+          "attempt": 1,
+          "root_turn_sha256": "8fa1b0b595957125bf34a0aa1829d60c5aaeab26e18d7ae296aa371804822f9a",
+          "started_at": "2026-09-28T04:51:29.350915+00:00",
+          "ended_at": "2026-09-28T04:53:12.568001+00:00",
+          "artifact": "results/faithful-b-default/01-1-turn.json",
+          "artifact_sha256": "36c80a101fb8bbcec9646e8addc661d84d941201af1ba1e21aea9346ce6f0f1e",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": []
+        },
+        {
+          "stage": 2,
+          "attempt": 1,
+          "root_turn_sha256": "a251286c4d983fbffebe79ad15d04b4edfec845b86898eefaeebc90f412f1671",
+          "started_at": "2026-09-28T04:53:22.517494+00:00",
+          "ended_at": "2026-09-28T04:55:21.414565+00:00",
+          "artifact": "results/faithful-b-default/02-1-turn.json",
+          "artifact_sha256": "df46454ffb29b9b4530f41f033ded326d0b629f8b19b68360e055ebcb82da660",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": []
+        },
+        {
+          "stage": 3,
+          "attempt": 1,
+          "root_turn_sha256": "52aea89e41e838e65d2bd7f77844a6e67c2337e1e0e9b118a84caa82ff3a99a0",
+          "started_at": "2026-09-28T04:55:30.161379+00:00",
+          "ended_at": "2026-09-28T04:56:55.986335+00:00",
+          "artifact": "results/faithful-b-default/03-1-turn.json",
+          "artifact_sha256": "3df2e5381d5d3ed2f4d0bbcc23b719298afdcc2229bba591d20bf789ef12662f",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": []
+        },
+        {
+          "stage": 4,
+          "attempt": 1,
+          "root_turn_sha256": "2019eb1bdca98ad3a959e6b500a1d5e1d913f44c618680275281eda1a06fe572",
+          "started_at": "2026-09-28T04:57:06.989236+00:00",
+          "ended_at": "2026-09-28T04:58:38.458036+00:00",
+          "artifact": "results/faithful-b-default/04-1-turn.json",
+          "artifact_sha256": "e466603fc692e082713803dcbad171d495bc3b8d62f9bc727e304bb5ba63f545",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": []
+        },
+        {
+          "stage": 5,
+          "attempt": 1,
+          "root_turn_sha256": "4ef253d97050e4c9ee48c225d5202bd39d6d3d84203ab94d64f222712f106874",
+          "started_at": "2026-09-28T04:58:51.915928+00:00",
+          "ended_at": "2026-09-28T05:01:23.892261+00:00",
+          "artifact": "results/faithful-b-default/05-1-turn.json",
+          "artifact_sha256": "fa8ded39bf437715f37aa25bad6fcd1f401be7bc2c5445b7e40a4a1e95a88c4f",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": []
+        },
+        {
+          "stage": 6,
+          "attempt": 1,
+          "root_turn_sha256": "f46049d77d873b8293f4e2702fe4999560eaaa0ffe46212ea7b6a7ee80fe862d",
+          "started_at": "2026-09-28T05:01:38.044114+00:00",
+          "ended_at": "2026-09-28T05:02:58.354627+00:00",
+          "artifact": "results/faithful-b-default/06-1-turn.json",
+          "artifact_sha256": "a98921a949d513eda6f04efac43d2210471a702156b12328ae6614791b84d8d2",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": []
+        },
+        {
+          "stage": 7,
+          "attempt": 1,
+          "root_turn_sha256": "66b3e49206c0dd9fd4e11c1e35b9d21dc444eaa446c164f908bf85b2dcf7ec8c",
+          "started_at": "2026-09-28T05:03:11.506156+00:00",
+          "ended_at": "2026-09-28T05:07:22.322657+00:00",
+          "artifact": "results/faithful-b-default/07-1-turn.json",
+          "artifact_sha256": "dc24136664bf446f50c6557a3d9d9e777cc81c7c9299c6db680bf05969cfd2e7",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": []
+        },
+        {
+          "stage": 8,
+          "attempt": 1,
+          "root_turn_sha256": "8d063a8e048c2cc5aa856a65b148baf6afe06b9f8bbd4224671d87a437cbbf4f",
+          "started_at": "2026-09-28T05:08:09.913728+00:00",
+          "ended_at": "2026-09-28T05:12:11.695194+00:00",
+          "artifact": "results/faithful-b-default/08-1-turn.json",
+          "artifact_sha256": "46a4d64fcb758b2c954c74b7870861269d2d0c5bd81661dd41d94e0cc556fc4b",
+          "root_model": "gpt-6-astra",
+          "root_effort": "high",
+          "worker_turns": []
+        }
+      ],
+      "root_child_activity": [],
+      "new_worker_threads_after_boundary": 0,
+      "root_id_changed_at_boundary": false,
+      "telemetry_warnings": [],
+      "public_trace": {
+        "path": "results/faithful-b-default/trace.jsonl",
+        "sha256": "cbdf104f856b34fbf482b9d29b2345fe94c8112fee0d10cea929c2a52817a984",
+        "row_count": 246,
+        "spawn_and_followup_rows": []
+      },
+      "private_protocol_sha256": [
+        {
+          "segment": "completed-segment-or-full-arm",
+          "sha256": "7a409ad33086cac243606bdbcbcea83eb74c2c8775e0ef5258ba5c47f109faef"
+        }
+      ]
+    }
+  ],
+  "method": [
+    "Read each recorded root turn ID and link worker turn_context.root_turn_id directly to that root turn.",
+    "Verify each worker session_meta source.subagent.thread_spawn.parent_thread_id matches the root ID.",
+    "Match native thread/start and thread/resume RPC acknowledgements, and child activity events on the root thread.",
+    "Hash native IDs; retain public artifact hashes and row references. No reasoning, hidden instruction envelopes, credentials, or opaque briefs are included."
+  ],
+  "caveats": [
+    "This verifies persisted native conversation identity and observed model/effort; it does not reveal provider-side cache retention or hidden internal state.",
+    "B-long pause before stage six was longer than the short/default transport restarts; cache effects may differ.",
+    "Final telemetry snapshots are cumulative. The preserved five-stage B-long snapshot is part of the completed eight-stage snapshot and must not be added again."
+  ]
+}

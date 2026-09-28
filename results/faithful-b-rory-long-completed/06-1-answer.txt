@@ -1,0 +1,5 @@
+Corrected `listDebates`: both filters now apply to the full newest-first catalog before offset and limit. Updated tests verify pages of matching debates, including combined filters.
+
+Artifact reading, validation, and read-only/symlink safeguards remain unchanged.
+
+Validation: 91 tests passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

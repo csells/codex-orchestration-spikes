@@ -23,6 +23,6 @@ test_quota_snapshot_allowlists_both_rpc_and_rollout_shapes (test_telemetry.Accou
 test_resumed_spawns_reusing_task_name_match_their_own_child_creation (test_telemetry.AccountingTests.test_resumed_spawns_reusing_task_name_match_their_own_child_creation) ... ok
 
 ----------------------------------------------------------------------
-Ran 23 tests in 0.096s
+Ran 23 tests in 0.499s
 
 OK

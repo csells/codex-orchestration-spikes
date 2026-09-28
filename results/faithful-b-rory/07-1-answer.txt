@@ -1,0 +1,3 @@
+Added `src/catalog-cli.ts` with JSON output, flags in any order, and `INVALID_QUERY` diagnostics with exit 1 and empty stdout. Missing directories return `[]`; read-only and symlink safeguards remain intact.
+
+Validation: 102 tests passed, including four CLI subprocess tests. One build test skipped because esbuild isn’t installed. No network or real model services used.

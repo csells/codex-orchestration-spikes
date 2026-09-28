@@ -1,0 +1,16 @@
+{
+  "credit_equivalent_by_experiment": {
+    "six_sustained_sessions": 1289.0996465,
+    "faithful-forced-chat": 6.4696,
+    "faithful-forced-agents": 8.489,
+    "reuse_preflight": 6.8670275,
+    "infrastructure_failed_reuse_preflight": 5.02046
+  },
+  "unique_total": 1315.9457340000001,
+  "excluded_duplicate_snapshot": "faithful-b-rory-long, superseded by cumulative faithful-b-rory-long-completed",
+  "exclusions": "Preparation, supervising, grading, and documentation model usage are not included. These are pricing-derived execution estimates, not actual subscription charges.",
+  "initial_guard": 800,
+  "initial_actual_at_turn_boundary": 816.0076765,
+  "extension_guard_additional": 650,
+  "extension_actual_additional": 473.09197
+}

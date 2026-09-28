@@ -1,0 +1,3 @@
+Implemented `src/catalog.ts` exporting `DebateEntry` and `listDebates(root)`, with exact filtering, lexical ordering, absolute paths, regular-file checks, and symlink exclusion. Catalog operations are read-only and launch no services.
+
+Validation: 84 tests passed, including four catalog tests. One build test skipped because esbuild isn’t installed. No network or real model services used.

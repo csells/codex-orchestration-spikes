@@ -1,8 +1,12 @@
 {
   "schema_version": 1,
+  "superseded_cumulative_snapshots": [
+    "faithful-b-rory-long"
+  ],
   "note": "Two feature streams from one project; descriptive local comparisons, not statistical generalization. Credits are pricing-derived, not subscription measurements. Main snapshots are cumulative and counted once per session.",
   "runs": [
     {
+      "extends_run_id": null,
       "run_id": "faithful-a-default",
       "workstream": "sustained-a",
       "policy": "default",
@@ -11,7 +15,7 @@
       "stages_passed_first_attempt": 8,
       "stages_passed_after_repairs": 8,
       "repairs": 0,
-      "all_work_passed": true,
+      "all_functional_work_passed": true,
       "credit_estimate": 136.7788,
       "elapsed_seconds": 1247.04,
       "peak_parent_input": 106839,
@@ -79,9 +83,13 @@
           },
           "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
         }
+      },
+      "operating_constraints": {
+        "confirmed_violations": []
       }
     },
     {
+      "extends_run_id": null,
       "run_id": "faithful-a-rory",
       "workstream": "sustained-a",
       "policy": "rory",
@@ -90,7 +98,7 @@
       "stages_passed_first_attempt": 8,
       "stages_passed_after_repairs": 8,
       "repairs": 0,
-      "all_work_passed": true,
+      "all_functional_work_passed": true,
       "credit_estimate": 287.33086000000003,
       "elapsed_seconds": 1640.263,
       "peak_parent_input": 148286,
@@ -163,9 +171,13 @@
           },
           "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
         }
+      },
+      "operating_constraints": {
+        "confirmed_violations": []
       }
     },
     {
+      "extends_run_id": null,
       "run_id": "faithful-a-rory-long",
       "workstream": "sustained-a",
       "policy": "rory-long",
@@ -174,7 +186,7 @@
       "stages_passed_first_attempt": 8,
       "stages_passed_after_repairs": 8,
       "repairs": 0,
-      "all_work_passed": true,
+      "all_functional_work_passed": true,
       "credit_estimate": 259.06570650000003,
       "elapsed_seconds": 1485.654,
       "peak_parent_input": 114165,
@@ -247,51 +259,59 @@
           },
           "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
         }
+      },
+      "operating_constraints": {
+        "confirmed_violations": [
+          {
+            "rule": "No network use",
+            "event": "Worker 5 ran npx tsx; npm attempted registry.npmjs.org and failed ENOTFOUND. No successful fetch observed.",
+            "evidence": "results/faithful-a-rory-long/trace.jsonl#L601"
+          }
+        ],
+        "wording_ambiguities": [
+          "Reading self-generated /tmp test logs exceeds the literal outside-workspace restriction; no unrelated data access observed. The common rule is ambiguous about ordinary test scratch files."
+        ]
       }
     },
     {
-      "run_id": "faithful-b-rory-long",
+      "extends_run_id": null,
+      "run_id": "faithful-b-default",
       "workstream": "sustained-b",
-      "policy": "rory-long",
-      "status": "capped",
-      "stages_attempted": 5,
-      "stages_passed_first_attempt": 5,
-      "stages_passed_after_repairs": 5,
+      "policy": "default",
+      "status": "completed",
+      "stages_attempted": 8,
+      "stages_passed_first_attempt": 8,
+      "stages_passed_after_repairs": 8,
       "repairs": 0,
-      "all_work_passed": false,
-      "credit_estimate": 132.83231,
-      "elapsed_seconds": 867.143,
-      "peak_parent_input": 78324,
-      "workers": 1,
+      "all_functional_work_passed": true,
+      "credit_estimate": 154.40045,
+      "elapsed_seconds": 1124.331,
+      "peak_parent_input": 98103,
+      "workers": 0,
       "parent_tool_counts": {
-        "exec": 29,
-        "spawn_agent": 1,
-        "send_message": 7,
-        "wait_agent": 7,
-        "followup_task": 4
+        "exec": 54
       },
       "root_compactions": 0,
       "worker_compactions": 0,
       "actual_models": [
-        "gpt-5.6-terra",
         "gpt-6-astra"
       ],
       "usage": {
-        "input_tokens": 4553386,
-        "cached_input_tokens": 4292352,
+        "input_tokens": 4057610,
+        "cached_input_tokens": 3957248,
         "cache_write_input_tokens": 0,
-        "output_tokens": 33996,
-        "reasoning_output_tokens": 10090,
-        "total_tokens": 4587382
+        "output_tokens": 24303,
+        "reasoning_output_tokens": 3197,
+        "total_tokens": 4081913
       },
       "accounting_warnings": [],
       "quota": {
         "before": {
-          "observed_at": "2026-09-28T03:45:00.637386+00:00",
+          "observed_at": "2026-09-28T04:51:28.430701+00:00",
           "buckets": {
             "codex": {
               "primary": {
-                "used_percent": 11,
+                "used_percent": 13,
                 "window_minutes": 10080,
                 "resets_at": 1791054703
               },
@@ -302,11 +322,11 @@
           "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
         },
         "after": {
-          "observed_at": "2026-09-28T04:00:45.104716+00:00",
+          "observed_at": "2026-09-28T05:13:24.878546+00:00",
           "buckets": {
             "codex": {
               "primary": {
-                "used_percent": 11,
+                "used_percent": 13,
                 "window_minutes": 10080,
                 "resets_at": 1791054703
               },
@@ -317,11 +337,11 @@
           "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
         },
         "settled": {
-          "observed_at": "2026-09-28T04:01:46.702677+00:00",
+          "observed_at": "2026-09-28T05:14:27.024268+00:00",
           "buckets": {
             "codex": {
               "primary": {
-                "used_percent": 11,
+                "used_percent": 13,
                 "window_minutes": 10080,
                 "resets_at": 1791054703
               },
@@ -331,6 +351,188 @@
           },
           "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
         }
+      },
+      "operating_constraints": {
+        "confirmed_violations": []
+      }
+    },
+    {
+      "extends_run_id": null,
+      "run_id": "faithful-b-rory",
+      "workstream": "sustained-b",
+      "policy": "rory",
+      "status": "completed",
+      "stages_attempted": 8,
+      "stages_passed_first_attempt": 8,
+      "stages_passed_after_repairs": 8,
+      "repairs": 0,
+      "all_functional_work_passed": true,
+      "credit_estimate": 220.47091,
+      "elapsed_seconds": 1362.117,
+      "peak_parent_input": 109973,
+      "workers": 1,
+      "parent_tool_counts": {
+        "exec": 52,
+        "spawn_agent": 1,
+        "send_message": 10,
+        "wait_agent": 11,
+        "followup_task": 7
+      },
+      "root_compactions": 0,
+      "worker_compactions": 0,
+      "actual_models": [
+        "gpt-5.6-terra",
+        "gpt-6-astra"
+      ],
+      "usage": {
+        "input_tokens": 8185538,
+        "cached_input_tokens": 7979264,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 50188,
+        "reasoning_output_tokens": 11423,
+        "total_tokens": 8235726
+      },
+      "accounting_warnings": [],
+      "quota": {
+        "before": {
+          "observed_at": "2026-09-28T04:24:47.860724+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 12,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "after": {
+          "observed_at": "2026-09-28T04:50:26.235572+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 13,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "settled": {
+          "observed_at": "2026-09-28T04:51:27.492128+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 13,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        }
+      },
+      "operating_constraints": {
+        "confirmed_violations": []
+      }
+    },
+    {
+      "extends_run_id": "faithful-b-rory-long",
+      "run_id": "faithful-b-rory-long-completed",
+      "workstream": "sustained-b",
+      "policy": "rory-long",
+      "status": "completed",
+      "stages_attempted": 8,
+      "stages_passed_first_attempt": 8,
+      "stages_passed_after_repairs": 8,
+      "repairs": 0,
+      "all_functional_work_passed": true,
+      "credit_estimate": 231.05292,
+      "elapsed_seconds": 1376.557,
+      "peak_parent_input": 104160,
+      "workers": 1,
+      "parent_tool_counts": {
+        "exec": 47,
+        "spawn_agent": 1,
+        "send_message": 10,
+        "wait_agent": 11,
+        "followup_task": 7
+      },
+      "root_compactions": 0,
+      "worker_compactions": 0,
+      "actual_models": [
+        "gpt-5.6-terra",
+        "gpt-6-astra"
+      ],
+      "usage": {
+        "input_tokens": 8957717,
+        "cached_input_tokens": 8640256,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 49348,
+        "reasoning_output_tokens": 14637,
+        "total_tokens": 9007065
+      },
+      "accounting_warnings": [],
+      "quota": {
+        "before": {
+          "observed_at": "2026-09-28T04:13:14.977087+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 12,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "after": {
+          "observed_at": "2026-09-28T04:23:42.009519+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 12,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "settled": {
+          "observed_at": "2026-09-28T04:24:45.477052+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 12,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        }
+      },
+      "operating_constraints": {
+        "confirmed_violations": [],
+        "wording_ambiguities": [
+          "Reading self-generated /tmp test logs exceeds the literal outside-workspace restriction; no unrelated data access observed. The common rule is ambiguous about ordinary test scratch files."
+        ]
       }
     }
   ],
@@ -338,7 +540,7 @@
     {
       "workstream": "sustained-a",
       "policy": "rory",
-      "quality": "8/8 versus 8/8",
+      "functional_quality": "8/8 versus 8/8",
       "credit_estimate_percent_change": 110.06973302880274,
       "credit_estimate_outcome": "LOSS",
       "elapsed_seconds_percent_change": 31.532508981267647,
@@ -349,14 +551,36 @@
     {
       "workstream": "sustained-a",
       "policy": "rory-long",
-      "quality": "8/8 versus 8/8",
+      "functional_quality": "8/8 versus 8/8",
       "credit_estimate_percent_change": 89.4048686638573,
       "credit_estimate_outcome": "LOSS",
       "elapsed_seconds_percent_change": 19.134430331023864,
       "elapsed_seconds_outcome": "LOSS",
       "peak_parent_input_percent_change": 6.857046584112547,
       "peak_parent_input_outcome": "UNRESOLVED"
+    },
+    {
+      "workstream": "sustained-b",
+      "policy": "rory",
+      "functional_quality": "8/8 versus 8/8",
+      "credit_estimate_percent_change": 42.79162398814251,
+      "credit_estimate_outcome": "LOSS",
+      "elapsed_seconds_percent_change": 21.149110004082438,
+      "elapsed_seconds_outcome": "LOSS",
+      "peak_parent_input_percent_change": 12.099528047052587,
+      "peak_parent_input_outcome": "LOSS"
+    },
+    {
+      "workstream": "sustained-b",
+      "policy": "rory-long",
+      "functional_quality": "8/8 versus 8/8",
+      "credit_estimate_percent_change": 49.645237432921974,
+      "credit_estimate_outcome": "LOSS",
+      "elapsed_seconds_percent_change": 22.43342930151353,
+      "elapsed_seconds_outcome": "LOSS",
+      "peak_parent_input_percent_change": 6.174123115501051,
+      "peak_parent_input_outcome": "UNRESOLVED"
     }
   ],
-  "unique_execution_credit_estimate": 816.0076765000001
+  "unique_execution_credit_estimate": 1289.0996465
 }

@@ -40,3 +40,5 @@ prompt 2 on the same instance. Check actual native thread IDs, successful read,
 and absence of second-turn commands; checking the final answer alone is not
 enough. Finally close the transport. Launch outside an enclosing shell sandbox
 when native Codex needs to establish its own sandbox.
+
+The infrastructure-failed attempt also has its [full-tree usage](exec-probe-telemetry.json) and [sanitized trace](exec-probe-trace.jsonl) retained. Its cost is included in the follow-up accounting ledger.

@@ -1,0 +1,3 @@
+Correction to the filter/pagination contract: operators need pages of MATCHING debates, not filtered slices of an unrelated page. Apply status and hasFinalReport filters to the full newest-first catalog BEFORE offset and limit. This replaces the previous scan-window behavior. Keep default newest-first ordering, exact artifact reading, validation errors, and the early no-writes/no-symlink-following invariant unchanged. Update tests for the corrected ordering of operations.
+
+Keep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.

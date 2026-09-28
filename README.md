@@ -2,11 +2,13 @@
 
 Reproducible, bounded experiments testing Rory's proposal to use Astra as an orchestrator with cheaper workers.
 
-**Faithful follow-up prepared:** [frozen six-session protocol](specs/plans/0002-faithful-sustained-comparison.md), [worker reuse proof](results/reuse-preflight/README.md), and [functional workload validation](evaluation/sustained-verification.json). The new comparison uses Rory’s actual short and long rules across related coding turns with persistent workers. Results will be reported separately from the earlier pilot.
+**Faithful follow-up completed: six eight-stage coding sessions, verified worker reuse, and two actual native-compaction probes.** [Read the win/loss report](FOLLOWUP.md) and [machine-readable comparison](results/faithful-summary.json).
 
-**Diagnostic pilot completed; overall evaluation incomplete.** Ten fresh-task trials, two independent five-turn sessions, and a routing/accounting preflight are recorded. [Read the pilot report](REPORT.md) and [what a complete evaluation requires](notes/complete-evaluation-requirements.md). Faithful worker reuse, natural compaction, and attributable subscription consumption remain required primary tests.
+All 48 stages passed their first external functional evaluation. Compared with default, Rory’s actual second short block used **43–110% more estimated credits** and his long block **50–89% more**. Both were slower; neither reduced peak parent input. Native worker reuse—including after a server restart—was verified. One long-policy worker violated the no-network instruction by attempting an npm request; it failed. These are local results on two feature sequences in one project, not a universal ranking.
 
-The experiments demonstrate that a whole-task handoff can reduce parent input. They did not establish an equivalent-quality cost saving for the tested delegation policies. Across five turns, our bounded variant used 27% less peak parent input but 73% more estimated credits, with 32/34 coverage versus 34/34. Both sessions retained the earlier constraint; neither compacted. The original short block, long block, and our variant are distinguished in the report. These estimates do not measure subscription savings.
+Both chat-only and AGENTS.md instructions survived the separate compaction probes. The main workloads did not naturally compact. Actual subscription savings remain unresolved: account-meter readings were collected, but their granularity, attribution and reporting delay do not support a causal comparison. **This is not a complete evaluation of every claim in the article.** The report documents the cost-cap extension, all attempts, and remaining claims.
+
+The [earlier diagnostic pilot](REPORT.md) is retained separately, including the bounded-Sol variant that did not faithfully test Rory’s cross-turn reuse rule. [Original broader evaluation requirements](notes/complete-evaluation-requirements.md) are historical planning, not additional completed results.
 
 The question is practical: does an executable delegation policy produce more accepted work for the cost, and does it keep the main session's context smaller? A cheaper incomplete answer is not an equivalent-quality saving. More total tokens can still cost less when the work moves to cheaper models.
 
@@ -38,7 +40,28 @@ python3 evaluation/evaluate_bug.py /absolute/path/to/candidate-workspace
 
 The bug evaluator uses pristine tests plus the historical upstream timeout regression, not just a candidate's own tests. The default current-source suite has an optional bundled-build test that skips without esbuild. See [verification](verification/) for the before-trial evidence.
 
-## Repeat model trials
+## Reproduce the faithful follow-up
+
+The [frozen protocol](specs/plans/0002-faithful-sustained-comparison.md), [completion amendment](specs/plans/0003-complete-frozen-comparison.md), [functional workstreams](evaluation/sustained-workstreams.md), and [reuse proof](verification/sustained-worker-reuse.json) describe the executed comparison. The following native runner preserves worker handles across related turns:
+
+```sh
+python3 scripts/run_sustained.py --prefix replication \
+  --private-root /absolute/private/runs \
+  --codex-home /absolute/private/codex-home
+python3 scripts/summarize_sustained.py --prefix replication
+python3 scripts/run_compaction_probe.py --self-test
+```
+
+These model trials consume allowance. The main runner has a fixed 800-credit-equivalent guard and may stop before all six sessions; the recorded completion runner is deliberately specific to the observed five-stage B-long stop, not a generic retry command. It preserves that capped snapshot and counts only incremental continuation cost. Follow the protocol’s account-coordination and quiet-supervision requirements before claiming meter attribution. Native Codex may need to run outside an enclosing tool sandbox to establish its own workspace sandbox; the preserved failed preflight explains that limitation.
+
+To inspect the completed published comparison without making model calls:
+
+```sh
+python3 scripts/summarize_sustained.py --prefix faithful
+python3 scripts/check_records.py
+```
+
+## Repeat historical pilot trials
 
 These commands consume model allowance and require the model IDs recorded in [common instructions](policies/common.md). Authenticate the Codex CLI in a **private** CODEX_HOME outside this repository. Never commit its authentication or raw session files. Reproduction may need adaptation as native CLI interfaces and model availability change.
 

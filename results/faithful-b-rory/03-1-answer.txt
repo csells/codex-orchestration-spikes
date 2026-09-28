@@ -1,0 +1,3 @@
+Implemented descending ID ordering and optional `offset`/`limit` pagination. Invalid values raise an Error with code `INVALID_QUERY`. Metadata, read-only behavior, and symlink safeguards remain intact.
+
+Validation: 90 tests passed, including 10 catalog tests. One build test skipped because esbuild isn’t installed. No network or real model services used.

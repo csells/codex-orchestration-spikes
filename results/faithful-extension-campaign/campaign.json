@@ -1,0 +1,91 @@
+{
+  "started_at": "2026-09-28T04:12:03.748290+00:00",
+  "order": [
+    "faithful-b-rory-long-completed",
+    "faithful-b-rory",
+    "faithful-b-default"
+  ],
+  "input_sha256": {
+    "tasks/sustained-a/turn-4.md": "edf82f3f1047bf2b8b79f264aba6b2e5c1338a448702b05cd55dba001fcbfa02",
+    "tasks/sustained-a/turn-6.json": "fa21080f5f0ac218b20db8fd75bce2ebd7d0baa9ba5e90e6b0da79843d222e6d",
+    "tasks/sustained-a/turn-7.json": "640e5d19d7a61542831551f507c9d329e238cf5bc70c56c558f68e5907dbf7d9",
+    "tasks/sustained-a/turn-1.md": "50690ac2cf08d8ef00573717c51c0d9e0de3297228bcb88fadd600d0277bd465",
+    "tasks/sustained-a/turn-5.md": "15fc8db26d5ccabec848cfc2f4b7e3d980ea2a51aade88c3385459c69d20abc7",
+    "tasks/sustained-a/metadata.json": "746a0bae11131c5bec82ecc623daa6ccfbb2411da7705a89af4c8387a38550ff",
+    "tasks/sustained-a/turn-1.json": "d88a532c03acae75c5394e3e6cc24e432e1814b429911c36db7feaec516b2421",
+    "tasks/sustained-a/turn-2.json": "ca5567f6f9b84d8aba6227487f1772faaca22a5323b37dcdfdcdab3a1a11a406",
+    "tasks/sustained-a/turn-8.md": "aba8e0250052ac32411b764c22a2737084d6ba522168ec5cefc443fdf110d129",
+    "tasks/sustained-a/turn-3.json": "1009bc8838be6633a1eef64e15363992e83dc1efb4789ad986fa67e6d77d0a29",
+    "tasks/sustained-a/turn-8.json": "7cd35de2b1116527cc24736b0ff54afbb8664244b031974fdc7bff69299c69c5",
+    "tasks/sustained-a/turn-2.md": "7e904217c2c8597f690145f34519e8a7ccadc1070338bad4d10a4ddc3b65cc44",
+    "tasks/sustained-a/turn-4.json": "f105719f9c09487370422ae7d687fb14c94da3922fe87c21e15b3fd01cab7aed",
+    "tasks/sustained-a/turn-6.md": "06e02290a65d5c7566f5d701d58c5173e0c6323a47e4eda72ef88748e8406c04",
+    "tasks/sustained-a/turn-7.md": "bbbd114e9c31370134a87fb3018d2b2baccb2baf86254cb4c5acf41fd271783f",
+    "tasks/sustained-a/turn-5.json": "28c70d5c3af7556773fdac9804d8b7c82d18e9ec7a83b4dcd2f19b537f0100d1",
+    "tasks/sustained-a/turn-3.md": "1948b62d061d669614fb5ba5a386147bd18b09c4ae739f2e95bf12146f41b0bb",
+    "tasks/sustained-b/turn-4.md": "5702300c121f8f2b06d9bd660dcda08dcabadfc78f8a9f7f99771cc2a6515f94",
+    "tasks/sustained-b/turn-6.json": "d287cad8875392ed4d766f016ca866d66e27ae8e42fd6f7bc7df421fd3171b05",
+    "tasks/sustained-b/turn-7.json": "5c3c53214b105801df8884b772af4c4ff5db66eb047aa670a46fc027e4f817a7",
+    "tasks/sustained-b/turn-1.md": "3c74892e526d8214a94cf29b1367becc80d9bf7fd144dd3f079aaaa5b5e1a3ab",
+    "tasks/sustained-b/turn-5.md": "409d0f2715cb8c790c42a36e87d3623df506876c6addc8e9ad9b2d6685187315",
+    "tasks/sustained-b/metadata.json": "a5b31085493e7975565400a3d1c67a4f5c6b7ee99624fa0f72cd5f8ab5b4da96",
+    "tasks/sustained-b/turn-1.json": "a6fda7e988be938d72d55e02b72e2461af14376bf8086a6fb33b202a0b7f3e36",
+    "tasks/sustained-b/turn-2.json": "43321b21b9fb0793c43ab9fcf1fc26174df02208c4ad5137a4dc861ce3bbb129",
+    "tasks/sustained-b/turn-8.md": "5bb0bec393726b62384bde7a6af8e22ca78a81439a8e212b585fda2933ac78d5",
+    "tasks/sustained-b/turn-3.json": "54d7fd0ea9a0152a0e3340ac7105b8a1b4f268fd0f9d19eb1977087c24a77396",
+    "tasks/sustained-b/turn-8.json": "e35ec7637f638961df263451b0bf6450b2c23e0608204fe68a0a145cc8ab6a34",
+    "tasks/sustained-b/turn-2.md": "d93c8c78fdf993afab34af3d9ae4c7028f51f126a53ba235935af8fb1a3031f7",
+    "tasks/sustained-b/turn-4.json": "a4587b2124e85a589c97607208091fe7d17066820c212a3223642f1355403cf8",
+    "tasks/sustained-b/turn-6.md": "cd372d3a7c78fd8c703c4b6232ded5026f9608c35cd2f234a7b0f8ed8033c9ee",
+    "tasks/sustained-b/turn-7.md": "f0e4b1797f4b0b8e6e5c5815deec053b12a525a0b536681ca97ba5e7ed137d9a",
+    "tasks/sustained-b/turn-5.json": "711dc90781795aae61f7bea43264d1256db37ff608f237b2b4396e85d74fead3",
+    "tasks/sustained-b/turn-3.md": "ecf5be6031465418647ef129df29ae5981e87426d3510fd903f6bd87436ec5eb",
+    "scripts/run_sustained.py": "ab2c5732ca11449eea2410ce95c45f09bddd725d633d05e78a31beca4d33073f",
+    "scripts/persistent_session.py": "75931a2f12fa92d3e789f8e2b7578117b445d3eb2bccd336653caffa0b0f62e0",
+    "evaluation/evaluate_sustained.py": "5b6db86aafbc14685387528a6575ac9a737835b83c6fbc70e28c763a942339af",
+    "evaluation/sustained_cases.mjs": "d0e6b6eb4ccd6a94e9c4d2ce483755b15d33b69944e5fbeee32a77b388e68f82",
+    "policies/sustained-common.md": "3e42d3daa0c23d6f5b6b5e3287f965afaa3bae0eae7d10c06e0f37854876acbb",
+    "policies/rory-v2.md": "10a111bb2a91461fa1ac69f9ff6533ee7e7bc28b114ac47cbbf6dbeb2ea132bd",
+    "policies/rory-long.md": "be229a3e3d6a823691e2c1c3e8ae028e43235042acad4ff20e2f32946e75773c",
+    "specs/plans/0002-faithful-sustained-comparison.md": "2418add9077326d13ce0264da9181d8859981b868d0bd866aac64e01ffa1e493",
+    "scripts/run_sustained_extension.py": "8d15ca1ed05c91eb379ed2540f1470cf42d2b02add59b0a89389a182678e6dca",
+    "specs/plans/0003-complete-frozen-comparison.md": "e3fbfd05828e4517bcb4fd1f53126bebf916ae6ff39707472e0c833c4f156dbc"
+  },
+  "extends_campaign": "faithful-campaign",
+  "account_coordination": "unconfirmed",
+  "supervision": "quiet",
+  "completed_sessions": [
+    {
+      "run_id": "faithful-b-rory-long-completed",
+      "status": "completed",
+      "credit_estimate": 231.05292,
+      "baseline_credit_estimate": 132.83231,
+      "additional_credit_estimate": 98.22061
+    },
+    {
+      "run_id": "faithful-b-rory",
+      "status": "completed",
+      "credit_estimate": 220.47091,
+      "baseline_credit_estimate": 0.0,
+      "additional_credit_estimate": 220.47091
+    },
+    {
+      "run_id": "faithful-b-default",
+      "status": "completed",
+      "credit_estimate": 154.40045,
+      "baseline_credit_estimate": 0.0,
+      "additional_credit_estimate": 154.40045
+    }
+  ],
+  "hard_caps": {
+    "additional_credit_estimate": 650,
+    "session_active_seconds": 3600,
+    "turn_seconds": 600,
+    "observed_quota_points": 10
+  },
+  "budget_semantics": "Check before each request; a request already in flight may cross a threshold.",
+  "transport_boundary": "One close/resume after stage five in every original B arm; root ID preserved.",
+  "accounting": "Long-completed includes original stages 1-5. Add only its incremental credits to original campaign spend.",
+  "additional_execution_credit_estimate": 473.09196999999995,
+  "ended_at": "2026-09-28T05:14:27.403817+00:00"
+}

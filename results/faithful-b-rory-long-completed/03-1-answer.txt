@@ -1,0 +1,3 @@
+Implemented `listDebates(root, options?)` with descending lexical ID order and optional `offset`/`limit`. Invalid values throw an Error with code `INVALID_QUERY`. Metadata, symlink protections, and read-only behavior are preserved.
+
+Validation: 87 tests passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

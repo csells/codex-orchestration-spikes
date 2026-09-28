@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e642-27cb-7092-befd-c6003729980b",
+  "turn_id": "01a0e64b-db3f-7c50-ad0b-c0259d919b37",
+  "status": "completed",
+  "answer": "Added validated `status` and `hasFinalReport` filters. Pagination runs first; filters narrow only that page, without backfilling. Omitted filters do nothing. Metadata and read-only symlink safeguards remain intact.\n\nValidation: 93 tests passed, including 13 catalog tests. One build test skipped because esbuild isn\u2019t installed. No network or real model services used.",
+  "started_at": "2026-09-28T04:35:26.111523+00:00",
+  "ended_at": "2026-09-28T04:37:40.899731+00:00",
+  "elapsed_seconds": 134.788,
+  "timed_out": false,
+  "event_count": 473,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 2082842,
+      "inputTokens": 2074113,
+      "cachedInputTokens": 2008960,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 8729,
+      "reasoningOutputTokens": 1757
+    },
+    "last": {
+      "totalTokens": 66022,
+      "inputTokens": 65942,
+      "cachedInputTokens": 65280,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 80,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

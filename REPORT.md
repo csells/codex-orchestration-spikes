@@ -1,5 +1,7 @@
 # Testing Rory's Codex orchestration proposal
 
+Historical diagnostic pilot. The subsequent faithful comparison and current claim coverage are in [FOLLOWUP.md](FOLLOWUP.md).
+
 **Scope correction:** this is a diagnostic pilot, not a complete evaluation of Rory's sustained-work and subscription-savings claims. [The completion requirements](notes/complete-evaluation-requirements.md) identify the missing primary tests and the controls needed to make an overall judgment. The measured results below remain unchanged.
 
 Rory proposed an executable way to divide work: keep Astra responsible for judgment and completion, and send routine investigation and implementation to cheaper workers. My initial response dismissed that too quickly and replaced it with an instruction an agent could not implement without performance data. The useful question was whether his policy changes actual behavior enough to improve accepted work, cost, or context. These experiments test that question.

@@ -1,0 +1,5 @@
+Add a local saved-debate catalog. Create `src/catalog.ts` exporting async `listDebates(root: string): Promise<DebateEntry[]>`. At this stage each entry is `{ id, path, hasTranscript, hasFinalReport }`; path is absolute. Inspect only immediate child directories whose basename matches `/^debate-[A-Za-z0-9][A-Za-z0-9._-]*$/`, ordered by id in ascending code-point lexical order. hasTranscript means a regular `debate.md` exists; hasFinalReport means a regular `final-report.md` exists. A missing root returns an empty array. Ignore unrelated files/directories.
+
+Standing invariant: catalog and artifact operations are read-only and must not follow child directory symlinks or artifact-file symlinks. Do not inspect or alter anything outside the supplied root through those links. Preserve this invariant through all follow-ups. No participants or model services should ever be launched by catalog operations.
+
+Keep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.

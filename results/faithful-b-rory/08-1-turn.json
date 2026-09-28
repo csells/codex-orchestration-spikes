@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e642-27cb-7092-befd-c6003729980b",
+  "turn_id": "01a0e656-ef4a-7663-aeef-66cc810c5515",
+  "status": "completed",
+  "answer": "Added artifact mode with exact text output and no added newline. Missing artifacts return exit 2 with `NOT_FOUND`; other errors return exit 1 with their code. Mixed list/artifact options are rejected.\n\nValidation: 106 tests passed, including eight CLI tests. One build test skipped because esbuild isn\u2019t installed. List behavior and read-only symlink safeguards remain intact. No network or real model services used.",
+  "started_at": "2026-09-28T04:47:32.145237+00:00",
+  "ended_at": "2026-09-28T04:49:57.091204+00:00",
+  "elapsed_seconds": 144.945,
+  "timed_out": false,
+  "event_count": 491,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 5706627,
+      "inputTokens": 5685012,
+      "cachedInputTokens": 5568512,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 21615,
+      "reasoningOutputTokens": 6268
+    },
+    "last": {
+      "totalTokens": 110060,
+      "inputTokens": 109973,
+      "cachedInputTokens": 107904,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 87,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

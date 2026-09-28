@@ -1,0 +1,5 @@
+Added optional `status` and `hasFinalReport` filters. Invalid values throw `INVALID_QUERY`. Pagination runs first, then filters apply only to that page; omitted filters do nothing.
+
+Read-only and symlink protections remain intact.
+
+Validation: 88 tests passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

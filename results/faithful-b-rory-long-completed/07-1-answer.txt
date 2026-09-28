@@ -1,0 +1,3 @@
+Added `src/catalog-cli.ts` with order-independent flags, JSON output, and `INVALID_QUERY` diagnostics on stderr with exit 1 and empty stdout. Missing directories return `[]`. It imports only the read-only catalog module.
+
+Validation: 94 tests passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

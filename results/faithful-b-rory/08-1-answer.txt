@@ -1,0 +1,3 @@
+Added artifact mode with exact text output and no added newline. Missing artifacts return exit 2 with `NOT_FOUND`; other errors return exit 1 with their code. Mixed list/artifact options are rejected.
+
+Validation: 106 tests passed, including eight CLI tests. One build test skipped because esbuild isn’t installed. List behavior and read-only symlink safeguards remain intact. No network or real model services used.

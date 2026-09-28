@@ -31,6 +31,7 @@
       "policy": "default",
       "elapsed_seconds": 83.866,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 222516,
@@ -202,6 +203,7 @@
       "policy": "rory",
       "elapsed_seconds": 90.307,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 248249,
@@ -373,6 +375,7 @@
       "policy": "rory",
       "elapsed_seconds": 154.918,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 827842,
@@ -543,6 +546,7 @@
       "policy": "default",
       "elapsed_seconds": 133.418,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 312538,
@@ -709,6 +713,7 @@
       "policy": "default",
       "elapsed_seconds": 198.058,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 355143,
@@ -762,6 +767,7 @@
       "policy": "rory",
       "elapsed_seconds": 306.875,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 1654613,
@@ -824,6 +830,7 @@
       "policy": "rory-long",
       "elapsed_seconds": 134.968,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 562085,
@@ -998,6 +1005,7 @@
       "policy": "rory-long-astra-workers",
       "elapsed_seconds": 215.213,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 1329623,
@@ -1171,6 +1179,7 @@
       "policy": "bounded-sol",
       "elapsed_seconds": 202.351,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 814695,
@@ -1346,6 +1355,7 @@
       "policy": "sol",
       "elapsed_seconds": 99.534,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 313888,
@@ -1505,11 +1515,553 @@
       }
     },
     {
+      "run_id": "faithful-a-default",
+      "task": "sustained-a",
+      "policy": "default",
+      "elapsed_seconds": 1247.04,
+      "resumed_session": false,
+      "extends_run_id": null,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 3094870,
+        "cached_input_tokens": 2988672,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 28410,
+        "reasoning_output_tokens": 3942,
+        "total_tokens": 3123280
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 3094870,
+          "cached_input_tokens": 2988672,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 28410,
+          "reasoning_output_tokens": 3942,
+          "total_tokens": 3123280
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 136.7788
+        },
+        "total": 136.7788
+      },
+      "workers": 0,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 106839,
+        "last_request_input_tokens": 106839,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "faithful-a-rory",
+      "task": "sustained-a",
+      "policy": "rory",
+      "elapsed_seconds": 1640.263,
+      "resumed_session": false,
+      "extends_run_id": null,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 10257197,
+        "cached_input_tokens": 9997184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 61338,
+        "reasoning_output_tokens": 23527,
+        "total_tokens": 10318535
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 7507503,
+          "cached_input_tokens": 7354752,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 29787,
+          "reasoning_output_tokens": 13932,
+          "total_tokens": 7537290
+        },
+        "gpt-5.6-terra": {
+          "input_tokens": 2749694,
+          "cached_input_tokens": 2642432,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 31551,
+          "reasoning_output_tokens": 9595,
+          "total_tokens": 2781245
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 259.2903,
+          "gpt-5.6-terra": 28.04056
+        },
+        "total": 287.33086000000003
+      },
+      "workers": 2,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 148286,
+        "last_request_input_tokens": 148286,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "faithful-a-rory-long",
+      "task": "sustained-a",
+      "policy": "rory-long",
+      "elapsed_seconds": 1485.654,
+      "resumed_session": false,
+      "extends_run_id": null,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 8901917,
+        "cached_input_tokens": 8532736,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 59331,
+        "reasoning_output_tokens": 18676,
+        "total_tokens": 8961248
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 6606675,
+          "cached_input_tokens": 6448640,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 23388,
+          "reasoning_output_tokens": 6993,
+          "total_tokens": 6630063
+        },
+        "gpt-6-luna": {
+          "input_tokens": 139731,
+          "cached_input_tokens": 101376,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1222,
+          "reasoning_output_tokens": 369,
+          "total_tokens": 140953
+        },
+        "gpt-5.6-terra": {
+          "input_tokens": 2155511,
+          "cached_input_tokens": 1982720,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 34721,
+          "reasoning_output_tokens": 11314,
+          "total_tokens": 2190232
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 229.95975,
+          "gpt-6-luna": 0.1365065,
+          "gpt-5.6-terra": 28.96945
+        },
+        "total": 259.06570650000003
+      },
+      "workers": 8,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 114165,
+        "last_request_input_tokens": 114165,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "faithful-b-default",
+      "task": "sustained-b",
+      "policy": "default",
+      "elapsed_seconds": 1124.331,
+      "resumed_session": false,
+      "extends_run_id": null,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 4057610,
+        "cached_input_tokens": 3957248,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 24303,
+        "reasoning_output_tokens": 3197,
+        "total_tokens": 4081913
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 4057610,
+          "cached_input_tokens": 3957248,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 24303,
+          "reasoning_output_tokens": 3197,
+          "total_tokens": 4081913
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 154.40045
+        },
+        "total": 154.40045
+      },
+      "workers": 0,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 98103,
+        "last_request_input_tokens": 98103,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "faithful-b-rory",
+      "task": "sustained-b",
+      "policy": "rory",
+      "elapsed_seconds": 1362.117,
+      "resumed_session": false,
+      "extends_run_id": null,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 8185538,
+        "cached_input_tokens": 7979264,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 50188,
+        "reasoning_output_tokens": 11423,
+        "total_tokens": 8235726
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 5685012,
+          "cached_input_tokens": 5568512,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 21615,
+          "reasoning_output_tokens": 6268,
+          "total_tokens": 5706627
+        },
+        "gpt-5.6-terra": {
+          "input_tokens": 2500526,
+          "cached_input_tokens": 2410752,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 28573,
+          "reasoning_output_tokens": 5155,
+          "total_tokens": 2529099
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 195.35655,
+          "gpt-5.6-terra": 25.11436
+        },
+        "total": 220.47091
+      },
+      "workers": 1,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 109973,
+        "last_request_input_tokens": 109973,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "faithful-b-rory-long",
+      "task": "sustained-b",
+      "policy": "rory-long",
+      "elapsed_seconds": 867.143,
+      "resumed_session": false,
+      "extends_run_id": null,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 4553386,
+        "cached_input_tokens": 4292352,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 33996,
+        "reasoning_output_tokens": 10090,
+        "total_tokens": 4587382
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 2599963,
+          "cached_input_tokens": 2465280,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 12503,
+          "reasoning_output_tokens": 2478,
+          "total_tokens": 2612466
+        },
+        "gpt-5.6-terra": {
+          "input_tokens": 1953423,
+          "cached_input_tokens": 1827072,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 21493,
+          "reasoning_output_tokens": 7612,
+          "total_tokens": 1974916
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 110.9315,
+          "gpt-5.6-terra": 21.90081
+        },
+        "total": 132.83231
+      },
+      "workers": 1,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 78324,
+        "last_request_input_tokens": 78324,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "faithful-b-rory-long-completed",
+      "task": "sustained-b",
+      "policy": "rory-long",
+      "elapsed_seconds": 1376.557,
+      "resumed_session": true,
+      "extends_run_id": "faithful-b-rory-long",
+      "estimate_is_cumulative_for_resumed_session": true,
+      "usage": {
+        "input_tokens": 8957717,
+        "cached_input_tokens": 8640256,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 49348,
+        "reasoning_output_tokens": 14637,
+        "total_tokens": 9007065
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 5453077,
+          "cached_input_tokens": 5286912,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 19161,
+          "reasoning_output_tokens": 4309,
+          "total_tokens": 5472238
+        },
+        "gpt-5.6-terra": {
+          "input_tokens": 3504640,
+          "cached_input_tokens": 3353344,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 30187,
+          "reasoning_output_tokens": 10328,
+          "total_tokens": 3534827
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 197.6653,
+          "gpt-5.6-terra": 33.38762
+        },
+        "total": 231.05292
+      },
+      "workers": 1,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 104160,
+        "last_request_input_tokens": 104160,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": null
+    },
+    {
+      "run_id": "faithful-forced-agents",
+      "task": "compaction-probe",
+      "policy": "forced-agents",
+      "elapsed_seconds": 37.42,
+      "resumed_session": false,
+      "extends_run_id": null,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 82751,
+        "cached_input_tokens": 57600,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 609,
+        "reasoning_output_tokens": 31,
+        "total_tokens": 83360
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 82751,
+          "cached_input_tokens": 57600,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 609,
+          "reasoning_output_tokens": 31,
+          "total_tokens": 83360
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 8.489
+        },
+        "total": 8.489
+      },
+      "workers": 0,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 16841,
+        "last_request_input_tokens": 16841,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 1,
+      "accounting_warnings": [],
+      "validation": {
+        "diagnostic_valid_for_retention": true,
+        "pre_boundary": {
+          "stage": 1,
+          "checks": {
+            "json_schema": true,
+            "integer_numeric_fields": true,
+            "request_identity": true,
+            "corrected_fact_retained": true,
+            "arithmetic_consistent_with_reported_reserve": true,
+            "expected_allocation": true,
+            "workspace_unchanged": true
+          },
+          "passed": true,
+          "workspace_changes": [],
+          "json_parse_error": null,
+          "observed": {
+            "batch": "first",
+            "sku": "bolts",
+            "reserve_units": 7,
+            "requested": 18,
+            "allocated": 16,
+            "deferred": 2
+          }
+        },
+        "post_boundary": {
+          "stage": 2,
+          "checks": {
+            "json_schema": true,
+            "integer_numeric_fields": true,
+            "request_identity": true,
+            "corrected_fact_retained": true,
+            "arithmetic_consistent_with_reported_reserve": true,
+            "expected_allocation": true,
+            "workspace_unchanged": true
+          },
+          "passed": true,
+          "workspace_changes": [],
+          "json_parse_error": null,
+          "observed": {
+            "batch": "second",
+            "sku": "washers",
+            "reserve_units": 7,
+            "requested": 27,
+            "allocated": 22,
+            "deferred": 5
+          }
+        },
+        "passed": true,
+        "interpretation": "One forced boundary; no inference about natural compaction or durability rates."
+      }
+    },
+    {
+      "run_id": "faithful-forced-chat",
+      "task": "compaction-probe",
+      "policy": "forced-chat",
+      "elapsed_seconds": 40.701,
+      "resumed_session": false,
+      "extends_run_id": null,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 82642,
+        "cached_input_tokens": 66304,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 582,
+        "reasoning_output_tokens": 0,
+        "total_tokens": 83224
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 82642,
+          "cached_input_tokens": 66304,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 582,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 83224
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 6.4696
+        },
+        "total": 6.4696
+      },
+      "workers": 0,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 16836,
+        "last_request_input_tokens": 16836,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 1,
+      "accounting_warnings": [],
+      "validation": {
+        "diagnostic_valid_for_retention": true,
+        "pre_boundary": {
+          "stage": 1,
+          "checks": {
+            "json_schema": true,
+            "integer_numeric_fields": true,
+            "request_identity": true,
+            "corrected_fact_retained": true,
+            "arithmetic_consistent_with_reported_reserve": true,
+            "expected_allocation": true,
+            "workspace_unchanged": true
+          },
+          "passed": true,
+          "workspace_changes": [],
+          "json_parse_error": null,
+          "observed": {
+            "batch": "first",
+            "sku": "bolts",
+            "reserve_units": 7,
+            "requested": 18,
+            "allocated": 16,
+            "deferred": 2
+          }
+        },
+        "post_boundary": {
+          "stage": 2,
+          "checks": {
+            "json_schema": true,
+            "integer_numeric_fields": true,
+            "request_identity": true,
+            "corrected_fact_retained": true,
+            "arithmetic_consistent_with_reported_reserve": true,
+            "expected_allocation": true,
+            "workspace_unchanged": true
+          },
+          "passed": true,
+          "workspace_changes": [],
+          "json_parse_error": null,
+          "observed": {
+            "batch": "second",
+            "sku": "washers",
+            "reserve_units": 7,
+            "requested": 27,
+            "allocated": 22,
+            "deferred": 5
+          }
+        },
+        "passed": true,
+        "interpretation": "One forced boundary; no inference about natural compaction or durability rates."
+      }
+    },
+    {
       "run_id": "preflight",
       "task": null,
       "policy": null,
       "elapsed_seconds": null,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 118998,
@@ -1561,6 +2113,7 @@
       "policy": "bounded-sol",
       "elapsed_seconds": 169.384,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 739588,
@@ -1707,6 +2260,7 @@
       "policy": "bounded-sol",
       "elapsed_seconds": 148.057,
       "resumed_session": true,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": true,
       "usage": {
         "input_tokens": 1523055,
@@ -1853,6 +2407,7 @@
       "policy": "bounded-sol",
       "elapsed_seconds": 124.831,
       "resumed_session": true,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": true,
       "usage": {
         "input_tokens": 2215091,
@@ -1972,6 +2527,7 @@
       "policy": "bounded-sol",
       "elapsed_seconds": 270.053,
       "resumed_session": true,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": true,
       "usage": {
         "input_tokens": 3623272,
@@ -2098,6 +2654,7 @@
       "policy": "bounded-sol",
       "elapsed_seconds": 116.399,
       "resumed_session": true,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": true,
       "usage": {
         "input_tokens": 4130671,
@@ -2225,6 +2782,7 @@
       "policy": "default",
       "elapsed_seconds": 82.27,
       "resumed_session": false,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": false,
       "usage": {
         "input_tokens": 212027,
@@ -2361,6 +2919,7 @@
       "policy": "default",
       "elapsed_seconds": 65.734,
       "resumed_session": true,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": true,
       "usage": {
         "input_tokens": 486585,
@@ -2495,6 +3054,7 @@
       "policy": "default",
       "elapsed_seconds": 45.125,
       "resumed_session": true,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": true,
       "usage": {
         "input_tokens": 723545,
@@ -2605,6 +3165,7 @@
       "policy": "default",
       "elapsed_seconds": 70.244,
       "resumed_session": true,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": true,
       "usage": {
         "input_tokens": 997479,
@@ -2720,6 +3281,7 @@
       "policy": "default",
       "elapsed_seconds": 27.723,
       "resumed_session": true,
+      "extends_run_id": null,
       "estimate_is_cumulative_for_resumed_session": true,
       "usage": {
         "input_tokens": 1095926,

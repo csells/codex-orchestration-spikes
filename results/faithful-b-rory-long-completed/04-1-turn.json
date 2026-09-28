@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e61d-b2f5-79e3-8519-52325d6ed8fd",
+  "turn_id": "01a0e626-20de-7233-917f-21d04411ca91",
+  "status": "completed",
+  "answer": "Added optional `status` and `hasFinalReport` filters. Invalid values throw `INVALID_QUERY`. Pagination runs first, then filters apply only to that page; omitted filters do nothing.\n\nRead-only and symlink protections remain intact.\n\nValidation: 88 tests passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.",
+  "started_at": "2026-09-28T03:54:13.467208+00:00",
+  "ended_at": "2026-09-28T03:56:53.412655+00:00",
+  "elapsed_seconds": 159.945,
+  "timed_out": false,
+  "event_count": 379,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 1903606,
+      "inputTokens": 1893937,
+      "cachedInputTokens": 1772672,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 9669,
+      "reasoningOutputTokens": 1940
+    },
+    "last": {
+      "totalTokens": 64553,
+      "inputTokens": 64473,
+      "cachedInputTokens": 63744,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 80,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}
