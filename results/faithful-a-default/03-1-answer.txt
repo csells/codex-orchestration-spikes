@@ -1,0 +1,3 @@
+Added inline overrides with final precedence, adapter-based participant merging, `judge: null` removal, and overrides-only profiles. Invalid settings raise `INVALID_BUNDLE`.
+
+Tests verify validation, merge behavior, fresh objects, and unchanged files. `npm test`: 96 passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

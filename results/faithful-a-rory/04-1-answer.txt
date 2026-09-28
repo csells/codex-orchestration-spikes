@@ -1,0 +1,3 @@
+Corrected YAML and inline overrides to replace the entire participant list in supplied order at every inheritance level. Omitted lists still inherit; scalar precedence, judge removal, ownership, and input preservation remain intact.
+
+Validation: 97 tests passed, 0 failed; one build test skipped because esbuild is unavailable. All 17 updated bundle tests passed. No network or real model services used.

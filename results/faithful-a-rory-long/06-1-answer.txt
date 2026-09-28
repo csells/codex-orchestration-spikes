@@ -1,0 +1,3 @@
+Implemented containment within the bundle’s real parent directory. Absolute paths, normalized escapes, sibling-prefix escapes, and external symlinks now return `UNSAFE_CONFIG_PATH`; valid internal paths still load.
+
+Read-only and fresh-object tests pass. Full suite: 98 passed; 1 build test skipped because esbuild is absent. Only local tests and fake CLIs were used.

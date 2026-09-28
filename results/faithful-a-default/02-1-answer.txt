@@ -1,0 +1,5 @@
+Implemented single-parent inheritance with scalar/judge replacement and participant merging by adapter, preserving order. Added cycle detection and partial-lineup overlays while retaining existing YAML parser behavior.
+
+Tests verify inheritance, validation, independent ownership, and unchanged inputs.
+
+`npm test`: 91 passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

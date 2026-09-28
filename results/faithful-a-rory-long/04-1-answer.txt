@@ -1,0 +1,5 @@
+Corrected participant inheritance: supplied YAML and inline lists now replace the entire inherited list in exact order; omitted lists inherit unchanged.
+
+Updated tests cover replacement, ordering, ownership, and unchanged files. Scalar precedence and judge removal remain intact.
+
+Validation: 90 passed; 1 build test skipped because esbuild is absent. Only local tests and fake CLIs were used.

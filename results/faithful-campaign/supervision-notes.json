@@ -1,0 +1,9 @@
+{
+  "account_exclusivity_confirmed": false,
+  "deterministic_progress": true,
+  "grading_during_blocks": "Only the deterministic functional evaluator; no grading model requests.",
+  "model_supervision": "Root waited in one tool execution that emitted deterministic progress. That execution yielded after one hour; a root model response requested a further wait during faithful-a-rory-long. No root analysis or model grading ran during the other original blocks.",
+  "known_supervisor_overlap_run_ids": ["faithful-a-rory-long"],
+  "attributable_subscription_savings": false,
+  "reason": "Account-wide exclusivity unconfirmed, integer percentages, unknown reporting delay, plus known supervisor overlap in one block."
+}

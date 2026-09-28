@@ -1,0 +1,1 @@
+{"batch":"second","sku":"washers","reserve_units":7,"requested":27,"allocated":22,"deferred":5}

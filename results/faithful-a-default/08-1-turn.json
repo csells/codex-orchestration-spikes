@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e5d2-d53e-7463-9e13-b886961bfd6c",
+  "turn_id": "01a0e5e4-9041-7470-ac13-b7821c8907a5",
+  "status": "completed",
+  "answer": "Added `listProfiles`, `--list`, and `--json`. Listing validates only the envelope and sorts names by Unicode code point. Incompatible flags exit 1 with empty stdout.\n\nTests confirm existing rendering, inheritance, path confinement, ownership, and read-only behavior.\n\n`npm test`: 115 passed, 0 failed; 1 skipped because esbuild is absent. No network or real model services used.",
+  "started_at": "2026-09-28T02:42:36.313481+00:00",
+  "ended_at": "2026-09-28T02:45:42.920838+00:00",
+  "elapsed_seconds": 186.605,
+  "timed_out": false,
+  "event_count": 289,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 3123280,
+      "inputTokens": 3094870,
+      "cachedInputTokens": 2988672,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 28410,
+      "reasoningOutputTokens": 3942
+    },
+    "last": {
+      "totalTokens": 106926,
+      "inputTokens": 106839,
+      "cachedInputTokens": 106368,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 87,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

@@ -1,0 +1,3 @@
+Added `listProfiles()` with envelope-only validation and code-point sorting, plus CLI `--list` and `--json`. Conflicting flags exit 1 with empty stdout. Existing rendering, confinement, replacement, and ownership invariants remain verified.
+
+Validation: 109 tests passed; one build test skipped because esbuild is unavailable. No network or real model services used.

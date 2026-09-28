@@ -1,0 +1,5 @@
+Added `src/profile-bundle.ts` with `loadProfileBundle`, bundle validation, required error codes, and relative config resolution through the unchanged YAML parser.
+
+Tests verify independent returned objects and unchanged input files.
+
+`npm test`: 86 passed, 0 failed; 1 build test skipped because esbuild is absent. Only local tests and fake CLIs ran; no network or real model services used.

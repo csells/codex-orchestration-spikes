@@ -1,0 +1,9 @@
+Added `src/profile-cli.ts`:
+
+```sh
+node src/profile-cli.ts --bundle bundle.json [--profile NAME]
+```
+
+It prints canonical YAML on success. Errors exit 1 with empty stdout and diagnostics on stderr, including loader codes. Tests confirm unchanged inputs and no participant launches.
+
+`npm test`: 110 passed, 0 failed; 1 skipped because esbuild is absent. No network or real model services used.

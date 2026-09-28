@@ -1,0 +1,3 @@
+Added `readDebateArtifact` with exact UTF-8 output, shared determination selection, missing-path `null` results, and `INVALID_ID`, `INVALID_QUERY`, and `UNSAFE_PATH` errors. Reads remain read-only and reject directory/direct artifact symlinks.
+
+Validation: 91 tests passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

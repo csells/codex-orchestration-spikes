@@ -1,0 +1,3 @@
+Implemented `src/profile-bundle.ts` with bundle-relative paths, required error codes, and fresh parsing through the unchanged YAML parser. Loading preserves input files and returns independently owned configurations.
+
+Validation: 80 existing tests and 6 new tests passed. One build test skipped because esbuild is unavailable. No network or real model services used.

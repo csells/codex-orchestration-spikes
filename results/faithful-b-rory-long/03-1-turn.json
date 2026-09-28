@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e61d-b2f5-79e3-8519-52325d6ed8fd",
+  "turn_id": "01a0e623-9079-78a0-a295-93bcfba5b69d",
+  "status": "completed",
+  "answer": "Implemented `listDebates(root, options?)` with descending lexical ID order and optional `offset`/`limit`. Invalid values throw an Error with code `INVALID_QUERY`. Metadata, symlink protections, and read-only behavior are preserved.\n\nValidation: 87 tests passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.",
+  "started_at": "2026-09-28T03:51:25.303466+00:00",
+  "ended_at": "2026-09-28T03:54:01.154687+00:00",
+  "elapsed_seconds": 155.85,
+  "timed_out": false,
+  "event_count": 459,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 1418150,
+      "inputTokens": 1410240,
+      "cachedInputTokens": 1297920,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 7910,
+      "reasoningOutputTokens": 1619
+    },
+    "last": {
+      "totalTokens": 56906,
+      "inputTokens": 56824,
+      "cachedInputTokens": 56192,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 82,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "diagnostic_valid_for_retention": true,
+  "pre_boundary": {
+    "stage": 1,
+    "checks": {
+      "json_schema": true,
+      "integer_numeric_fields": true,
+      "request_identity": true,
+      "corrected_fact_retained": true,
+      "arithmetic_consistent_with_reported_reserve": true,
+      "expected_allocation": true,
+      "workspace_unchanged": true
+    },
+    "passed": true,
+    "workspace_changes": [],
+    "json_parse_error": null,
+    "observed": {
+      "batch": "first",
+      "sku": "bolts",
+      "reserve_units": 7,
+      "requested": 18,
+      "allocated": 16,
+      "deferred": 2
+    }
+  },
+  "post_boundary": {
+    "stage": 2,
+    "checks": {
+      "json_schema": true,
+      "integer_numeric_fields": true,
+      "request_identity": true,
+      "corrected_fact_retained": true,
+      "arithmetic_consistent_with_reported_reserve": true,
+      "expected_allocation": true,
+      "workspace_unchanged": true
+    },
+    "passed": true,
+    "workspace_changes": [],
+    "json_parse_error": null,
+    "observed": {
+      "batch": "second",
+      "sku": "washers",
+      "reserve_units": 7,
+      "requested": 27,
+      "allocated": 22,
+      "deferred": 5
+    }
+  },
+  "passed": true,
+  "interpretation": "One forced boundary; no inference about natural compaction or durability rates."
+}

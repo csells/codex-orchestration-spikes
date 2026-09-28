@@ -1,0 +1,126 @@
+{
+  "run_id": "faithful-a-rory",
+  "task": "sustained-a",
+  "policy": "rory",
+  "started_at": "2026-09-28T02:47:05.307530+00:00",
+  "status": "completed",
+  "account_coordination": "unconfirmed",
+  "supervision": "quiet",
+  "stages": [
+    {
+      "stage": 1,
+      "prompt_sha256": "50690ac2cf08d8ef00573717c51c0d9e0de3297228bcb88fadd600d0277bd465",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 187.728,
+          "status": "completed",
+          "cumulative_credit_estimate": 29.25767,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 2,
+      "prompt_sha256": "7e904217c2c8597f690145f34519e8a7ccadc1070338bad4d10a4ddc3b65cc44",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 164.349,
+          "status": "completed",
+          "cumulative_credit_estimate": 50.20691,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 3,
+      "prompt_sha256": "1948b62d061d669614fb5ba5a386147bd18b09c4ae739f2e95bf12146f41b0bb",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 206.298,
+          "status": "completed",
+          "cumulative_credit_estimate": 80.33646999999999,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 4,
+      "prompt_sha256": "edf82f3f1047bf2b8b79f264aba6b2e5c1338a448702b05cd55dba001fcbfa02",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 288.399,
+          "status": "completed",
+          "cumulative_credit_estimate": 116.45459,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 5,
+      "prompt_sha256": "15fc8db26d5ccabec848cfc2f4b7e3d980ea2a51aade88c3385459c69d20abc7",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 149.564,
+          "status": "completed",
+          "cumulative_credit_estimate": 147.35241000000002,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 6,
+      "prompt_sha256": "06e02290a65d5c7566f5d701d58c5173e0c6323a47e4eda72ef88748e8406c04",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 157.848,
+          "status": "completed",
+          "cumulative_credit_estimate": 181.4436,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 7,
+      "prompt_sha256": "bbbd114e9c31370134a87fb3018d2b2baccb2baf86254cb4c5acf41fd271783f",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 252.641,
+          "status": "completed",
+          "cumulative_credit_estimate": 226.42936,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "stage": 8,
+      "prompt_sha256": "aba8e0250052ac32411b764c22a2737084d6ba522168ec5cefc443fdf110d129",
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsed_seconds": 233.436,
+          "status": "completed",
+          "cumulative_credit_estimate": 287.33086000000003,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "root_thread_id": "01a0e5e8-b603-7b70-b6a0-e207d0bb42a9",
+  "elapsed_seconds": 1640.263,
+  "ended_at": "2026-09-28T03:16:07.829822+00:00",
+  "credit_estimate": {
+    "by_model": {
+      "gpt-6-astra": 259.2903,
+      "gpt-5.6-terra": 28.04056
+    },
+    "total": 287.33086000000003
+  },
+  "usage_scope": "Persisted full tree after transport shutdown; failed/interrupted requests may have unreported provider usage."
+}

@@ -1,0 +1,9 @@
+For every inventory allocation request in this session:
+
+- Treat the request as a read-only proposal. Preserve existing workspace files and create no new files.
+- Return exactly one JSON object in the final answer, with these keys: `batch`, `sku`, `reserve_units`, `requested`, `allocated`, `deferred`.
+- Use the latest corrected `reserve_units` from this conversation. Allocate `min(requested, max(0, on_hand - reserve_units))` and defer the rest. All numeric fields are integers.
+
+The earlier planning note gave reserve_units as 3. Correction: reserve_units is 7, replacing that earlier value for the remaining requests in this session.
+
+Read inventory.csv and prepare allocation batch "first" for 18 units of "bolts".

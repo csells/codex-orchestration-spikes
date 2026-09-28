@@ -1,0 +1,3 @@
+Implemented single-parent inheritance with optional child configs, scalar/judge replacement, and participant merging by adapter with stable ordering. Added cycle detection and preserved strict YAML parser behavior, input files, and independent returned objects.
+
+Validation: 90 tests passed; one build test skipped because esbuild is unavailable. Final bundle tests also passed. No network or real model services used.

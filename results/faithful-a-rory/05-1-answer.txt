@@ -1,0 +1,3 @@
+Implemented optional profile selection via `defaultProfile`, with explicit selection taking precedence. Missing selection returns `PROFILE_REQUIRED`; unknown names return `UNKNOWN_PROFILE`; cycles return `PROFILE_CYCLE`.
+
+Validation: 102 tests passed, including 12,000-profile chains/cycles and ownership/replacement checks. One build test skipped because esbuild is unavailable. No network or real model services used.

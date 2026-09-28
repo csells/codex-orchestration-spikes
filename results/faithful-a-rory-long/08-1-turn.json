@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e604-49e2-7f01-a6af-635d63576afe",
+  "turn_id": "01a0e619-a438-75b2-b07d-0cf9d3500d62",
+  "status": "completed",
+  "answer": "Added `listProfiles()` with envelope-only validation and Unicode code-point ordering, plus CLI `--list` and `--json`. Conflicting flags fail with exit 1 and empty stdout.\n\nExisting rendering, confinement, replacement, and ownership/read-only checks pass. Full local suite: 106 passed; 1 build test skipped because esbuild is absent. No real services were invoked.",
+  "started_at": "2026-09-28T03:40:35.108936+00:00",
+  "ended_at": "2026-09-28T03:43:37.885892+00:00",
+  "elapsed_seconds": 182.777,
+  "timed_out": false,
+  "event_count": 692,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 6630063,
+      "inputTokens": 6606675,
+      "cachedInputTokens": 6448640,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 23388,
+      "reasoningOutputTokens": 6993
+    },
+    "last": {
+      "totalTokens": 114246,
+      "inputTokens": 114165,
+      "cachedInputTokens": 113664,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 81,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

@@ -1,0 +1,1 @@
+{"batch":"first","sku":"bolts","reserve_units":7,"requested":18,"allocated":16,"deferred":2}

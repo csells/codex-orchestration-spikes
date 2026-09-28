@@ -1,0 +1,5 @@
+Implemented optional selection with `defaultProfile` fallback, `PROFILE_REQUIRED`, consistent `UNKNOWN_PROFILE`, and `PROFILE_CYCLE`. Iterative traversal handles 12,000-profile chains and cycles without stack overflow.
+
+Replacement semantics, fresh results, and unchanged input files remain verified.
+
+Validation: 95 passed; 1 build test skipped because esbuild is absent. Only local tests and fake CLIs were used.

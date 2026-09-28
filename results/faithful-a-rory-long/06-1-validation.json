@@ -1,0 +1,83 @@
+{
+  "exit_code": 0,
+  "report": {
+    "workstream": "a",
+    "stage": 6,
+    "passed": true,
+    "functional": {
+      "workstream": "a",
+      "stage": 6,
+      "passed": true,
+      "tests": [
+        {
+          "name": "exports loadProfileBundle",
+          "passed": true
+        },
+        {
+          "name": "relative YAML loading and read-only inputs",
+          "passed": true
+        },
+        {
+          "name": "returned configurations are independently owned",
+          "passed": true
+        },
+        {
+          "name": "unknown profile has declared error code",
+          "passed": true
+        },
+        {
+          "name": "invalid bundle envelope and selected profile errors",
+          "passed": true
+        },
+        {
+          "name": "corrected inheritance replaces entire participant list",
+          "passed": true
+        },
+        {
+          "name": "inline precedence, judge removal, and participant policy",
+          "passed": true
+        },
+        {
+          "name": "invalid overrides are not silently discarded",
+          "passed": true
+        },
+        {
+          "name": "replacement applies through multiple inheritance levels",
+          "passed": true
+        },
+        {
+          "name": "default selection, explicit selection, and no-default error",
+          "passed": true
+        },
+        {
+          "name": "cycles and dangling parent have bounded declared failures",
+          "passed": true
+        },
+        {
+          "name": "relative, realpath, and prefix-sibling escapes are rejected",
+          "passed": true
+        },
+        {
+          "name": "internal normalized and symlinked paths remain usable",
+          "passed": true
+        }
+      ]
+    },
+    "compatibility": {
+      "exit_code": 0,
+      "stdout": "\u2714 claude: success envelope \u2192 ok with text and cost (606.635667ms)\n\u2714 claude: --max-budget-usd defaults to $5, overridable via maxBudgetUsd (226.935833ms)\n\u2714 claude: effort is passed as --effort when set, omitted when absent (111.53675ms)\n\u2714 codex: effort is passed as model_reasoning_effort override when set, omitted when absent (236.870458ms)\n\u2714 claude: budget-exceeded envelope (no `result` string) \u2192 error from `errors` array (81.215791ms)\n\u2714 claude: REGRESSION \u2014 subtype lies on error; classify on is_error (113.081875ms)\n\u2714 claude: non-JSON stdout \u2192 error with exit code (50.66275ms)\n\u2714 claude: exit 126 (stale shim) \u2192 setup hint, not a cryptic error (45.438209ms)\n\u2714 agy: trimmed stdout is the answer (217.653959ms)\n\u2714 agy: empty stdout \u2192 failure even on exit 0 (21.680333ms)\n\u2714 agy: timeout kills the run and reports it (218.878833ms)\n\u2714 REGRESSION \u2014 leaked worker holding the pipe + SIGTERM-ignoring CLI still times out fast (process-group kill) (2219.78875ms)\n\u2714 codex: success JSONL \u2192 LAST agent_message wins (57.166667ms)\n\u2714 codex: turn.failed \u2192 failure with the event's message (47.878166ms)\n\u2714 codex: exit 0 but no turn.completed \u2192 failure (incomplete stream) (56.134125ms)\n\u2714 codex: custom bin override is used (69.143834ms)\n\u2714 pi: success JSON lines \u2192 LAST assistant message_end wins (290.607125ms)\n\u2714 pi: runs read-only (tools allowlist, no edit/write/bash) in json mode (66.121416ms)\n\u2714 pi: effort is passed as --thinking when set, omitted when absent (127.619084ms)\n\u2714 pi: auto_retry_end finalError \u2192 failure with the error (67.502041ms)\n\u2714 pi: custom bin override is used (44.060542ms)\n\u2714 copilot-cli: success JSON lines \u2192 LAST assistant.message wins (247.076083ms)\n\u2714 copilot-cli: runs read-only (available-tools view/glob/grep, no bash/edit/write) in json mode (95.221875ms)\n\u2714 copilot-cli: effort is passed as --effort when set, omitted when absent (195.58775ms)\n\u2714 copilot-cli: result exitCode non-zero \u2192 failure (79.729042ms)\n\u2714 copilot-cli: custom bin override is used (67.599ms)\n\ufe63 published bundle: JS bin with a single line-1 shebang that runs (45.737459ms) # esbuild not installed (zero-dep clone)\n\u2714 userConfigPath honors XDG_CONFIG_HOME, else ~/.config (92.1185ms)\n\u2714 no --config + no user config \u2192 built-in lineup (text:null) \u2014 the P2 guard (152.261666ms)\n\u2714 no --config but user config present \u2192 loads it (146.829667ms)\n\u2714 explicit --config that does not exist \u2192 hard-fails (does not silently fall back) (90.272875ms)\n\u2714 a malformed user config still surfaces (parse throws downstream, not swallowed) (41.781541ms)\n\u2714 parses the shipped example config (a portable template \u2014 no host-specific bin) (160.8435ms)\n\u2714 serializeDebateConfig round-trips through parseDebateConfig (47.996959ms)\n\u2714 serializeDebateConfig quotes edge-whitespace values, leaves spaces/parens bare (7.033583ms)\n\u2714 serializeDebateConfig refuses an unrepresentable comment marker rather than corrupting (13.853958ms)\n\u2714 parses a judge: block (respondeo) (0.907709ms)\n\u2714 judge is undefined when the section is absent (0.269917ms)\n\u2714 rejects an unknown judge key with the line number (0.271417ms)\n\u2714 rejects a judge without a valid adapter (2.065208ms)\n\u2714 a top-level key after a judge block closes it (no misattribution) (0.272667ms)\n\u2714 models with spaces and parens survive (agy model names) (0.297209ms)\n\u2714 quoted values are unquoted (0.224167ms)\n\u2714 rejects unknown top-level keys with the line number (0.238291ms)\n\u2714 parses per-participant effort (free-form string) (0.197ms)\n\u2714 rejects unknown participant keys (0.1765ms)\n\u2714 rejects a single-participant lineup (0.182334ms)\n\u2714 rejects unknown adapters (0.176667ms)\n\u2714 rejects non-numeric numeric keys and non-integer rounds (0.229875ms)\n\u2714 rejects nested structures it cannot represent (0.166833ms)\n[disputatio] Round 1 \u2014 independent proposals: a, b\n[disputatio] ABORTED \u2014 only 1/2 proposals succeeded \u2014 no debate possible. Failures: b: timeout\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 abort: <2 successful proposals ends the debate before any reaction round (211.419ms)\n[disputatio] ABORTED \u2014 only 0/2 proposals succeeded \u2014 no debate possible. Failures: a: budget | b: timeout\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 abort: both proposals failing lists both failures (46.046667ms)\n[disputatio] Round 2 \u2014 reactions\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 reaction context is clean: proposals included, cost footnotes excluded (35.159333ms)\n[disputatio] Round 2 \u2014 reactions\n[disputatio] Respondeo \u2014 opus renders the consolidatio\n[disputatio] Redactio \u2014 opus drafts the final deliverable\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 respondeo: the judge runs after reactions and reads proposals + reactions (11.551584ms)\n[disputatio] Respondeo \u2014 opus renders the consolidatio\n[disputatio] Redactio \u2014 opus drafts the final deliverable\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 finalize: a RESOLVED respondeo triggers a final-report deliverable turn (9.332916ms)\n[disputatio] Respondeo \u2014 opus renders the consolidatio\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 finalize: NEEDS_INPUT does not produce a final report (the deliverable waits for the human) (97.07275ms)\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 finalize: no judge means no final report (15.711791ms)\n[disputatio] Respondeo \u2014 opus renders the consolidatio\n[disputatio] Redactio \u2014 opus drafts the final deliverable\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 finalize: a failing redactio is non-fatal (debate + respondeo still succeeded) (14.749875ms)\n[disputatio] Respondeo \u2014 opus renders the consolidatio\n[disputatio] Redactio \u2014 opus drafts the final deliverable\n\u2714 finalize: budget-exhausted redactio sets finalReportError.budgetExhausted (7.439333ms)\n\u2714 continuation: re-invokes the judge with the quaestio, transcript, prior determination, and human answers (2.928584ms)\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 continuation: degrades to NEEDS_INPUT when the answer opens ground the debaters never argued (1.411708ms)\n[disputatio] Round 2 \u2014 reactions\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 respondeo: no judge turn when the judge arg is absent (3.805458ms)\n[disputatio] Respondeo \u2014 opus renders the consolidatio\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 respondeo: STATUS: NEEDS_INPUT surfaces on the outcome (7.48875ms)\n[disputatio] Respondeo \u2014 opus renders the consolidatio\n\u2714 respondeo: a failing judge is non-fatal (42.243416ms)\n\u2714 redactio: with a repo, the synthesizer is grounded in a throwaway worktree, never the real checkout (2137.856167ms)\n[disputatio] Round 1 \u2014 independent proposals: m, s\n\u2714 worktree isolation: agents run in a throwaway worktree, never the real checkout (3272.388625ms)\n\u2714 doctor: all participants answer the canary \u2192 all ok, allHealthy true (386.145ms)\n\u2714 doctor: one participant fails \u2192 that diagnosis ok:false and allHealthy false (8.303792ms)\n\u2714 doctor: a participant that throws is reported as unhealthy, not crash the run (46.140209ms)\n\u2714 doctor: report shows a per-participant marker, vendor, and the failing detail (13.72225ms)\n\u2714 resolveBinary: PATH binary works \u2192 ok, no pin, alternatives untouched (4.656959ms)\n\u2714 resolveBinary: PATH binary fails, an alternative works \u2192 pin that alternative (0.426541ms)\n\u2714 resolveBinary: nothing works \u2192 ok:false, no bin (0.237541ms)\n\u2714 runInit: codex stale shim \u2192 brew bin pinned; claude on PATH \u2192 no bin; judge seeded (213.833208ms)\n\u2714 runInit: PATH binaries all work \u2192 no bin pinned (only-when-needed) (104.175125ms)\n\u2714 runInit: a participant with no working binary \u2192 exit 1, config not written (23.627917ms)\n\u2714 inline is the default: the sole positional IS the quaestio (43.115375ms)\n\u2714 --file selects the file source (no positional) (0.672167ms)\n\u2714 no quaestio at all \u2192 not ok (11.209417ms)\n\u2714 both --file and an inline positional \u2192 conflict, not ok (1.436333ms)\n\u2714 extra positionals (likely an unquoted prompt) \u2192 not ok (4.896041ms)\n\u2139 tests 81\n\u2139 suites 0\n\u2139 pass 80\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 1\n\u2139 todo 0\n\u2139 duration_ms 9132.738792\n",
+      "stderr": ""
+    },
+    "functional_exit_code": 0,
+    "wall_seconds": 12.687,
+    "repair_feedback": {
+      "workstream": "a",
+      "stage": 6,
+      "failed_checks": [],
+      "functional_error": null,
+      "compatibility_exit_code": 0,
+      "compatibility_failure_tail": ""
+    }
+  },
+  "stderr": ""
+}

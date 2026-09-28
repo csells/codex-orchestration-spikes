@@ -1,0 +1,3 @@
+`loadProfileBundle` now accepts an optional profile name, uses `defaultProfile` when omitted, and reports `PROFILE_REQUIRED`, `UNKNOWN_PROFILE`, or `PROFILE_CYCLE` as appropriate. Iterative traversal handles deep chains safely.
+
+Tests preserve replacement semantics, ownership, and unchanged inputs. `npm test`: 102 passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.

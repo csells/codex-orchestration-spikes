@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e5e8-b603-7b70-b6a0-e207d0bb42a9",
+  "turn_id": "01a0e5ee-7a04-7932-b071-fd992aad0226",
+  "status": "completed",
+  "answer": "Added inline overrides after inheritance and local YAML, including adapter-based participant merging, `judge: null` removal, and overrides-only profiles. Invalid supplied settings are rejected; fresh object ownership and unchanged input files are verified.\n\n`npm test`: 96 passed, 0 failed, 1 skipped because esbuild is unavailable. No network or real model services used.",
+  "started_at": "2026-09-28T02:53:26.109665+00:00",
+  "ended_at": "2026-09-28T02:56:52.407704+00:00",
+  "elapsed_seconds": 206.298,
+  "timed_out": false,
+  "event_count": 701,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 1750372,
+      "inputTokens": 1739905,
+      "cachedInputTokens": 1675136,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 10467,
+      "reasoningOutputTokens": 3845
+    },
+    "last": {
+      "totalTokens": 69382,
+      "inputTokens": 69243,
+      "cachedInputTokens": 64512,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 139,
+      "reasoningOutputTokens": 61
+    },
+    "modelContextWindow": 258400
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e604-49e2-7f01-a6af-635d63576afe",
+  "turn_id": "01a0e613-7f28-7d10-a6ed-076ed325087e",
+  "status": "completed",
+  "answer": "Implemented containment within the bundle\u2019s real parent directory. Absolute paths, normalized escapes, sibling-prefix escapes, and external symlinks now return `UNSAFE_CONFIG_PATH`; valid internal paths still load.\n\nRead-only and fresh-object tests pass. Full suite: 98 passed; 1 build test skipped because esbuild is absent. Only local tests and fake CLIs were used.",
+  "started_at": "2026-09-28T03:33:52.407712+00:00",
+  "ended_at": "2026-09-28T03:36:07.385199+00:00",
+  "elapsed_seconds": 134.978,
+  "timed_out": false,
+  "event_count": 662,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 3941511,
+      "inputTokens": 3924576,
+      "cachedInputTokens": 3797504,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 16935,
+      "reasoningOutputTokens": 4605
+    },
+    "last": {
+      "totalTokens": 88250,
+      "inputTokens": 88171,
+      "cachedInputTokens": 87552,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 79,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

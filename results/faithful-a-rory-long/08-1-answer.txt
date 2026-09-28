@@ -1,0 +1,3 @@
+Added `listProfiles()` with envelope-only validation and Unicode code-point ordering, plus CLI `--list` and `--json`. Conflicting flags fail with exit 1 and empty stdout.
+
+Existing rendering, confinement, replacement, and ownership/read-only checks pass. Full local suite: 106 passed; 1 build test skipped because esbuild is absent. No real services were invoked.

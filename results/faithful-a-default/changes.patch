@@ -1,0 +1,1037 @@
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -98,6 +98,16 @@
+ }
+ 
+ export function parseDebateConfig(text: string): DebateConfig {
++  return parseConfig(text, false);
++}
++
++// Bundle overlays may be superseded by later overlays. All other YAML
++// validation remains identical; the bundle loader validates the final lineup.
++export function parseDebateConfigOverlay(text: string): DebateConfig {
++  return parseConfig(text, true);
++}
++
++function parseConfig(text: string, partial: boolean): DebateConfig {
+   const cfg: DebateConfig = {};
+   let participants: Record<string, string | number>[] | null = null;
+   // The judge is a single spec (not a list). The `in*` flags track which block's
+@@ -160,7 +170,7 @@
+         throw new Error(`debate config: each participant needs "adapter: claude | agy | codex | pi | copilot-cli" (got ${JSON.stringify(p)})`);
+       }
+     }
+-    if (participants.length < 2) {
++    if (!partial && participants.length < 2) {
+       throw new Error(`debate config: a debate needs at least 2 participants (got ${participants.length})`);
+     }
+     cfg.participants = participants as ParticipantSpec[];
+--- a/src/profile-bundle.ts
++++ b/src/profile-bundle.ts
+@@ -0,0 +1,193 @@
++import { readFile, realpath } from "node:fs/promises";
++import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
++import { isDeepStrictEqual } from "node:util";
++import { parseDebateConfig, parseDebateConfigOverlay, serializeDebateConfig, type DebateConfig } from "./config.ts";
++
++function isObject(value: unknown): value is Record<string, unknown> {
++  return typeof value === "object" && value !== null && !Array.isArray(value);
++}
++
++function bundleError(code: "INVALID_BUNDLE" | "UNKNOWN_PROFILE" | "PROFILE_REQUIRED" | "PROFILE_CYCLE" | "UNSAFE_CONFIG_PATH", message: string): Error {
++  return Object.assign(new Error(message), { code });
++}
++
++function isWithin(directory: string, target: string): boolean {
++  const path = relative(directory, target);
++  return path !== ".." && !path.startsWith(`..${sep}`) && !isAbsolute(path);
++}
++
++async function resolveConfigPath(directory: string, configPath: string): Promise<string> {
++  const target = resolve(directory, configPath);
++  if (isAbsolute(configPath) || !isWithin(directory, target)) {
++    throw bundleError("UNSAFE_CONFIG_PATH", `config path must stay within the bundle directory: ${configPath}`);
++  }
++  const realTarget = await realpath(target);
++  if (!isWithin(directory, realTarget)) {
++    throw bundleError("UNSAFE_CONFIG_PATH", `config path resolves outside the bundle directory: ${configPath}`);
++  }
++  return realTarget;
++}
++
++function validateOverrideSpec(value: unknown): void {
++  if (!isObject(value)) throw new Error("participant and judge specs must be objects");
++  const stringKeys = ["adapter", "model", "bin", "effort"];
++  for (const [key, setting] of Object.entries(value)) {
++    if (key === "maxBudgetUsd") {
++      if (typeof setting !== "number" || !Number.isFinite(setting)) {
++        throw new Error("maxBudgetUsd must be a finite number");
++      }
++    } else if (!stringKeys.includes(key) || typeof setting !== "string") {
++      throw new Error(`unknown or invalid spec setting: ${key}`);
++    }
++  }
++  if (typeof value.adapter !== "string") throw new Error("spec requires an adapter");
++}
++
++function parseOverrides(value: unknown): { config: DebateConfig; removeJudge: boolean } {
++  try {
++    if (!isObject(value)) throw new Error("overrides must be an object");
++    for (const [key, setting] of Object.entries(value)) {
++      switch (key) {
++        case "rounds":
++        case "timeoutMinutes":
++          if (typeof setting !== "number" || !Number.isFinite(setting)) {
++            throw new Error(`${key} must be a finite number`);
++          }
++          break;
++        case "repo":
++          if (typeof setting !== "string") throw new Error("repo must be a string");
++          break;
++        case "participants":
++          if (!Array.isArray(setting)) throw new Error("participants must be an array");
++          setting.forEach(validateOverrideSpec);
++          break;
++        case "judge":
++          if (setting !== null) validateOverrideSpec(setting);
++          break;
++        default:
++          throw new Error(`unknown override key: ${key}`);
++      }
++    }
++    const config = { ...value };
++    const removeJudge = config.judge === null;
++    if (removeJudge) delete config.judge;
++    const parsed = parseDebateConfigOverlay(serializeDebateConfig(config as DebateConfig));
++    // The minimal YAML serializer cannot represent every JSON string. Refuse
++    // lossy round trips (quotes, escapes, newlines) instead of changing settings.
++    if (!isDeepStrictEqual(parsed, config)) throw new Error("override settings do not round-trip through config YAML");
++    return { config: parsed, removeJudge };
++  } catch (error) {
++    throw bundleError("INVALID_BUNDLE", `invalid overrides: ${error instanceof Error ? error.message : String(error)}`);
++  }
++}
++
++function overlayConfig(parent: DebateConfig, child: DebateConfig): DebateConfig {
++  // Every supplied value replaces its parent value, including the entire
++  // participant list in its supplied order. Absent keys inherit unchanged.
++  return { ...parent, ...child };
++}
++
++async function readBundleEnvelope(bundlePath: string) {
++  const absoluteBundlePath = await realpath(bundlePath);
++  const text = await readFile(absoluteBundlePath, "utf8");
++  let bundle: unknown;
++  try {
++    bundle = JSON.parse(text);
++  } catch {
++    throw bundleError("INVALID_BUNDLE", "profile bundle must contain valid JSON");
++  }
++  if (!isObject(bundle) || bundle.version !== 1) {
++    throw bundleError("INVALID_BUNDLE", "profile bundle must have version 1");
++  }
++  if (!isObject(bundle.profiles)) {
++    throw bundleError("INVALID_BUNDLE", "profile bundle profiles must be an object");
++  }
++  return { absoluteBundlePath, bundle, profiles: bundle.profiles };
++}
++
++// Compare Unicode code points rather than locale rules or UTF-16 code units.
++function compareProfileNames(a: string, b: string): number {
++  const left = Array.from(a);
++  const right = Array.from(b);
++  for (let i = 0; i < Math.min(left.length, right.length); i++) {
++    const difference = left[i].codePointAt(0)! - right[i].codePointAt(0)!;
++    if (difference !== 0) return difference;
++  }
++  return left.length - right.length;
++}
++
++export async function listProfiles(bundlePath: string): Promise<string[]> {
++  const { profiles } = await readBundleEnvelope(bundlePath);
++  return Object.keys(profiles).sort(compareProfileNames);
++}
++
++// Read and parse afresh on every load: inputs stay untouched and callers own
++// their entire configuration, including participant and judge objects.
++export async function loadProfileBundle(bundlePath: string, profileName?: string): Promise<DebateConfig> {
++  const { absoluteBundlePath, bundle, profiles } = await readBundleEnvelope(bundlePath);
++  if (profileName === undefined) {
++    if (!Object.hasOwn(bundle, "defaultProfile")) {
++      throw bundleError("PROFILE_REQUIRED", "select a profile or set defaultProfile in the bundle");
++    }
++    if (typeof bundle.defaultProfile !== "string") {
++      throw bundleError("INVALID_BUNDLE", "profile bundle defaultProfile must be a string");
++    }
++    profileName = bundle.defaultProfile;
++  }
++  const visiting = new Set<string>();
++  const chain: Record<string, unknown>[] = [];
++  let name = profileName;
++  // Walk iteratively so even a long inheritance chain or cycle cannot exhaust
++  // the call stack. Apply the collected profiles in parent-first order below.
++  while (true) {
++    if (!Object.hasOwn(profiles, name)) {
++      throw bundleError("UNKNOWN_PROFILE", `unknown profile: ${name}`);
++    }
++    if (visiting.has(name)) {
++      throw bundleError("PROFILE_CYCLE", `profile inheritance cycle at: ${name}`);
++    }
++    const profile = profiles[name];
++    if (!isObject(profile)) {
++      throw bundleError("INVALID_BUNDLE", `profile ${name} must be an object`);
++    }
++    const hasConfig = Object.hasOwn(profile, "config");
++    const hasParent = Object.hasOwn(profile, "extends");
++    const hasOverrides = Object.hasOwn(profile, "overrides");
++    if (!hasConfig && !hasParent && !hasOverrides) {
++      throw bundleError("INVALID_BUNDLE", `profile ${name} must have config, extends, or overrides`);
++    }
++    for (const key of ["config", "extends"] as const) {
++      if (Object.hasOwn(profile, key) && (typeof profile[key] !== "string" || profile[key].trim() === "")) {
++        throw bundleError("INVALID_BUNDLE", `profile ${name} ${key} must be a non-empty string`);
++      }
++    }
++    visiting.add(name);
++    chain.push(profile);
++    if (!hasParent) break;
++    name = profile.extends as string;
++  }
++
++  let result: DebateConfig = {};
++  for (const profile of chain.reverse()) {
++    const hasConfig = Object.hasOwn(profile, "config");
++    const hasParent = Object.hasOwn(profile, "extends");
++    const hasOverrides = Object.hasOwn(profile, "overrides");
++    if (hasConfig) {
++      const configPath = await resolveConfigPath(dirname(absoluteBundlePath), profile.config as string);
++      const configText = await readFile(configPath, "utf8");
++      result = hasParent || hasOverrides
++        ? overlayConfig(result, parseDebateConfigOverlay(configText))
++        : parseDebateConfig(configText);
++    }
++    if (hasOverrides) {
++      const overrides = parseOverrides(profile.overrides);
++      result = overlayConfig(result, overrides.config);
++      if (overrides.removeJudge) delete result.judge;
++    }
++  }
++
++  if (result.participants !== undefined && result.participants.length < 2) {
++    throw new Error(`debate config: a debate needs at least 2 participants (got ${result.participants.length})`);
++  }
++  return result;
++}
+--- a/src/profile-cli.ts
++++ b/src/profile-cli.ts
+@@ -0,0 +1,63 @@
++#!/usr/bin/env node
++import { serializeDebateConfig } from "./config.ts";
++import { listProfiles, loadProfileBundle } from "./profile-bundle.ts";
++
++const usage = "usage: node src/profile-cli.ts --bundle FILE [--profile NAME] [--json]\n       node src/profile-cli.ts --bundle FILE --list";
++
++function parseArgs(args: string[]): { bundle: string; profile?: string; list: boolean; json: boolean } {
++  let bundle: string | undefined;
++  let profile: string | undefined;
++  let list = false;
++  let json = false;
++  for (let i = 0; i < args.length; i++) {
++    const flag = args[i];
++    if (flag === "--list" || flag === "--json") {
++      if (flag === "--list") {
++        if (list) throw new Error(`duplicate --list\n${usage}`);
++        list = true;
++      } else {
++        if (json) throw new Error(`duplicate --json\n${usage}`);
++        json = true;
++      }
++      continue;
++    }
++    if (flag !== "--bundle" && flag !== "--profile") {
++      throw new Error(`unknown argument: ${flag}\n${usage}`);
++    }
++    const value = args[++i];
++    if (!value || value.startsWith("--")) {
++      throw new Error(`${flag} requires a value\n${usage}`);
++    }
++    if (flag === "--bundle") {
++      if (bundle !== undefined) throw new Error(`duplicate --bundle\n${usage}`);
++      bundle = value;
++    } else {
++      if (profile !== undefined) throw new Error(`duplicate --profile\n${usage}`);
++      profile = value;
++    }
++  }
++  if (bundle === undefined) throw new Error(`--bundle is required\n${usage}`);
++  if (list && (profile !== undefined || json)) {
++    throw new Error(`--list cannot combine with --profile or --json\n${usage}`);
++  }
++  return { bundle, profile, list, json };
++}
++
++try {
++  const args = parseArgs(process.argv.slice(2));
++  // Finish loading and serializing before emitting anything, so failures leave
++  // stdout empty. This entry point only renders; it never launches a debate.
++  let output: string;
++  if (args.list) {
++    output = JSON.stringify(await listProfiles(args.bundle)) + "\n";
++  } else {
++    const config = await loadProfileBundle(args.bundle, args.profile);
++    output = args.json ? JSON.stringify(config, null, 2) + "\n" : serializeDebateConfig(config);
++  }
++  process.stdout.write(output);
++} catch (error) {
++  const code = error instanceof Error && "code" in error ? `[${String(error.code)}] ` : "";
++  const message = error instanceof Error ? error.message : String(error);
++  console.error(`${code}${message}`);
++  process.exitCode = 1;
++}
+--- a/test/profile-bundle.test.ts
++++ b/test/profile-bundle.test.ts
+@@ -0,0 +1,535 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import { join, relative } from "node:path";
++import { parseDebateConfig } from "../src/config.ts";
++import { listProfiles, loadProfileBundle } from "../src/profile-bundle.ts";
++
++const yaml = "rounds: 1\nrepo: ../repo\nparticipants:\n  - adapter: claude\n    model: sonnet\n  - adapter: codex\njudge:\n  adapter: claude\n  model: opus\n";
++
++async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
++  const dir = await mkdtemp(join(tmpdir(), "disputatio-bundle-"));
++  t.after(() => rm(dir, { recursive: true, force: true }));
++  const bundlePath = join(dir, "bundle.json");
++  const configPath = join(dir, "configs", "fast.yaml");
++  await mkdir(join(dir, "configs"));
++  await writeFile(configPath, yaml);
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: { fast: { config: "configs/fast.yaml" } } }));
++  return { dir, bundlePath, configPath };
++}
++
++test("loads relative config paths from the bundle directory with independently owned results", async (t) => {
++  const { bundlePath, configPath } = await fixture(t);
++  const before = await Promise.all([readFile(bundlePath), readFile(configPath)]);
++  const first = await loadProfileBundle(bundlePath, "fast");
++  assert.deepEqual(first, parseDebateConfig(yaml));
++  first.rounds = 99;
++  first.participants![0].model = "changed";
++  first.participants!.push({ adapter: "pi" });
++  first.judge!.model = "changed";
++  const second = await loadProfileBundle(relative(process.cwd(), bundlePath), "fast");
++  assert.deepEqual(second, parseDebateConfig(yaml));
++  assert.deepEqual(await Promise.all([readFile(bundlePath), readFile(configPath)]), before);
++});
++
++test("selects only the named profile, including names inherited by ordinary objects", async (t) => {
++  const { bundlePath } = await fixture(t);
++  await writeFile(bundlePath, '{"version":1,"profiles":{"__proto__":{"config":"configs/fast.yaml"},"unused":null}}');
++  assert.deepEqual(await loadProfileBundle(bundlePath, "__proto__"), parseDebateConfig(yaml));
++  for (const name of ["fast", "toString", "constructor"]) {
++    await assert.rejects(loadProfileBundle(bundlePath, name), { code: "UNKNOWN_PROFILE" });
++  }
++});
++
++test("listing validates only the envelope and sorts fresh names by Unicode code point", async (t) => {
++  const { bundlePath, configPath } = await fixture(t);
++  const names = ["😀", "\uE000", "é", "a", "aa", "Z", "A", "2", "10", "__proto__", "constructor"];
++  const expected = ["10", "2", "A", "Z", "__proto__", "a", "aa", "constructor", "é", "\uE000", "😀"];
++  const profiles: Record<string, unknown> = Object.fromEntries(names.map(name => [name, { config: "missing.yaml" }]));
++  profiles.a = null;
++  profiles.aa = { extends: "aa" };
++  profiles.Z = { config: "../escape.yaml" };
++  const text = JSON.stringify({ version: 1, profiles });
++  await writeFile(bundlePath, text);
++  const result = await listProfiles(bundlePath);
++  assert.deepEqual(result, expected);
++  result.reverse();
++  result.pop();
++  assert.deepEqual(await listProfiles(bundlePath), expected);
++  assert.equal(await readFile(bundlePath, "utf8"), text);
++  assert.equal(await readFile(configPath, "utf8"), yaml);
++  // Defaults are selection metadata; listing neither needs nor resolves one.
++  await writeFile(bundlePath, JSON.stringify({ version: 1, defaultProfile: null, profiles: {} }));
++  assert.deepEqual(await listProfiles(bundlePath), []);
++});
++
++test("default selection resolves inheritance while explicit selection takes precedence", async (t) => {
++  const { bundlePath, configPath } = await fixture(t);
++  const participants = [{ adapter: "pi", model: "first" }, { adapter: "claude", model: "second" }];
++  await writeFile(bundlePath, JSON.stringify({ version: 1, defaultProfile: "child", profiles: {
++    base: { config: "configs/fast.yaml" },
++    child: { extends: "base", overrides: { rounds: 0, participants, judge: null } },
++  } }));
++  const before = await Promise.all([readFile(bundlePath), readFile(configPath)]);
++  const expected = { rounds: 0, repo: "../repo", participants };
++  const result = await loadProfileBundle(bundlePath);
++  assert.deepEqual(result, expected);
++  assert.deepEqual(await loadProfileBundle(bundlePath, "base"), parseDebateConfig(yaml));
++  result.participants![0].model = "mutated";
++  result.participants!.pop();
++  assert.deepEqual(await loadProfileBundle(bundlePath, undefined), expected);
++  assert.deepEqual(await Promise.all([readFile(bundlePath), readFile(configPath)]), before);
++});
++
++test("omitting selection without a default reports PROFILE_REQUIRED", async (t) => {
++  const { bundlePath } = await fixture(t);
++  for (const profiles of [{}, { fast: { config: "configs/fast.yaml" } }]) {
++    const text = JSON.stringify({ version: 1, profiles });
++    await writeFile(bundlePath, text);
++    await assert.rejects(loadProfileBundle(bundlePath), {
++      name: "Error", code: "PROFILE_REQUIRED", message: /select a profile/,
++    });
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++  }
++  assert.deepEqual(await loadProfileBundle(bundlePath, "fast"), parseDebateConfig(yaml));
++});
++
++test("unknown explicit, default, and parent names report UNKNOWN_PROFILE", async (t) => {
++  const { bundlePath } = await fixture(t);
++  for (const missing of ["missing", "constructor", ""]) {
++    await writeFile(bundlePath, JSON.stringify({ version: 1, defaultProfile: missing, profiles: {
++      fast: { config: "configs/fast.yaml" },
++      child: { extends: "missing-parent" },
++    } }));
++    await assert.rejects(loadProfileBundle(bundlePath), { code: "UNKNOWN_PROFILE", message: `unknown profile: ${missing}` });
++    await assert.rejects(loadProfileBundle(bundlePath, missing), { code: "UNKNOWN_PROFILE" });
++    await assert.rejects(loadProfileBundle(bundlePath, "child"), { code: "UNKNOWN_PROFILE", message: "unknown profile: missing-parent" });
++    assert.deepEqual(await loadProfileBundle(bundlePath, "fast"), parseDebateConfig(yaml));
++  }
++});
++
++test("explicit selection ignores an unused malformed or cyclic default", async (t) => {
++  const { bundlePath } = await fixture(t);
++  for (const defaultProfile of [null, 1, [], {}, false, "loop"]) {
++    await writeFile(bundlePath, JSON.stringify({ version: 1, defaultProfile, profiles: {
++      fast: { config: "configs/fast.yaml" }, loop: { extends: "loop" },
++    } }));
++    assert.deepEqual(await loadProfileBundle(bundlePath, "fast"), parseDebateConfig(yaml));
++    await assert.rejects(loadProfileBundle(bundlePath), {
++      code: defaultProfile === "loop" ? "PROFILE_CYCLE" : "INVALID_BUNDLE",
++    });
++  }
++});
++
++test("long inheritance chains and cycles resolve without recursive stack growth", { timeout: 10000 }, async (t) => {
++  const { bundlePath } = await fixture(t);
++  const profiles: Record<string, unknown> = {};
++  const depth = 15000;
++  for (let i = 0; i < depth; i++) profiles[`p${i}`] = { extends: `p${i + 1}` };
++  profiles[`p${depth}`] = { extends: "p1" };
++  const text = JSON.stringify({ version: 1, defaultProfile: "p0", profiles });
++  await writeFile(bundlePath, text);
++  await assert.rejects(loadProfileBundle(bundlePath), {
++    name: "Error", code: "PROFILE_CYCLE", message: /p1/,
++  });
++  assert.equal(await readFile(bundlePath, "utf8"), text);
++  profiles[`p${depth}`] = { overrides: { rounds: 4 } };
++  await writeFile(bundlePath, JSON.stringify({ version: 1, defaultProfile: "p0", profiles }));
++  assert.deepEqual(await loadProfileBundle(bundlePath), { rounds: 4 });
++});
++
++test("rejects invalid JSON, bundle shapes, versions, and profiles maps", async (t) => {
++  const { bundlePath } = await fixture(t);
++  const invalid = [
++    "{", "null", "[]", "1", '"bundle"',
++    ...[
++      {}, { version: 2, profiles: {} }, { version: "1", profiles: {} },
++      { version: 1 }, { version: 1, profiles: null },
++      { version: 1, profiles: [] }, { version: 1, profiles: "fast" },
++      { version: 1, profiles: 1 }, { version: 1, profiles: true },
++    ].map(value => JSON.stringify(value)),
++  ];
++  for (const text of invalid) {
++    await writeFile(bundlePath, text);
++    await assert.rejects(loadProfileBundle(bundlePath, "fast"), { code: "INVALID_BUNDLE" });
++    await assert.rejects(listProfiles(bundlePath), { code: "INVALID_BUNDLE" });
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++  }
++});
++
++test("rejects malformed selected profiles", async (t) => {
++  const { bundlePath } = await fixture(t);
++  for (const profile of [null, [], "configs/fast.yaml", 1, true, {}, { config: null }, { config: [] }, { config: 1 }, { config: "" }, { config: "  " }]) {
++    const text = JSON.stringify({ version: 1, profiles: { fast: profile } });
++    await writeFile(bundlePath, text);
++    await assert.rejects(loadProfileBundle(bundlePath, "fast"), { code: "INVALID_BUNDLE" });
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++  }
++});
++
++test("preserves filesystem errors for missing config and bundle files", async (t) => {
++  const { bundlePath, configPath, dir } = await fixture(t);
++  await rm(configPath);
++  await assert.rejects(loadProfileBundle(bundlePath, "fast"), { code: "ENOENT" });
++  await assert.rejects(loadProfileBundle(join(dir, "missing.json"), "fast"), { code: "ENOENT" });
++  await assert.rejects(listProfiles(join(dir, "missing.json")), { code: "ENOENT" });
++});
++
++test("allows nested, normalized, and internal symlink config paths without changing inputs", async (t) => {
++  const { bundlePath, configPath, dir } = await fixture(t);
++  await mkdir(join(dir, "configs", "nested"));
++  await symlink("configs/fast.yaml", join(dir, "linked.yaml"));
++  await symlink("configs", join(dir, "linked-dir"));
++  for (const config of ["configs/nested/../fast.yaml", "./configs/./fast.yaml", "linked.yaml", "linked-dir/fast.yaml"]) {
++    const text = JSON.stringify({ version: 1, defaultProfile: "fast", profiles: { fast: { config } } });
++    await writeFile(bundlePath, text);
++    const result = await loadProfileBundle(bundlePath);
++    assert.deepEqual(result, parseDebateConfig(yaml));
++    result.participants![0].model = "mutated";
++    result.judge!.model = "mutated";
++    assert.deepEqual(await loadProfileBundle(bundlePath), parseDebateConfig(yaml));
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++    assert.equal(await readFile(configPath, "utf8"), yaml);
++  }
++});
++
++test("rejects absolute paths and normalized traversal or prefix-sibling escapes", async (t) => {
++  const { dir } = await fixture(t);
++  const boundary = join(dir, "safe");
++  const sibling = join(dir, "safe-sibling");
++  await mkdir(boundary);
++  await mkdir(sibling);
++  const bundlePath = join(boundary, "bundle.json");
++  const insideConfig = join(boundary, "inside.yaml");
++  const outsideConfig = join(sibling, "outside.yaml");
++  await writeFile(insideConfig, yaml);
++  await writeFile(outsideConfig, yaml);
++  // Even a symlink that returns inside cannot make a normalized escape safe.
++  await symlink(insideConfig, join(sibling, "back-inside.yaml"));
++  for (const config of [insideConfig, outsideConfig, "..", "../safe-sibling/outside.yaml",
++    "nested/../../safe-sibling/outside.yaml", "../missing.yaml", "../safe-sibling/back-inside.yaml"]) {
++    const text = JSON.stringify({ version: 1, profiles: {
++      base: { config }, child: { extends: "base", config: "inside.yaml" },
++    } });
++    await writeFile(bundlePath, text);
++    await assert.rejects(loadProfileBundle(bundlePath, "child"), { name: "Error", code: "UNSAFE_CONFIG_PATH" });
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++    assert.equal(await readFile(insideConfig, "utf8"), yaml);
++    assert.equal(await readFile(outsideConfig, "utf8"), yaml);
++  }
++});
++
++test("rejects file and directory symlinks resolving into a prefix sibling", async (t) => {
++  const { dir } = await fixture(t);
++  const boundary = join(dir, "safe");
++  const sibling = join(dir, "safe-sibling");
++  await mkdir(boundary);
++  await mkdir(sibling);
++  const outsideConfig = join(sibling, "outside.yaml");
++  await writeFile(outsideConfig, yaml);
++  await symlink("../safe-sibling/outside.yaml", join(boundary, "escape.yaml"));
++  await symlink(sibling, join(boundary, "escape-dir"));
++  const bundlePath = join(boundary, "bundle.json");
++  for (const config of ["escape.yaml", "escape-dir/outside.yaml"]) {
++    const text = JSON.stringify({ version: 1, profiles: { fast: { config } } });
++    await writeFile(bundlePath, text);
++    await assert.rejects(loadProfileBundle(bundlePath, "fast"), { code: "UNSAFE_CONFIG_PATH" });
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++    assert.equal(await readFile(outsideConfig, "utf8"), yaml);
++  }
++});
++
++test("uses the bundle file's real parent for resolution and confinement through symlinks", async (t) => {
++  const { dir } = await fixture(t);
++  const boundary = join(dir, "real");
++  const aliases = join(dir, "aliases");
++  await mkdir(boundary);
++  await mkdir(aliases);
++  const bundlePath = join(boundary, "bundle.json");
++  const aliasPath = join(aliases, "bundle.json");
++  await writeFile(join(boundary, "config.yaml"), yaml);
++  await writeFile(join(aliases, "config.yaml"), "rounds: 99\n");
++  await symlink(bundlePath, aliasPath);
++  await symlink(boundary, join(aliases, "directory"));
++  const text = JSON.stringify({ version: 1, profiles: { fast: { config: "config.yaml" } } });
++  await writeFile(bundlePath, text);
++  for (const path of [aliasPath, join(aliases, "directory", "bundle.json")]) {
++    assert.deepEqual(await loadProfileBundle(path, "fast"), parseDebateConfig(yaml));
++  }
++  assert.equal(await readFile(bundlePath, "utf8"), text);
++  assert.equal(await readFile(join(boundary, "config.yaml"), "utf8"), yaml);
++  assert.equal(await readFile(join(aliases, "config.yaml"), "utf8"), "rounds: 99\n");
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    fast: { config: "../aliases/config.yaml" },
++  } }));
++  await assert.rejects(loadProfileBundle(aliasPath, "fast"), { code: "UNSAFE_CONFIG_PATH" });
++});
++
++test("preserves YAML parser errors without modifying the inputs", async (t) => {
++  const { bundlePath, configPath } = await fixture(t);
++  const invalidYaml = "round: 2\n";
++  await writeFile(configPath, invalidYaml);
++  const before = await readFile(bundlePath);
++  await assert.rejects(loadProfileBundle(bundlePath, "fast"), /debate config line 1: unknown key "round"/);
++  assert.equal(await readFile(configPath, "utf8"), invalidYaml);
++  assert.deepEqual(await readFile(bundlePath), before);
++});
++
++test("inherits through multiple parents, replacing scalars, judges, and entire participant lists", async (t) => {
++  const { bundlePath, configPath, dir } = await fixture(t);
++  const base = "rounds: 3\nrepo: ../repo\ntimeoutMinutes: 10\nparticipants:\n  - adapter: claude\n    model: sonnet\n    effort: high\n  - adapter: codex\n    model: original\njudge:\n  adapter: claude\n  model: opus\n  effort: high\n";
++  const childPath = join(dir, "configs", "child.yaml");
++  const grandchildPath = join(dir, "grandchild.yaml");
++  await writeFile(configPath, base);
++  await writeFile(childPath, "rounds: 0\nparticipants:\n  - adapter: agy\n  - adapter: claude\n    model: updated\njudge:\n  adapter: codex\n");
++  await writeFile(grandchildPath, "repo: ./child-repo\nparticipants:\n  - adapter: pi\n  - adapter: codex\n    effort: low\n  - adapter: agy\n");
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    base: { config: "configs/fast.yaml" },
++    child: { extends: "base", config: "configs/child.yaml" },
++    grandchild: { extends: "child", config: "grandchild.yaml" },
++    alias: { extends: "grandchild" },
++  } }));
++  const paths = [bundlePath, configPath, childPath, grandchildPath];
++  const before = await Promise.all(paths.map(path => readFile(path)));
++  const expected = {
++    rounds: 0, repo: "./child-repo", timeoutMinutes: 10,
++    participants: [
++      { adapter: "pi" },
++      { adapter: "codex", effort: "low" },
++      { adapter: "agy" },
++    ],
++    judge: { adapter: "codex" },
++  };
++  const result = await loadProfileBundle(bundlePath, "alias");
++  assert.deepEqual(result, expected);
++  assert.deepEqual((await loadProfileBundle(bundlePath, "child")).participants, [
++    { adapter: "agy" }, { adapter: "claude", model: "updated" },
++  ]);
++  result.rounds = 99;
++  result.participants![0].model = "mutated";
++  result.participants![1].effort = "mutated";
++  result.participants!.pop();
++  result.judge!.model = "mutated";
++  assert.deepEqual(await loadProfileBundle(bundlePath, "alias"), expected);
++  assert.deepEqual(await loadProfileBundle(bundlePath, "base"), parseDebateConfig(base));
++  assert.deepEqual(await Promise.all(paths.map(path => readFile(path))), before);
++});
++
++test("omitted child values inherit, and an extends-only profile owns its result", async (t) => {
++  const { bundlePath, dir } = await fixture(t);
++  await writeFile(join(dir, "scalar.yaml"), "timeoutMinutes: 2\n");
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    base: { config: "configs/fast.yaml" },
++    child: { extends: "base", config: "scalar.yaml" },
++    alias: { extends: "child" },
++  } }));
++  const [first, second] = await Promise.all([
++    loadProfileBundle(bundlePath, "alias"), loadProfileBundle(bundlePath, "alias"),
++  ]);
++  assert.deepEqual(first, { ...parseDebateConfig(yaml), timeoutMinutes: 2 });
++  first.participants![0].model = "mutated";
++  first.judge!.model = "mutated";
++  assert.deepEqual(second, { ...parseDebateConfig(yaml), timeoutMinutes: 2 });
++});
++
++test("rejects malformed inheritance fields even when config or a parent is valid", async (t) => {
++  const { bundlePath } = await fixture(t);
++  const invalid = [null, [], {}, 1, true, "", "  "];
++  for (const profile of [
++    ...invalid.map(value => ({ config: "configs/fast.yaml", extends: value })),
++    ...invalid.map(value => ({ config: value, extends: "base" })),
++  ]) {
++    await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++      base: { config: "configs/fast.yaml" }, child: profile,
++    } }));
++    await assert.rejects(loadProfileBundle(bundlePath, "child"), { code: "INVALID_BUNDLE" });
++  }
++});
++
++test("rejects cycles and unknown or malformed parents without changing the bundle", async (t) => {
++  const { bundlePath } = await fixture(t);
++  for (const [profiles, code] of [
++    [{ child: { extends: "child" } }, "PROFILE_CYCLE"],
++    [{ child: { extends: "parent" }, parent: { extends: "child" } }, "PROFILE_CYCLE"],
++    [{ child: { extends: "missing" } }, "UNKNOWN_PROFILE"],
++    [{ child: { extends: "constructor" } }, "UNKNOWN_PROFILE"],
++    [{ child: { extends: "parent" }, parent: {} }, "INVALID_BUNDLE"],
++  ] as const) {
++    const text = JSON.stringify({ version: 1, profiles });
++    await writeFile(bundlePath, text);
++    await assert.rejects(loadProfileBundle(bundlePath, "child"), { code });
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++  }
++});
++
++test("validates the final replacement lineup while allowing incomplete intermediate overlays", async (t) => {
++  const { bundlePath, dir } = await fixture(t);
++  await writeFile(join(dir, "base.yaml"), "rounds: 1\n");
++  await writeFile(join(dir, "one.yaml"), "participants:\n  - adapter: claude\n");
++  await writeFile(join(dir, "two.yaml"), "participants:\n  - adapter: codex\n");
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    base: { config: "base.yaml" },
++    one: { extends: "base", config: "one.yaml" },
++    two: { extends: "one", config: "two.yaml" },
++    standalone: { config: "one.yaml" },
++  } }));
++  await assert.rejects(loadProfileBundle(bundlePath, "one"), /at least 2 participants/);
++  await assert.rejects(loadProfileBundle(bundlePath, "standalone"), /at least 2 participants/);
++  await assert.rejects(loadProfileBundle(bundlePath, "two"), /at least 2 participants/);
++  await writeFile(join(dir, "two.yaml"), "participants:\n  - adapter: codex\n  - adapter: pi\n");
++  assert.deepEqual(await loadProfileBundle(bundlePath, "two"), {
++    rounds: 1, participants: [{ adapter: "codex" }, { adapter: "pi" }],
++  });
++  await writeFile(join(dir, "one.yaml"), "participants:\n  - adapter: unknown\n");
++  await assert.rejects(loadProfileBundle(bundlePath, "two"), /each participant needs/);
++});
++
++test("inline overrides replace entire lineups after inheritance and local YAML", async (t) => {
++  const { bundlePath, configPath, dir } = await fixture(t);
++  const localPath = join(dir, "local.yaml");
++  await writeFile(localPath, "rounds: 2\ntimeoutMinutes: 10\nparticipants:\n  - adapter: claude\n    model: local\n    effort: high\njudge:\n  adapter: claude\n  model: local\n");
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    base: { config: "configs/fast.yaml", overrides: { timeoutMinutes: 20 } },
++    child: { extends: "base", config: "local.yaml", overrides: {
++      rounds: 0, repo: "./inline-repo", timeoutMinutes: 0,
++      participants: [{ adapter: "pi" }, { adapter: "claude", model: "inline" }, { adapter: "agy" }],
++      judge: { adapter: "codex", effort: "low" },
++    } },
++    grandchild: { extends: "child", overrides: {
++      participants: [{ adapter: "agy", model: "new" }, { adapter: "pi" }], judge: null,
++    } },
++    alias: { extends: "grandchild", overrides: { rounds: 3 } },
++  } }));
++  const paths = [bundlePath, configPath, localPath];
++  const before = await Promise.all(paths.map(path => readFile(path)));
++  const expected = {
++    rounds: 0, repo: "./inline-repo", timeoutMinutes: 0,
++    participants: [{ adapter: "pi" }, { adapter: "claude", model: "inline" }, { adapter: "agy" }],
++    judge: { adapter: "codex", effort: "low" },
++  };
++  const [first, second] = await Promise.all([
++    loadProfileBundle(bundlePath, "child"), loadProfileBundle(bundlePath, "child"),
++  ]);
++  assert.deepEqual(first, expected);
++  first.participants![0].model = "mutated";
++  first.participants!.pop();
++  first.judge!.effort = "mutated";
++  assert.deepEqual(second, expected);
++  assert.deepEqual(await loadProfileBundle(bundlePath, "child"), expected);
++  assert.deepEqual(await loadProfileBundle(bundlePath, "alias"), {
++    rounds: 3, repo: "./inline-repo", timeoutMinutes: 0,
++    participants: [{ adapter: "agy", model: "new" }, { adapter: "pi" }],
++  });
++  assert.deepEqual(await loadProfileBundle(bundlePath, "base"), { ...parseDebateConfig(yaml), timeoutMinutes: 20 });
++  assert.deepEqual(await Promise.all(paths.map(path => readFile(path))), before);
++});
++
++test("overrides-only profiles are valid and omitted settings inherit", async (t) => {
++  const { bundlePath } = await fixture(t);
++  const inline = {
++    rounds: 2, repo: " repo with spaces ", timeoutMinutes: 5,
++    participants: [{ adapter: "claude", model: "sonnet", maxBudgetUsd: 1 }, { adapter: "codex", bin: "/tmp/fake-codex", effort: "low" }],
++    judge: { adapter: "pi", model: "judge" },
++  };
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    base: { overrides: inline },
++    child: { extends: "base", overrides: { rounds: 0 } },
++    empty: { overrides: {} },
++    unchanged: { extends: "base", overrides: {} },
++  } }));
++  assert.deepEqual(await loadProfileBundle(bundlePath, "base"), inline);
++  assert.deepEqual(await loadProfileBundle(bundlePath, "child"), { ...inline, rounds: 0 });
++  assert.deepEqual(await loadProfileBundle(bundlePath, "empty"), {});
++  assert.deepEqual(await loadProfileBundle(bundlePath, "unchanged"), inline);
++});
++
++test("judge null removes inherited and local judges and remains absent through inheritance", async (t) => {
++  const { bundlePath } = await fixture(t);
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    base: { config: "configs/fast.yaml" },
++    inherited: { extends: "base", overrides: { judge: null } },
++    local: { config: "configs/fast.yaml", overrides: { judge: null } },
++    alias: { extends: "inherited", overrides: { rounds: 0 } },
++    restored: { extends: "alias", overrides: { judge: { adapter: "pi" } } },
++    absent: { overrides: { judge: null } },
++  } }));
++  const expected = parseDebateConfig(yaml);
++  delete expected.judge;
++  for (const name of ["inherited", "local"]) {
++    const result = await loadProfileBundle(bundlePath, name);
++    assert.deepEqual(result, expected);
++    assert.equal(Object.hasOwn(result, "judge"), false);
++  }
++  assert.deepEqual(await loadProfileBundle(bundlePath, "alias"), { ...expected, rounds: 0 });
++  assert.deepEqual(await loadProfileBundle(bundlePath, "restored"), { ...expected, rounds: 0, judge: { adapter: "pi" } });
++  assert.deepEqual(await loadProfileBundle(bundlePath, "absent"), {});
++  assert.deepEqual(await loadProfileBundle(bundlePath, "base"), parseDebateConfig(yaml));
++});
++
++test("inline participant overlays replace a local YAML lineup and validate its size", async (t) => {
++  const { bundlePath, configPath } = await fixture(t);
++  await writeFile(configPath, "participants:\n  - adapter: claude\n");
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    fast: { config: "configs/fast.yaml", overrides: { participants: [{ adapter: "codex" }, { adapter: "pi" }] } },
++    single: { config: "configs/fast.yaml", overrides: { participants: [{ adapter: "codex" }] } },
++    empty: { extends: "fast", overrides: { participants: [] } },
++    incomplete: { overrides: { participants: [{ adapter: "codex" }] } },
++  } }));
++  assert.deepEqual(await loadProfileBundle(bundlePath, "fast"), {
++    participants: [{ adapter: "codex" }, { adapter: "pi" }],
++  });
++  await assert.rejects(loadProfileBundle(bundlePath, "single"), /at least 2 participants \(got 1\)/);
++  await assert.rejects(loadProfileBundle(bundlePath, "empty"), /at least 2 participants \(got 0\)/);
++  await assert.rejects(loadProfileBundle(bundlePath, "incomplete"), /at least 2 participants/);
++});
++
++test("replacement preserves repeated adapters and empty YAML does not inherit a lineup", async (t) => {
++  const { bundlePath, dir } = await fixture(t);
++  const replacement = [{ adapter: "pi", model: "first" }, { adapter: "pi", model: "second" }];
++  await writeFile(join(dir, "replacement.yaml"), "participants:\n  - adapter: pi\n    model: first\n  - adapter: pi\n    model: second\n");
++  await writeFile(join(dir, "empty.yaml"), "participants:\n");
++  await writeFile(bundlePath, JSON.stringify({ version: 1, profiles: {
++    base: { config: "configs/fast.yaml" },
++    fromYaml: { extends: "base", config: "replacement.yaml" },
++    fromInline: { extends: "base", overrides: { participants: replacement } },
++    empty: { extends: "base", config: "empty.yaml" },
++  } }));
++  for (const name of ["fromYaml", "fromInline"]) {
++    assert.deepEqual((await loadProfileBundle(bundlePath, name)).participants, replacement);
++  }
++  await assert.rejects(loadProfileBundle(bundlePath, "empty"), /at least 2 participants \(got 0\)/);
++});
++
++test("invalid supplied overrides fail without dropping keys or changing input files", async (t) => {
++  const { bundlePath, configPath } = await fixture(t);
++  const invalidSpecs = [null, false, [], "claude", {}, { adapter: "unknown" },
++    { adapter: "claude", extra: 1 }, { adapter: "claude", model: 1 },
++    { adapter: "claude", model: "" }, { adapter: "claude", bin: null },
++    { adapter: "claude", effort: false }, { adapter: "claude", maxBudgetUsd: "1" },
++    { adapter: "claude", model: "model # comment" },
++    { adapter: "claude", model: '"quoted"' },
++    { adapter: "claude", model: "injected\nrounds: 9" },
++  ];
++  const invalidOverrides = [null, [], false, 1, "config", { unknown: 1 },
++    { rounds: "2" }, { rounds: null }, { rounds: -1 }, { rounds: 1.5 },
++    { repo: 1 }, { repo: null }, { repo: "" }, { repo: "repo\nrounds: 9" },
++    { timeoutMinutes: "5" }, { timeoutMinutes: null }, { participants: null },
++    { participants: {} }, { participants: false },
++    ...invalidSpecs.map(spec => ({ participants: [spec] })),
++    ...invalidSpecs.filter(spec => spec !== null).map(spec => ({ judge: spec })),
++  ];
++  for (const overrides of invalidOverrides) {
++    const text = JSON.stringify({ version: 1, profiles: {
++      fast: { config: "configs/fast.yaml", overrides },
++      child: { extends: "fast", overrides: { rounds: 1, judge: null } },
++    } });
++    await writeFile(bundlePath, text);
++    await assert.rejects(loadProfileBundle(bundlePath, "child"), { code: "INVALID_BUNDLE" });
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++    assert.equal(await readFile(configPath, "utf8"), yaml);
++  }
++  // JSON permits numeric overflow, which must not become a valid config number.
++  await writeFile(bundlePath, '{"version":1,"profiles":{"fast":{"overrides":{"timeoutMinutes":1e400}}}}');
++  await assert.rejects(loadProfileBundle(bundlePath, "fast"), { code: "INVALID_BUNDLE" });
++});
+--- a/test/profile-cli.test.ts
++++ b/test/profile-cli.test.ts
+@@ -0,0 +1,206 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { spawnSync } from "node:child_process";
++import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { fileURLToPath } from "node:url";
++import { parseDebateConfig, serializeDebateConfig } from "../src/config.ts";
++
++const cli = fileURLToPath(new URL("../src/profile-cli.ts", import.meta.url));
++
++async function fixture(t: { after: (fn: () => Promise<void>) => void }) {
++  const dir = await mkdtemp(join(tmpdir(), "disputatio-profile-cli-"));
++  const bundlePath = join(dir, "bundle.json");
++  const configPath = join(dir, "base.yaml");
++  const marker = join(dir, "participant-ran");
++  t.after(async () => {
++    try {
++      await assert.rejects(readFile(marker), { code: "ENOENT" });
++    } finally {
++      await rm(dir, { recursive: true, force: true });
++    }
++  });
++  const binDir = join(dir, "bin");
++  await mkdir(binDir);
++  // PATH contains only local tripwires: any accidental participant invocation
++  // leaves evidence, and no installed agent CLI can run from these tests.
++  for (const name of ["claude", "codex", "agy", "pi", "copilot"]) {
++    await writeFile(join(binDir, name), '#!/bin/sh\nprintf invoked > "$PARTICIPANT_MARKER"\nexit 99\n', { mode: 0o755 });
++  }
++  const yaml = "# source formatting is not canonical\nrepo: ./repo\nrounds: 2\nparticipants:\n  - adapter: claude\n    model: sonnet\n  - adapter: codex\njudge:\n  adapter: pi\n";
++  await writeFile(configPath, yaml);
++  await writeFile(bundlePath, JSON.stringify({ version: 1, defaultProfile: "child", profiles: {
++    base: { config: "base.yaml" },
++    child: { extends: "base", overrides: {
++      rounds: 0, participants: [{ adapter: "codex", model: "updated" }, { adapter: "pi" }], judge: null,
++    } },
++  } }));
++  const run = (args: string[]) => {
++    const result = spawnSync(process.execPath, [cli, ...args], {
++      cwd: dir, encoding: "utf8", timeout: 5000,
++      env: { ...process.env, PATH: binDir, PARTICIPANT_MARKER: marker },
++    });
++    assert.ifError(result.error);
++    assert.equal(result.signal, null);
++    return result;
++  };
++  return { dir, bundlePath, configPath, yaml, run };
++}
++
++test("CLI renders default and explicit profiles as canonical reusable YAML without writes or participants", async (t) => {
++  const { dir, bundlePath, configPath, yaml, run } = await fixture(t);
++  const before = await Promise.all([readFile(bundlePath), readFile(configPath)]);
++  const files = await readdir(dir, { recursive: true });
++  const expected = {
++    rounds: 0, repo: "./repo", participants: [{ adapter: "codex", model: "updated" }, { adapter: "pi" }],
++  };
++  const rendered = run(["--bundle", "bundle.json"]);
++  assert.equal(rendered.status, 0);
++  assert.equal(rendered.stderr, "");
++  assert.deepEqual(parseDebateConfig(rendered.stdout), expected);
++  assert.equal(rendered.stdout, "rounds: 0\nrepo: ./repo\nparticipants:\n  - adapter: codex\n    model: updated\n  - adapter: pi\n");
++  const explicit = run(["--profile", "base", "--bundle", bundlePath]);
++  assert.equal(explicit.status, 0);
++  assert.equal(explicit.stderr, "");
++  assert.equal(explicit.stdout, serializeDebateConfig(parseDebateConfig(yaml)));
++  assert.deepEqual(await Promise.all([readFile(bundlePath), readFile(configPath)]), before);
++  assert.deepEqual(await readdir(dir, { recursive: true }), files);
++});
++
++test("CLI rejects missing arguments, unknown flags, and extra arguments with empty stdout", async (t) => {
++  const { bundlePath, run } = await fixture(t);
++  for (const args of [[], ["--profile", "base"], ["--bundle"], ["--bundle", ""],
++    ["--bundle", "--profile", "base"], ["--bundle", bundlePath, "--profile"],
++    ["--bundle", bundlePath, "--profile", ""], ["--bundle", bundlePath, "--unknown"],
++    ["--bundle", bundlePath, "extra"], ["--bundle", bundlePath, "--bundle", bundlePath],
++    ["--bundle", bundlePath, "--profile", "base", "--profile", "child"],
++    ["--list"], ["--json"], ["--bundle", bundlePath, "--json", "--json"],
++    ["--bundle", bundlePath, "--list", "--list"],
++  ]) {
++    const result = run(args);
++    assert.equal(result.status, 1, JSON.stringify(args));
++    assert.equal(result.stdout, "");
++    assert.match(result.stderr, /required|requires|unknown|duplicate/);
++    assert.match(result.stderr, /usage:/);
++  }
++});
++
++test("CLI lists names as JSON without loading configs or needing a default", async (t) => {
++  const { bundlePath, configPath, run } = await fixture(t);
++  const text = JSON.stringify({ version: 1, profiles: {
++    "😀": { config: "missing.yaml" }, "\uE000": { config: "../escape.yaml" },
++    z: { extends: "z" }, A: null, aa: {}, a: { config: "base.yaml" },
++  } });
++  await writeFile(bundlePath, text);
++  await writeFile(configPath, "this YAML is invalid\n");
++  const result = run(["--list", "--bundle", bundlePath]);
++  assert.equal(result.status, 0);
++  assert.equal(result.stderr, "");
++  assert.equal(result.stdout, JSON.stringify(["A", "a", "aa", "z", "\uE000", "😀"]) + "\n");
++  assert.equal(await readFile(bundlePath, "utf8"), text);
++  assert.equal(await readFile(configPath, "utf8"), "this YAML is invalid\n");
++  await writeFile(bundlePath, '{"version":1,"profiles":{}}');
++  const empty = run(["--bundle", bundlePath, "--list"]);
++  assert.equal(empty.status, 0);
++  assert.equal(empty.stderr, "");
++  assert.equal(empty.stdout, "[]\n");
++});
++
++test("CLI rejects list combined with profile or JSON in either flag order", async (t) => {
++  const { bundlePath, run } = await fixture(t);
++  for (const flags of [["--list", "--profile", "base"], ["--profile", "base", "--list"],
++    ["--list", "--json"], ["--json", "--list"]]) {
++    const result = run(["--bundle", bundlePath, ...flags]);
++    assert.equal(result.status, 1);
++    assert.equal(result.stdout, "");
++    assert.match(result.stderr, /--list cannot combine with --profile or --json/);
++  }
++});
++
++test("CLI JSON renders resolved default and explicit configs without writes", async (t) => {
++  const { dir, bundlePath, configPath, yaml, run } = await fixture(t);
++  const before = await Promise.all([readFile(bundlePath), readFile(configPath)]);
++  const files = await readdir(dir, { recursive: true });
++  const result = run(["--json", "--bundle", bundlePath]);
++  assert.equal(result.status, 0);
++  assert.equal(result.stderr, "");
++  assert.deepEqual(JSON.parse(result.stdout), {
++    rounds: 0, repo: "./repo", participants: [{ adapter: "codex", model: "updated" }, { adapter: "pi" }],
++  });
++  const explicit = run(["--bundle", bundlePath, "--profile", "base", "--json"]);
++  assert.equal(explicit.status, 0);
++  assert.equal(explicit.stderr, "");
++  assert.deepEqual(JSON.parse(explicit.stdout), parseDebateConfig(yaml));
++  assert.deepEqual(await Promise.all([readFile(bundlePath), readFile(configPath)]), before);
++  assert.deepEqual(await readdir(dir, { recursive: true }), files);
++  // JSON rendering does not depend on the narrower YAML serializer.
++  await writeFile(configPath, "repo: '#literal'\n");
++  const literal = run(["--bundle", bundlePath, "--profile", "base", "--json"]);
++  assert.equal(literal.status, 0);
++  assert.equal(literal.stderr, "");
++  assert.deepEqual(JSON.parse(literal.stdout), { repo: "#literal" });
++});
++
++test("CLI list validates the envelope and JSON rendering preserves loader errors", async (t) => {
++  const { bundlePath, run } = await fixture(t);
++  for (const text of ["{", '{"version":2,"profiles":{}}', '{"version":1,"profiles":[]}']) {
++    await writeFile(bundlePath, text);
++    const result = run(["--bundle", bundlePath, "--list"]);
++    assert.equal(result.status, 1);
++    assert.equal(result.stdout, "");
++    assert.match(result.stderr, /INVALID_BUNDLE/);
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++  }
++  for (const [profile, code] of [[{ config: "../outside.yaml" }, "UNSAFE_CONFIG_PATH"],
++    [{ extends: "missing" }, "UNKNOWN_PROFILE"]] as const) {
++    await writeFile(bundlePath, JSON.stringify({ version: 1, defaultProfile: "bad", profiles: { bad: profile } }));
++    const result = run(["--bundle", bundlePath, "--json"]);
++    assert.equal(result.status, 1);
++    assert.equal(result.stdout, "");
++    assert.ok(result.stderr.includes(code), result.stderr);
++  }
++});
++
++test("CLI reports loader error codes on stderr and never emits partial YAML", async (t) => {
++  const { bundlePath, run } = await fixture(t);
++  const cases: [string, string[], string][] = [
++    ["{", [], "INVALID_BUNDLE"],
++    [JSON.stringify({ version: 1, profiles: {} }), [], "PROFILE_REQUIRED"],
++    [JSON.stringify({ version: 1, defaultProfile: "missing", profiles: {} }), [], "UNKNOWN_PROFILE"],
++    [JSON.stringify({ version: 1, profiles: {} }), ["--profile", "missing"], "UNKNOWN_PROFILE"],
++    [JSON.stringify({ version: 1, defaultProfile: "child", profiles: { child: { extends: "missing" } } }), [], "UNKNOWN_PROFILE"],
++    [JSON.stringify({ version: 1, defaultProfile: "loop", profiles: { loop: { extends: "loop" } } }), [], "PROFILE_CYCLE"],
++    [JSON.stringify({ version: 1, defaultProfile: "bad", profiles: { bad: { config: "../outside.yaml" } } }), [], "UNSAFE_CONFIG_PATH"],
++    [JSON.stringify({ version: 1, defaultProfile: "bad", profiles: { bad: { config: "missing.yaml" } } }), [], "ENOENT"],
++  ];
++  for (const [text, args, code] of cases) {
++    await writeFile(bundlePath, text);
++    const result = run(["--bundle", bundlePath, ...args]);
++    assert.equal(result.status, 1);
++    assert.equal(result.stdout, "");
++    assert.ok(result.stderr.includes(code), result.stderr);
++    assert.equal(await readFile(bundlePath, "utf8"), text);
++  }
++  const missing = run(["--bundle", "missing.json"]);
++  assert.equal(missing.status, 1);
++  assert.equal(missing.stdout, "");
++  assert.match(missing.stderr, /ENOENT/);
++});
++
++test("CLI reports YAML and serialization failures without stdout or input changes", async (t) => {
++  const { bundlePath, configPath, run } = await fixture(t);
++  const bundleBefore = await readFile(bundlePath);
++  for (const [text, diagnostic] of [
++    ["round: 2\n", /unknown key "round"/],
++    ["rounds: 2\nrepo: '#unrepresentable'\n", /comment marker/],
++  ] as const) {
++    await writeFile(configPath, text);
++    const result = run(["--bundle", bundlePath, "--profile", "base"]);
++    assert.equal(result.status, 1);
++    assert.equal(result.stdout, "");
++    assert.match(result.stderr, diagnostic);
++    assert.equal(await readFile(configPath, "utf8"), text);
++    assert.deepEqual(await readFile(bundlePath), bundleBefore);
++  }
++});

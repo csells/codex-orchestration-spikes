@@ -1,0 +1,5 @@
+Added `listProfiles`, `--list`, and `--json`. Listing validates only the envelope and sorts names by Unicode code point. Incompatible flags exit 1 with empty stdout.
+
+Tests confirm existing rendering, inheritance, path confinement, ownership, and read-only behavior.
+
+`npm test`: 115 passed, 0 failed; 1 skipped because esbuild is absent. No network or real model services used.

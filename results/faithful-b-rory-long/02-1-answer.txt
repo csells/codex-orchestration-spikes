@@ -1,0 +1,3 @@
+Added determination filenames and statuses to every catalog entry, plus strict `classifyDetermination(text)`. Selection uses numeric versions and excludes symlinks/nonregular files. Reads remain read-only; the debate engine parser is unchanged.
+
+Validation: 86 tests passed; 1 build test skipped because esbuild is absent. Expanded catalog tests also passed. No network or real model services used.

@@ -1,0 +1,5 @@
+Corrected participant inheritance: supplied lists fully replace prior lists in exact order; omitted lists inherit. Applied consistently to YAML and inline overrides across multiple levels.
+
+Tests verify replacement, ownership, unchanged inputs, scalar precedence, and judge removal.
+
+`npm test`: 97 passed, 0 failed; 1 skipped because esbuild is absent. No network or real model services used.

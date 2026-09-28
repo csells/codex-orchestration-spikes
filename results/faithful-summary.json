@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "note": "Two feature streams from one project; descriptive local comparisons, not statistical generalization. Credits are pricing-derived, not subscription measurements. Main snapshots are cumulative and counted once per session.",
+  "runs": [
+    {
+      "run_id": "faithful-a-default",
+      "workstream": "sustained-a",
+      "policy": "default",
+      "status": "completed",
+      "stages_attempted": 8,
+      "stages_passed_first_attempt": 8,
+      "stages_passed_after_repairs": 8,
+      "repairs": 0,
+      "all_work_passed": true,
+      "credit_estimate": 136.7788,
+      "elapsed_seconds": 1247.04,
+      "peak_parent_input": 106839,
+      "workers": 0,
+      "parent_tool_counts": {
+        "exec": 40
+      },
+      "root_compactions": 0,
+      "worker_compactions": 0,
+      "actual_models": [
+        "gpt-6-astra"
+      ],
+      "usage": {
+        "input_tokens": 3094870,
+        "cached_input_tokens": 2988672,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 28410,
+        "reasoning_output_tokens": 3942,
+        "total_tokens": 3123280
+      },
+      "accounting_warnings": [],
+      "quota": {
+        "before": {
+          "observed_at": "2026-09-28T02:23:13.982603+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 8,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "after": {
+          "observed_at": "2026-09-28T02:46:03.296179+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 9,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "settled": {
+          "observed_at": "2026-09-28T02:47:05.005625+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 9,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        }
+      }
+    },
+    {
+      "run_id": "faithful-a-rory",
+      "workstream": "sustained-a",
+      "policy": "rory",
+      "status": "completed",
+      "stages_attempted": 8,
+      "stages_passed_first_attempt": 8,
+      "stages_passed_after_repairs": 8,
+      "repairs": 0,
+      "all_work_passed": true,
+      "credit_estimate": 287.33086000000003,
+      "elapsed_seconds": 1640.263,
+      "peak_parent_input": 148286,
+      "workers": 2,
+      "parent_tool_counts": {
+        "exec": 49,
+        "spawn_agent": 2,
+        "send_message": 11,
+        "wait_agent": 15,
+        "followup_task": 7
+      },
+      "root_compactions": 0,
+      "worker_compactions": 0,
+      "actual_models": [
+        "gpt-5.6-terra",
+        "gpt-6-astra"
+      ],
+      "usage": {
+        "input_tokens": 10257197,
+        "cached_input_tokens": 9997184,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 61338,
+        "reasoning_output_tokens": 23527,
+        "total_tokens": 10318535
+      },
+      "accounting_warnings": [],
+      "quota": {
+        "before": {
+          "observed_at": "2026-09-28T02:47:06.510665+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 9,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "after": {
+          "observed_at": "2026-09-28T03:16:11.313855+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 10,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "settled": {
+          "observed_at": "2026-09-28T03:17:13.041060+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 10,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        }
+      }
+    },
+    {
+      "run_id": "faithful-a-rory-long",
+      "workstream": "sustained-a",
+      "policy": "rory-long",
+      "status": "completed",
+      "stages_attempted": 8,
+      "stages_passed_first_attempt": 8,
+      "stages_passed_after_repairs": 8,
+      "repairs": 0,
+      "all_work_passed": true,
+      "credit_estimate": 259.06570650000003,
+      "elapsed_seconds": 1485.654,
+      "peak_parent_input": 114165,
+      "workers": 8,
+      "parent_tool_counts": {
+        "spawn_agent": 8,
+        "exec": 54,
+        "send_message": 12,
+        "wait_agent": 16
+      },
+      "root_compactions": 0,
+      "worker_compactions": 0,
+      "actual_models": [
+        "gpt-5.6-terra",
+        "gpt-6-astra",
+        "gpt-6-luna"
+      ],
+      "usage": {
+        "input_tokens": 8901917,
+        "cached_input_tokens": 8532736,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 59331,
+        "reasoning_output_tokens": 18676,
+        "total_tokens": 8961248
+      },
+      "accounting_warnings": [],
+      "quota": {
+        "before": {
+          "observed_at": "2026-09-28T03:17:14.684625+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 10,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "after": {
+          "observed_at": "2026-09-28T03:43:57.508122+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 11,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "settled": {
+          "observed_at": "2026-09-28T03:44:59.196304+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 11,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        }
+      }
+    },
+    {
+      "run_id": "faithful-b-rory-long",
+      "workstream": "sustained-b",
+      "policy": "rory-long",
+      "status": "capped",
+      "stages_attempted": 5,
+      "stages_passed_first_attempt": 5,
+      "stages_passed_after_repairs": 5,
+      "repairs": 0,
+      "all_work_passed": false,
+      "credit_estimate": 132.83231,
+      "elapsed_seconds": 867.143,
+      "peak_parent_input": 78324,
+      "workers": 1,
+      "parent_tool_counts": {
+        "exec": 29,
+        "spawn_agent": 1,
+        "send_message": 7,
+        "wait_agent": 7,
+        "followup_task": 4
+      },
+      "root_compactions": 0,
+      "worker_compactions": 0,
+      "actual_models": [
+        "gpt-5.6-terra",
+        "gpt-6-astra"
+      ],
+      "usage": {
+        "input_tokens": 4553386,
+        "cached_input_tokens": 4292352,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 33996,
+        "reasoning_output_tokens": 10090,
+        "total_tokens": 4587382
+      },
+      "accounting_warnings": [],
+      "quota": {
+        "before": {
+          "observed_at": "2026-09-28T03:45:00.637386+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 11,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "after": {
+          "observed_at": "2026-09-28T04:00:45.104716+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 11,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        },
+        "settled": {
+          "observed_at": "2026-09-28T04:01:46.702677+00:00",
+          "buckets": {
+            "codex": {
+              "primary": {
+                "used_percent": 11,
+                "window_minutes": 10080,
+                "resets_at": 1791054703
+              },
+              "limit_id": "codex",
+              "spend_control_reached": false
+            }
+          },
+          "caveat": "Account-wide, potentially rounded/delayed percentages; concurrent activity prevents per-run attribution."
+        }
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "workstream": "sustained-a",
+      "policy": "rory",
+      "quality": "8/8 versus 8/8",
+      "credit_estimate_percent_change": 110.06973302880274,
+      "credit_estimate_outcome": "LOSS",
+      "elapsed_seconds_percent_change": 31.532508981267647,
+      "elapsed_seconds_outcome": "LOSS",
+      "peak_parent_input_percent_change": 38.793886127724896,
+      "peak_parent_input_outcome": "LOSS"
+    },
+    {
+      "workstream": "sustained-a",
+      "policy": "rory-long",
+      "quality": "8/8 versus 8/8",
+      "credit_estimate_percent_change": 89.4048686638573,
+      "credit_estimate_outcome": "LOSS",
+      "elapsed_seconds_percent_change": 19.134430331023864,
+      "elapsed_seconds_outcome": "LOSS",
+      "peak_parent_input_percent_change": 6.857046584112547,
+      "peak_parent_input_outcome": "UNRESOLVED"
+    }
+  ],
+  "unique_execution_credit_estimate": 816.0076765000001
+}

@@ -1,0 +1,93 @@
+{
+  "run_id": "faithful-forced-agents",
+  "task": "compaction-probe",
+  "policy": "forced-agents",
+  "condition": "agents",
+  "started_at": "2026-09-28T04:04:21.196697+00:00",
+  "status": "completed",
+  "model_requested": "gpt-6-astra",
+  "reasoning_requested": "high",
+  "boundary_kind": "explicit native forced compaction",
+  "input_sha256": {
+    "tasks/compaction-probe/allocation-rule.md": "2a1b76b1a86af89d1e24cac986b500ba63146c4f3ba07bbb0abb075c13be0665",
+    "tasks/compaction-probe/common.md": "115f33d68457f04f71d0f4c757e26258b0b6dc167aa38713297a5fe59c0d1bae",
+    "tasks/compaction-probe/continuation.md": "e26bd66f7b44e0097767f73fb6813f4ff01e47cf5cc0e92781bd164e44fb9a75",
+    "tasks/compaction-probe/initial.md": "03aabeb5b35756ccd19a78ef2ed84b9b8c8323cf578e245585ed051c8c9428b8",
+    "tasks/compaction-probe/inventory.csv": "b099b9229432a65b697ba5aacf5920fd20c6d3f0742875e48cedf3fe87aa7a58",
+    "tasks/compaction-probe/manifest.json": "08c1ab87cd039b2afd0e8f2a71a5691a104b6dc76dcac7231b0c85c1b2c14ab9",
+    "tasks/compaction-probe/protocol.md": "f9427ccd22bf1d2c31c8cdab279db39d80ad52c38c0d6e109586a33cced729a9",
+    "scripts/run_compaction_probe.py": "413a0819dc39c3168f5f8fb1e9597f629db6b94541b953563df0ef10e1e12e0e",
+    "scripts/persistent_session.py": "75931a2f12fa92d3e789f8e2b7578117b445d3eb2bccd336653caffa0b0f62e0",
+    "scripts/telemetry.py": "cc07109d31ff79a096644508ee205c0b770d02ce8a01629d2a21701ebb6ce724",
+    "scripts/export_trace.py": "ab0c4208c3d232c06e6085a176fec4118316cf7603633eee8d79eba760bf81e0"
+  },
+  "instructions_sha256": "dd20ef04eebde06a864724e6c234f46d1b28f4bdc02eb2af99c2e396ec3167c0",
+  "turn_timeout_seconds": 180,
+  "compaction_timeout_seconds": 180,
+  "subscription_attribution": "Not claimed; schedule outside primary meter intervals",
+  "stages": [
+    {
+      "stage": 1,
+      "checks": {
+        "json_schema": true,
+        "integer_numeric_fields": true,
+        "request_identity": true,
+        "corrected_fact_retained": true,
+        "arithmetic_consistent_with_reported_reserve": true,
+        "expected_allocation": true,
+        "workspace_unchanged": true
+      },
+      "passed": true,
+      "workspace_changes": [],
+      "json_parse_error": null,
+      "observed": {
+        "batch": "first",
+        "sku": "bolts",
+        "reserve_units": 7,
+        "requested": 18,
+        "allocated": 16,
+        "deferred": 2
+      }
+    },
+    {
+      "stage": 2,
+      "checks": {
+        "json_schema": true,
+        "integer_numeric_fields": true,
+        "request_identity": true,
+        "corrected_fact_retained": true,
+        "arithmetic_consistent_with_reported_reserve": true,
+        "expected_allocation": true,
+        "workspace_unchanged": true
+      },
+      "passed": true,
+      "workspace_changes": [],
+      "json_parse_error": null,
+      "observed": {
+        "batch": "second",
+        "sku": "washers",
+        "reserve_units": 7,
+        "requested": 27,
+        "allocated": 22,
+        "deferred": 5
+      }
+    }
+  ],
+  "root_thread_id": "01a0e62f-677e-7f93-b76b-3b1017d6e546",
+  "boundary": {
+    "before": 0,
+    "after": 1,
+    "delta": 1,
+    "native_event_observed": true,
+    "specified_single_boundary": true
+  },
+  "ended_at": "2026-09-28T04:04:58.619478+00:00",
+  "elapsed_seconds": 37.42,
+  "exit_code": 0,
+  "workspace_changes": [],
+  "credit_estimate_total": 8.489,
+  "single_model": true,
+  "compactions_final": 1,
+  "credit_estimate_compaction_increment": 0.9759000000000002,
+  "compaction_usage_growth_observed": true
+}

@@ -1,0 +1,3 @@
+Make profile selection and inheritance errors usable. Change loadProfileBundle's second argument to optional. If omitted, use the bundle's `defaultProfile`; if there is no default, throw an Error with code `PROFILE_REQUIRED`. An unknown explicit/default/parent profile must produce `UNKNOWN_PROFILE`. Detect self-cycles and multi-profile inheritance cycles and return `PROFILE_CYCLE`, without hanging or overflowing the stack. Preserve explicit profile selection over the default and the corrected replacement semantics.
+
+Keep existing behavior and tests working. Use local tests and fake CLIs only; do not invoke real model services or use the network. Implement the requested code, run appropriate checks, and briefly report what changed and was verified.

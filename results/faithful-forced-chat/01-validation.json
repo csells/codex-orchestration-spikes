@@ -1,0 +1,23 @@
+{
+  "stage": 1,
+  "checks": {
+    "json_schema": true,
+    "integer_numeric_fields": true,
+    "request_identity": true,
+    "corrected_fact_retained": true,
+    "arithmetic_consistent_with_reported_reserve": true,
+    "expected_allocation": true,
+    "workspace_unchanged": true
+  },
+  "passed": true,
+  "workspace_changes": [],
+  "json_parse_error": null,
+  "observed": {
+    "batch": "first",
+    "sku": "bolts",
+    "reserve_units": 7,
+    "requested": 18,
+    "allocated": 16,
+    "deferred": 2
+  }
+}

@@ -1,0 +1,3 @@
+Added `src/profile-cli.ts` with canonical YAML output, strict argument validation, and coded stderr diagnostics. The loader remains independently usable.
+
+Verified unchanged inputs, empty stdout on errors, and no participant launches. Full local suite: 101 passed; 1 build test skipped because esbuild is absent.

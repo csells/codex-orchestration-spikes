@@ -1,0 +1,5 @@
+Added `src/catalog.ts` exporting `DebateEntry` and async `listDebates(root)`, with absolute paths, lexical ordering, regular-file flags, missing-root handling, and read-only symlink exclusion. No participants are launched.
+
+Added regression tests, including links outside the supplied root.
+
+Validation: `npm test` — 84 passed, 0 failed; 1 build test skipped because esbuild isn’t installed. No network or real model services used.

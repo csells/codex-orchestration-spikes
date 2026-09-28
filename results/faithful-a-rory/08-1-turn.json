@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e5e8-b603-7b70-b6a0-e207d0bb42a9",
+  "turn_id": "01a0e5ff-6da1-71f3-b92a-854568d095cd",
+  "status": "completed",
+  "answer": "Added `listProfiles()` with envelope-only validation and code-point sorting, plus CLI `--list` and `--json`. Conflicting flags exit 1 with empty stdout. Existing rendering, confinement, replacement, and ownership invariants remain verified.\n\nValidation: 109 tests passed; one build test skipped because esbuild is unavailable. No network or real model services used.",
+  "started_at": "2026-09-28T03:11:57.193915+00:00",
+  "ended_at": "2026-09-28T03:15:50.601417+00:00",
+  "elapsed_seconds": 233.436,
+  "timed_out": false,
+  "event_count": 630,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 7537290,
+      "inputTokens": 7507503,
+      "cachedInputTokens": 7354752,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 29787,
+      "reasoningOutputTokens": 13932
+    },
+    "last": {
+      "totalTokens": 148364,
+      "inputTokens": 148286,
+      "cachedInputTokens": 147200,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 78,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

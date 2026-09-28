@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e5d2-d53e-7463-9e13-b886961bfd6c",
+  "turn_id": "01a0e5d7-440f-7ec2-b07b-8d4d105c0233",
+  "status": "completed",
+  "answer": "Added inline overrides with final precedence, adapter-based participant merging, `judge: null` removal, and overrides-only profiles. Invalid settings raise `INVALID_BUNDLE`.\n\nTests verify validation, merge behavior, fresh objects, and unchanged files. `npm test`: 96 passed, 0 failed; 1 build test skipped because esbuild is absent. No network or real model services used.",
+  "started_at": "2026-09-28T02:28:04.959368+00:00",
+  "ended_at": "2026-09-28T02:30:52.416497+00:00",
+  "elapsed_seconds": 167.457,
+  "timed_out": false,
+  "event_count": 299,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 696665,
+      "inputTokens": 686029,
+      "cachedInputTokens": 639872,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 10636,
+      "reasoningOutputTokens": 968
+    },
+    "last": {
+      "totalTokens": 51972,
+      "inputTokens": 51891,
+      "cachedInputTokens": 50304,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 81,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

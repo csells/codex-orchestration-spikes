@@ -1,0 +1,3 @@
+Config paths now stay within the bundle file’s real parent directory. Absolute paths, traversal escapes, prefix-sibling escapes, and escaping symlinks raise `UNSAFE_CONFIG_PATH`. Valid internal paths remain supported.
+
+Tests verify path boundaries, unchanged inputs, and fresh objects. `npm test`: 106 passed, 0 failed; 1 skipped because esbuild is absent. No network or real model services used.

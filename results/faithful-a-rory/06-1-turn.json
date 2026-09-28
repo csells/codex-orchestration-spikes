@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e5e8-b603-7b70-b6a0-e207d0bb42a9",
+  "turn_id": "01a0e5f8-c93a-7b41-bee2-d77946d415c7",
+  "status": "completed",
+  "answer": "Config paths are now confined to the bundle file\u2019s real parent directory. Absolute paths, normalized escapes, and escaping symlinks return `UNSAFE_CONFIG_PATH`; safe nested paths and internal symlinks remain valid.\n\nValidation: 105 tests passed, plus all 25 final bundle tests. One build test skipped because esbuild is unavailable. Read-only and fresh-object invariants remain verified. No network or real model services used.",
+  "started_at": "2026-09-28T03:04:41.837961+00:00",
+  "ended_at": "2026-09-28T03:07:19.685834+00:00",
+  "elapsed_seconds": 157.848,
+  "timed_out": false,
+  "event_count": 618,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 4490270,
+      "inputTokens": 4471365,
+      "cachedInputTokens": 4358144,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 18905,
+      "reasoningOutputTokens": 7586
+    },
+    "last": {
+      "totalTokens": 112665,
+      "inputTokens": 112575,
+      "cachedInputTokens": 111744,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 90,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

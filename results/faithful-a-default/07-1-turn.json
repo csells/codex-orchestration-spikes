@@ -1,0 +1,30 @@
+{
+  "thread_id": "01a0e5d2-d53e-7463-9e13-b886961bfd6c",
+  "turn_id": "01a0e5e1-ad93-75c2-81d1-de381cfe74c6",
+  "status": "completed",
+  "answer": "Added `src/profile-cli.ts`:\n\n```sh\nnode src/profile-cli.ts --bundle bundle.json [--profile NAME]\n```\n\nIt prints canonical YAML on success. Errors exit 1 with empty stdout and diagnostics on stderr, including loader codes. Tests confirm unchanged inputs and no participant launches.\n\n`npm test`: 110 passed, 0 failed; 1 skipped because esbuild is absent. No network or real model services used.",
+  "started_at": "2026-09-28T02:39:26.823277+00:00",
+  "ended_at": "2026-09-28T02:42:21.432039+00:00",
+  "elapsed_seconds": 174.608,
+  "timed_out": false,
+  "event_count": 265,
+  "root_token_usage": {
+    "total": {
+      "totalTokens": 2293537,
+      "inputTokens": 2269648,
+      "cachedInputTokens": 2177152,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 23889,
+      "reasoningOutputTokens": 3228
+    },
+    "last": {
+      "totalTokens": 94587,
+      "inputTokens": 94495,
+      "cachedInputTokens": 94080,
+      "cacheWriteInputTokens": 0,
+      "outputTokens": 92,
+      "reasoningOutputTokens": 0
+    },
+    "modelContextWindow": 258400
+  }
+}

@@ -1,0 +1,3 @@
+Config paths are now confined to the bundle file’s real parent directory. Absolute paths, normalized escapes, and escaping symlinks return `UNSAFE_CONFIG_PATH`; safe nested paths and internal symlinks remain valid.
+
+Validation: 105 tests passed, plus all 25 final bundle tests. One build test skipped because esbuild is unavailable. Read-only and fresh-object invariants remain verified. No network or real model services used.

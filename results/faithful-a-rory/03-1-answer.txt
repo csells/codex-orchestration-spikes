@@ -1,0 +1,3 @@
+Added inline overrides after inheritance and local YAML, including adapter-based participant merging, `judge: null` removal, and overrides-only profiles. Invalid supplied settings are rejected; fresh object ownership and unchanged input files are verified.
+
+`npm test`: 96 passed, 0 failed, 1 skipped because esbuild is unavailable. No network or real model services used.

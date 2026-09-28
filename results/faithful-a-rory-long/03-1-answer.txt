@@ -1,0 +1,3 @@
+Added inline overrides with final precedence, adapter-based participant merging, `judge: null` removal, and overrides-only profiles. Validation rejects unknown, malformed, or silently altered settings.
+
+Verified fresh results and unchanged input files. Full suite: 90 passed, 1 skipped because esbuild is absent. All 10 bundle tests passed after final additions. Only local tests and fake CLIs were used.
