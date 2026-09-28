@@ -1,5 +1,7 @@
 # Testing Rory's Codex orchestration proposal
 
+**Scope correction:** this is a diagnostic pilot, not a complete evaluation of Rory's sustained-work and subscription-savings claims. [The completion requirements](notes/complete-evaluation-requirements.md) identify the missing primary tests and the controls needed to make an overall judgment. The measured results below remain unchanged.
+
 Rory proposed an executable way to divide work: keep Astra responsible for judgment and completion, and send routine investigation and implementation to cheaper workers. My initial response dismissed that too quickly and replaced it with an instruction an agent could not implement without performance data. The useful question was whether his policy changes actual behavior enough to improve accepted work, cost, or context. These experiments test that question.
 
 The results support a narrower, more useful distinction: **delegation can reduce the material in the parent conversation, but merely spawning a cheaper worker need not remove the parent's expensive investigation.** The article's short block did not save estimated cost on the audit or bug repair tested here. A more explicit whole-task handoff nearly halved the parent's input footprint on the audit, but omitted details required by the frozen coverage rubric and did not reduce total estimated cost. These are diagnostic observations on one repository, not a verdict on Rory's daily experience.
