@@ -1,0 +1,125 @@
+{
+  "score": 6,
+  "max_score": 8,
+  "passed": false,
+  "rubric": "publication/evaluation/answer-key.md#workflow-audit-8-points",
+  "blinding": "Inspected anonymous answer C, unchanged rubric, and public source only. No results, policy identities, cost files, or run logs were inspected.",
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correctly identifies the README config-only judge claim and saved-command current-config/default fallback; fresh-debate configured judging is described separately.",
+      "evidence": [
+        "README.md:158-160",
+        "src/index.ts:209-214",
+        "src/index.ts:340"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correctly reports respondeo-N.md output for unresolved continuation and for resolved continuation whose drafting fails.",
+      "evidence": [
+        "README.md:107-110",
+        "src/index.ts:265-292"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correctly reports permissive status parsing and saved failed-judge text being accepted by standalone finalization, while identifying explicit NEEDS_INPUT as the rejecting case.",
+      "evidence": [
+        "README.md:103-104",
+        "README.md:172-175",
+        "src/debate.ts:120-126",
+        "src/debate.ts:263-265",
+        "src/index.ts:234-240"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correct fresh-debate proposal threshold, judge-after-reactions order, and RESOLVED condition for drafting.",
+      "evidence": [
+        "src/debate.ts:221-275"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 0,
+      "finding": "Describes re-judging and the resolved/unresolved continuation outcomes, but does not convey that continuation omits all debater turns. Merely saying that the judge re-judges does not distinguish judge-only continuation from a workflow that also reruns debaters. This is missing coverage, not a claim that debaters actually rerun.",
+      "missing": "Continuation re-judges alone and does not rerun the debaters.",
+      "evidence": [
+        "README.md:202-204",
+        "src/index.ts:255-279",
+        "src/debate.ts:195-200"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 1,
+      "finding": "Correct explicit/latest debate-directory selection and highest numeric saved-determination version.",
+      "evidence": [
+        "src/index.ts:124-152"
+      ]
+    },
+    {
+      "item": 7,
+      "credit": 0,
+      "finding": "Correctly separates transcript-only judging/re-judging from repository-grounded final drafting, but does not describe the disposable HEAD worktree or distinguish it from using the ordinary checkout. The cited runFinalize function alone cannot supply an unreported isolation claim.",
+      "missing": "Final drafting uses a throwaway worktree of HEAD rather than the ordinary source checkout; config repo fallback is also omitted.",
+      "evidence": [
+        "src/index.ts:217-240",
+        "src/debate.ts:70-77",
+        "src/debate.ts:183-200"
+      ]
+    },
+    {
+      "item": 8,
+      "credit": 1,
+      "finding": "Explicitly identifies NEEDS_INPUT rejection by --finalize and successful final-report.md output. Same semantic credit as preceding audit answers.",
+      "omitted_detail": "Does not spell out rejection exit code 1, although it is present in the cited guard. This omission is not a false claim.",
+      "evidence": [
+        "src/index.ts:234-252"
+      ]
+    }
+  ],
+  "false_claims": [],
+  "additional_correct_findings": [
+    {
+      "finding": "Continuation accepts a prior RESOLVED determination without a prior-status guard.",
+      "assessment": "Correct broader accepted behavior. The README describes a NEEDS_INPUT workflow without explicitly promising rejection of every other state; do not infer unintended product behavior solely from broader acceptance.",
+      "evidence": [
+        "README.md:177-181",
+        "src/index.ts:255-257"
+      ]
+    },
+    {
+      "finding": "Saved-debate commands use current configuration/default judge rather than restoring original judge identity.",
+      "assessment": "Correct.",
+      "evidence": [
+        "src/index.ts:184-185",
+        "src/index.ts:209-214"
+      ]
+    },
+    {
+      "finding": "Saved failed-judge text can later pass standalone finalization.",
+      "assessment": "Correct and reachable through ordinary artifact persistence. Initial failure still suppresses automatic drafting; the subsequent saved-state path loses that FAILED distinction.",
+      "evidence": [
+        "src/debate.ts:263-275",
+        "src/index.ts:378-380",
+        "src/index.ts:234-240"
+      ]
+    }
+  ],
+  "grading_notes": [
+    "Failure denotes omitted rubric coverage, not incorrect reported facts. No new criteria were added.",
+    "Prior audit answers earned item 5 by conveying judge-only/no-debater continuation; this answer does not. Exact wording is not required, but the exclusion must be conveyed.",
+    "The first-line status shorthand omits the parser trimming/skipping empty lines. Neither answer makes a claim about leading blank lines; treated as shorthand rather than a material factual error.",
+    "Prior audit answers earned item 7 by describing disposable HEAD-worktree isolation; answer C states repository access without that mechanism. It does not falsely claim ordinary-checkout access."
+  ],
+  "limitations": [
+    "Self-reported test counts, tool execution, network absence, and unchanged source were not independently audited because run logs/workspaces are excluded from blind scoring; these statements add no rubric credit."
+  ],
+  "method": "Blind scoring against unchanged semantic rubric, without policy/cost information."
+}

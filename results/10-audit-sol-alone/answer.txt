@@ -1,0 +1,13 @@
+## Findings
+
+1. **Determination status is not strictly enforced.** README says `--continue` closes a `NEEDS_INPUT` ruling and `--finalize` drafts from an already resolved one ([README.md](<WORKSPACE>/README.md:93), [README.md](<WORKSPACE>/README.md:177)). The CLI does not check the prior status before `--continue`; `--finalize` rejects only `NEEDS_INPUT` ([index.ts](<WORKSPACE>/src/index.ts:232)). The parser treats every successful response without a `STATUS: NEEDS_INPUT` first line as `RESOLVED`, including a missing or malformed marker ([debate.ts](<WORKSPACE>/src/debate.ts:120)). A failed initial judge is even saved as a `respondeo.md` containing failure text, which `--finalize` would classify as resolved ([debate.ts](<WORKSPACE>/src/debate.ts:263), [index.ts](<WORKSPACE>/src/index.ts:376)).
+
+2. **Saved-debate commands do not retain the original judge.** README describes continuing “the judge” and says the later phases run only when the config defines one ([README.md](<WORKSPACE>/README.md:158), [README.md](<WORKSPACE>/README.md:177)). Both commands instead use the **current** config’s judge, or a built-in Opus judge if none is configured ([index.ts](<WORKSPACE>/src/index.ts:204)). They choose the latest debate directory in the current working directory unless `--debate` is supplied, then choose the highest numbered `respondeo*.md` in it ([index.ts](<WORKSPACE>/src/index.ts:124)). The latest-debate behavior is documented; the judge substitution is not.
+
+3. **The stdout description misses unresolved continuations.** README says stdout names `final-report.md` if produced, otherwise `debate.md` ([README.md](<WORKSPACE>/README.md:107)). A successful `--continue` that still needs input prints the new `respondeo-N.md` path and exits 0. It prints that path again if re-judging resolves but report drafting fails ([index.ts](<WORKSPACE>/src/index.ts:265)). Successful report drafting prints `final-report.md`, as documented.
+
+## Confirmed behavior
+
+After at least two proposals succeed, a configured judge runs after reactions; a `RESOLVED` ruling triggers report drafting, while `NEEDS_INPUT` does not ([debate.ts](<WORKSPACE>/src/debate.ts:228), [debate.ts](<WORKSPACE>/src/debate.ts:253)). Re-judging receives the transcript, prior ruling, and human answers without repository access. Report drafting receives those saved materials and, with `--repo`, runs in a temporary worktree of HEAD ([debate.ts](<WORKSPACE>/src/debate.ts:164), [debate.ts](<WORKSPACE>/src/debate.ts:188)). That matches README’s repository grounding for the deliverable.
+
+Validation: 16 orchestration tests and 26 local fake-CLI adapter tests passed. No source files were changed.
