@@ -1,0 +1,5 @@
+Fixed timeout handling in `src/adapters.ts`: POSIX CLIs run in isolated process groups, receive SIGTERM, then SIGKILL after 250 ms. Timeout completion no longer depends on pipe closure; normal capture/classification is preserved.
+
+Validation: **33 tests passed**. Local reproductions confirmed prompt timeout returns and no surviving workers for inherited pipes, ignored SIGTERM, and early pipe closure.
+
+Changes remain in the workspace. No network or model services used. Windows retains direct-child termination only.

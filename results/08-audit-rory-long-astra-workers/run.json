@@ -1,10 +1,10 @@
 {
-  "run_id": "05-bug-default",
-  "task": "bug",
-  "policy": "default",
+  "run_id": "08-audit-rory-long-astra-workers",
+  "task": "audit",
+  "policy": "rory-long-astra-workers",
   "model_requested": "gpt-6-astra",
   "reasoning_requested": "high",
-  "started_at": "2026-09-27T23:44:40.093003+00:00",
+  "started_at": "2026-09-27T23:56:08.864787+00:00",
   "command": [
     "codex",
     "exec",
@@ -34,25 +34,25 @@
     "-C",
     "<WORKSPACE>",
     "-o",
-    "<PRIVATE_RUN_ROOT>/05-bug-default/answer.txt",
+    "<PRIVATE_RUN_ROOT>/08-audit-rory-long-astra-workers/answer.txt",
     "-"
   ],
-  "prompt_sha256": "7004936c59c5ae682accb5a1214491e295520f8d2ba40f001a64d351947356c3",
-  "instructions_sha256": "ea1897973acd6e36f5269fe54b86b5713c88c5d9a77881bd6f72f84b1b709449",
+  "prompt_sha256": "10e8e03e29e27d7d2e3d50b792a1bd0321fee1ee5a5ffd4d2f43549c2bffb4cc",
+  "instructions_sha256": "da7ba42d3e8701ecf8ae7fbc248720df403fc04769daf798a4cee589f5254066",
   "timeout_seconds": 900,
   "resume": null,
   "account_meter_attribution": "uncontrolled: investigation and other account activity may overlap",
-  "root_thread_id": "01a0e541-aa92-7263-b68d-23a5c7332403",
+  "root_thread_id": "01a0e54c-2c58-75a2-ba54-2cfeeae93e6e",
   "cli_usage": {
-    "input_tokens": 355143,
-    "cached_input_tokens": 314368,
+    "input_tokens": 850019,
+    "cached_input_tokens": 801536,
     "cache_write_input_tokens": 0,
-    "output_tokens": 5492,
-    "reasoning_output_tokens": 1600
+    "output_tokens": 4216,
+    "reasoning_output_tokens": 1309
   },
   "exit_code": 0,
-  "ended_at": "2026-09-27T23:47:58.820762+00:00",
-  "elapsed_seconds": 198.058,
+  "ended_at": "2026-09-27T23:59:44.735475+00:00",
+  "elapsed_seconds": 215.213,
   "timed_out": false,
-  "event_count": 40
+  "event_count": 44
 }

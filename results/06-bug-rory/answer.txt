@@ -1,0 +1,5 @@
+Fixed POSIX timeout handling: each CLI gets an isolated process group, receives SIGTERM, then SIGKILL after 250 ms. Timeout completion no longer waits for inherited pipes; normal capture/classification remains intact.
+
+Validation: **33/33 tests pass**, including four process-tree regressions. The local 200 ms timeout reproduction improved from **2,231 ms to 459 ms**.
+
+Changes remain in the workspace. No network or model services used. Windows process-tree termination is not covered.

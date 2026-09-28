@@ -1,0 +1,125 @@
+{
+  "score": 8,
+  "max_score": 8,
+  "passed": true,
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correctly limits configuration-only judge behavior to fresh debates and identifies saved-command fallback to the current config's judge or DEFAULT_JUDGE.",
+      "evidence": [
+        "README.md:158-160",
+        "src/index.ts:103",
+        "src/index.ts:209-214",
+        "src/index.ts:340"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correctly identifies respondeo-N.md output for both unresolved continuation and continuation whose final drafting fails, contrasting README's global fallback promise.",
+      "evidence": [
+        "README.md:107-110",
+        "src/index.ts:270-275",
+        "src/index.ts:278-292"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correctly explains first-nonempty-line NEEDS_INPUT recognition, permissive fallback for empty/malformed text, and saved failed determinations passing the finalize guard.",
+      "evidence": [
+        "README.md:103-104",
+        "README.md:172-175",
+        "src/debate.ts:124-126",
+        "src/index.ts:234-240"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correct fresh-debate order, optional judge after reactions, and suppression of final drafting for failed or NEEDS_INPUT judge outcomes.",
+      "evidence": [
+        "src/debate.ts:228-275",
+        "src/index.ts:340"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 1,
+      "finding": "Correctly states continuation runs only judge, not debaters; resolved continuation can draft while unresolved continuation returns its determination path.",
+      "evidence": [
+        "src/index.ts:255-279",
+        "src/debate.ts:195-200"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 1,
+      "finding": "Correctly distinguishes explicit/latest debate-directory selection from numeric highest determination version and notes no backward search for a resolved version.",
+      "evidence": [
+        "src/index.ts:124-152"
+      ]
+    },
+    {
+      "item": 7,
+      "credit": 1,
+      "finding": "Correct transcript-only re-judging and repo-or-config-repo final drafting in a detached disposable HEAD worktree.",
+      "evidence": [
+        "src/index.ts:217-240",
+        "src/debate.ts:70-77",
+        "src/debate.ts:188-200",
+        "src/debate.ts:261"
+      ]
+    },
+    {
+      "item": 8,
+      "credit": 1,
+      "finding": "The NEEDS_INPUT exception and cited finalize guard convey the blocking case; successful final-report.md emission is explicit. Exact refusal exit code 1 is omitted in prose but present in cited guard; semantic credit granted consistently to both answers.",
+      "evidence": [
+        "src/index.ts:234-252"
+      ],
+      "omitted_detail": "The answer does not explicitly state --finalize exits 1 for an explicit NEEDS_INPUT determination."
+    }
+  ],
+  "false_claims": [],
+  "additional_correct_findings": [
+    {
+      "finding": "Failed judge text is saved by the ordinary workflow and can later be passed to --finalize without manual artifact corruption.",
+      "assessment": "Correct and materially strengthens reachability of the pre-registered enforcement gap. A fresh failed judge still does not automatically draft a report; the problem concerns subsequent explicit finalization.",
+      "evidence": [
+        "src/debate.ts:263-275",
+        "src/index.ts:378-380",
+        "src/index.ts:234-240"
+      ]
+    },
+    {
+      "finding": "--continue accepts a prior RESOLVED or failed determination even though the continuation prompt asserts that it ended in NEEDS_INPUT.",
+      "assessment": "Correct broader accepted behavior and prompt inconsistency. README describes the NEEDS_INPUT use case but does not expressly prohibit reopening a resolved debate; source evidence alone does not establish that broader continuation is an unintended product bug.",
+      "evidence": [
+        "README.md:95-97",
+        "README.md:177-181",
+        "src/index.ts:255-257",
+        "src/debate.ts:164-170"
+      ]
+    },
+    {
+      "finding": "Saved-debate commands do not restore the original judge configuration; they select from current configuration or the fallback.",
+      "assessment": "Correct. The word 'silently' is loose: there is no comparison/warning about a judge change, but ordinary stderr progress explicitly names the selected judge, so this is not literally unreported.",
+      "evidence": [
+        "src/index.ts:184-185",
+        "src/index.ts:214",
+        "src/index.ts:239",
+        "src/index.ts:256"
+      ]
+    }
+  ],
+  "severity_notes": [
+    "Permissive parsing is explicitly intentional for successful turns in src/debate.ts:120-123. The documented-resolution mismatch and lost FAILED distinction on reloading are supported; no frequency or production-harm claim is established.",
+    "Judge fallback and stdout findings are concrete documentation mismatches; no security severity is implied."
+  ],
+  "limitations": [
+    "Self-reported test counts, temporary scenarios, unchanged files, network absence, and git-status availability were not independently audited because run logs/workspaces were excluded to preserve blinding. No inspected evidence contradicts them, and they add no rubric points."
+  ],
+  "method": "Blind rubric scoring against frozen public source; reviewer did not see policy or cost."
+}

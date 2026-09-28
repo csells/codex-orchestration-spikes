@@ -1,0 +1,124 @@
+{
+  "score": 8,
+  "max_score": 8,
+  "passed": true,
+  "rubric": "publication/evaluation/answer-key.md#workflow-audit-8-points",
+  "blinding": "Inspected anonymous answer A, the frozen audit criteria, and public fixture source only; no policy, cost, or result/run files.",
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correctly scopes README's config-only judge claim to new debates and identifies cfg.judge/default fallback for saved-debate commands.",
+      "evidence": [
+        "README.md:158-160",
+        "src/index.ts:103",
+        "src/index.ts:214",
+        "src/index.ts:340"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correctly identifies respondeo-N.md stdout for unresolved continuation and for continuation whose final drafting fails, contrasting README's debate.md fallback.",
+      "evidence": [
+        "README.md:107-110",
+        "src/index.ts:265-292"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correctly explains first-nonempty-line status parsing, permissive missing/malformed status handling, and finalization of saved failure text; explicitly distinguishes the NEEDS_INPUT rejection.",
+      "evidence": [
+        "README.md:103-104",
+        "README.md:172-175",
+        "src/debate.ts:120-126",
+        "src/debate.ts:263-265",
+        "src/index.ts:235-240"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correct proposals/reactions/configured-judge order, fewer-than-two proposal abort, and suppression of automatic drafting for failed or NEEDS_INPUT judge results.",
+      "evidence": [
+        "src/debate.ts:221-275"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 1,
+      "finding": "Correct judge-only continuation and distinction between unresolved return and subsequent drafting; correctly says standalone finalization does not re-judge.",
+      "evidence": [
+        "src/index.ts:255-279",
+        "src/debate.ts:188-200"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 1,
+      "finding": "Correct explicit/latest directory and highest numeric determination selection, with base respondeo.md as version 1 and no search for latest resolved version.",
+      "evidence": [
+        "src/index.ts:124-152"
+      ]
+    },
+    {
+      "item": 7,
+      "credit": 1,
+      "finding": "Correct transcript-only initial/re-judging and --repo/current-config repo evidence for final drafting in disposable HEAD worktree.",
+      "evidence": [
+        "src/index.ts:217-240",
+        "src/debate.ts:70-77",
+        "src/debate.ts:188-200",
+        "src/debate.ts:261"
+      ]
+    },
+    {
+      "item": 8,
+      "credit": 1,
+      "finding": "Explicitly says --finalize rejects only NEEDS_INPUT and cites the guard; successful final-report.md output is explicit. Semantic credit is consistent with prior audit scoring.",
+      "evidence": [
+        "src/index.ts:235-252"
+      ],
+      "omitted_detail": "Does not explicitly state refusal exit code 1, although the cited guard contains it. This is an omission, not a false claim."
+    }
+  ],
+  "false_claims": [],
+  "additional_correct_findings": [
+    {
+      "finding": "Saved initial-judge failure text can subsequently be finalized, despite initial failure suppressing automatic drafting.",
+      "assessment": "Correct and strengthens reachability of the pre-registered gap. The normal artifact writer persists failure text; this is not limited to manually malformed data.",
+      "evidence": [
+        "src/debate.ts:263-275",
+        "src/index.ts:378-380",
+        "src/index.ts:235-240"
+      ]
+    },
+    {
+      "finding": "--continue accepts an already-resolved determination while its prompt asserts prior NEEDS_INPUT.",
+      "assessment": "Correct. The answer appropriately qualifies this as a workflow/precondition gap rather than claiming an explicit documented rejection guarantee.",
+      "evidence": [
+        "README.md:95-97",
+        "README.md:177-181",
+        "src/index.ts:255-257",
+        "src/debate.ts:170"
+      ]
+    },
+    {
+      "finding": "The selected judge comes from current configuration or fallback rather than saved original judge identity.",
+      "assessment": "Correct; fallback details Opus/high/$5 match code.",
+      "evidence": [
+        "src/index.ts:103",
+        "src/index.ts:184-185",
+        "src/index.ts:209-214"
+      ]
+    }
+  ],
+  "severity_notes": [
+    "The parser's permissive fallback is explicitly intentional for successful turns in its source comment. The report accurately distinguishes the more concrete lost FAILED-state issue on saved-debate re-entry; no incident frequency or production harm is established."
+  ],
+  "limitations": [
+    "Self-reported test/scenario counts, network absence, unchanged files, and missing Git metadata were not independently verified because run logs and workspaces were excluded from this blind scoring. No inspected evidence contradicts them; they add no rubric credit."
+  ],
+  "method": "Blind frozen-rubric scoring without policy/cost information."
+}

@@ -416,7 +416,126 @@
       },
       "root_compactions": 0,
       "accounting_warnings": [],
-      "validation": null
+      "validation": {
+        "score": 8,
+        "max_score": 8,
+        "passed": true,
+        "details": [
+          {
+            "item": 1,
+            "credit": 1,
+            "finding": "Correct fresh-debate scope and cfg.judge/default fallback for both saved-debate commands.",
+            "evidence": [
+              "README.md:158-160",
+              "src/index.ts:103",
+              "src/index.ts:214",
+              "src/index.ts:340"
+            ]
+          },
+          {
+            "item": 2,
+            "credit": 1,
+            "finding": "Correctly identifies both continuation cases that print respondeo-N.md rather than README's claimed debate.md fallback.",
+            "evidence": [
+              "README.md:107-110",
+              "src/index.ts:270-292"
+            ]
+          },
+          {
+            "item": 3,
+            "credit": 1,
+            "finding": "Correctly identifies permissive parser behavior for missing/malformed/failed determinations and --finalize accepting them.",
+            "evidence": [
+              "README.md:103-104",
+              "README.md:172-175",
+              "src/debate.ts:124-126",
+              "src/index.ts:234-240"
+            ]
+          },
+          {
+            "item": 4,
+            "credit": 1,
+            "finding": "Correctly describes configured judging after reactions and no automatic drafting after NEEDS_INPUT or failed judge turns.",
+            "evidence": [
+              "src/debate.ts:228-275"
+            ]
+          },
+          {
+            "item": 5,
+            "credit": 1,
+            "finding": "Correct judge-only continuation, synthesis on resolved result, and absence of re-judging in --finalize.",
+            "evidence": [
+              "src/index.ts:234-279",
+              "src/debate.ts:188-200"
+            ]
+          },
+          {
+            "item": 6,
+            "credit": 1,
+            "finding": "Correct latest numeric determination selection within explicit/latest debate directory, without falling back to an older resolved version.",
+            "evidence": [
+              "src/index.ts:124-152"
+            ]
+          },
+          {
+            "item": 7,
+            "credit": 1,
+            "finding": "Correct separation between transcript-only initial/re-judging and final drafting with disposable HEAD-worktree evidence. It does not spell out repoArg ?? cfg.repo, but correctly conveys the underlying repository-access distinction.",
+            "evidence": [
+              "src/index.ts:221",
+              "src/debate.ts:70-77",
+              "src/debate.ts:188-200",
+              "src/debate.ts:261"
+            ]
+          },
+          {
+            "item": 8,
+            "credit": 1,
+            "finding": "The NEEDS_INPUT parser exception plus cited finalize guard convey the blocking case; successful final-report.md emission is explicit. Exact refusal exit code 1 is omitted in prose but present in cited guard; semantic credit granted consistently to both answers.",
+            "evidence": [
+              "src/index.ts:234-252"
+            ],
+            "omitted_detail": "The answer does not explicitly state --finalize exits 1 for an explicit NEEDS_INPUT determination."
+          }
+        ],
+        "false_claims": [],
+        "additional_correct_findings": [
+          {
+            "finding": "--continue can re-judge an already-resolved determination without a previous-status check.",
+            "assessment": "Correct broader accepted behavior. README presents a NEEDS_INPUT workflow rather than an explicit prohibition on other input states; do not infer bug severity from acceptance alone. The internal prompt's NEEDS_INPUT assumption supports an additional consistency concern.",
+            "evidence": [
+              "README.md:95-97",
+              "src/index.ts:255-257",
+              "src/debate.ts:164-170"
+            ]
+          },
+          {
+            "finding": "Saved-debate commands select the current configured judge or fallback rather than restoring the original judge.",
+            "assessment": "Correct; no saved judge spec is recovered by these branches.",
+            "evidence": [
+              "src/index.ts:184-185",
+              "src/index.ts:209-214"
+            ]
+          },
+          {
+            "finding": "Saved failed determination text is accepted as resolved by subsequent --finalize.",
+            "assessment": "Correct. Source confirms the normal workflow persists this text, while preventing automatic final drafting on the initial failure.",
+            "evidence": [
+              "src/debate.ts:263-275",
+              "src/index.ts:378-380",
+              "src/index.ts:234-240"
+            ]
+          }
+        ],
+        "severity_notes": [
+          "Parser permissiveness is an explicitly documented implementation choice for successful turns. The saved FAILED-state loss and divergence from already-resolved documentation are concrete; observed occurrence frequency or real-world harm is not established.",
+          "No material factual overstatement or invented issue was found."
+        ],
+        "limitations": [
+          "Self-reported test counts, temporary scenarios, unchanged files, network absence, and git-status availability were not independently audited because run logs/workspaces were excluded to preserve blinding. No inspected evidence contradicts them, and they add no rubric points."
+        ],
+        "method": "Blind rubric scoring against frozen public source; reviewer did not see policy or cost."
+      }
     },
     {
       "run_id": "04-audit-default",
@@ -454,6 +573,296 @@
         "definition": "Provider input_tokens for each observed response; not exact live occupancy",
         "peak_request_input_tokens": 56016,
         "last_request_input_tokens": 56016,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": {
+        "score": 8,
+        "max_score": 8,
+        "passed": true,
+        "details": [
+          {
+            "item": 1,
+            "credit": 1,
+            "finding": "Correctly limits configuration-only judge behavior to fresh debates and identifies saved-command fallback to the current config's judge or DEFAULT_JUDGE.",
+            "evidence": [
+              "README.md:158-160",
+              "src/index.ts:103",
+              "src/index.ts:209-214",
+              "src/index.ts:340"
+            ]
+          },
+          {
+            "item": 2,
+            "credit": 1,
+            "finding": "Correctly identifies respondeo-N.md output for both unresolved continuation and continuation whose final drafting fails, contrasting README's global fallback promise.",
+            "evidence": [
+              "README.md:107-110",
+              "src/index.ts:270-275",
+              "src/index.ts:278-292"
+            ]
+          },
+          {
+            "item": 3,
+            "credit": 1,
+            "finding": "Correctly explains first-nonempty-line NEEDS_INPUT recognition, permissive fallback for empty/malformed text, and saved failed determinations passing the finalize guard.",
+            "evidence": [
+              "README.md:103-104",
+              "README.md:172-175",
+              "src/debate.ts:124-126",
+              "src/index.ts:234-240"
+            ]
+          },
+          {
+            "item": 4,
+            "credit": 1,
+            "finding": "Correct fresh-debate order, optional judge after reactions, and suppression of final drafting for failed or NEEDS_INPUT judge outcomes.",
+            "evidence": [
+              "src/debate.ts:228-275",
+              "src/index.ts:340"
+            ]
+          },
+          {
+            "item": 5,
+            "credit": 1,
+            "finding": "Correctly states continuation runs only judge, not debaters; resolved continuation can draft while unresolved continuation returns its determination path.",
+            "evidence": [
+              "src/index.ts:255-279",
+              "src/debate.ts:195-200"
+            ]
+          },
+          {
+            "item": 6,
+            "credit": 1,
+            "finding": "Correctly distinguishes explicit/latest debate-directory selection from numeric highest determination version and notes no backward search for a resolved version.",
+            "evidence": [
+              "src/index.ts:124-152"
+            ]
+          },
+          {
+            "item": 7,
+            "credit": 1,
+            "finding": "Correct transcript-only re-judging and repo-or-config-repo final drafting in a detached disposable HEAD worktree.",
+            "evidence": [
+              "src/index.ts:217-240",
+              "src/debate.ts:70-77",
+              "src/debate.ts:188-200",
+              "src/debate.ts:261"
+            ]
+          },
+          {
+            "item": 8,
+            "credit": 1,
+            "finding": "The NEEDS_INPUT exception and cited finalize guard convey the blocking case; successful final-report.md emission is explicit. Exact refusal exit code 1 is omitted in prose but present in cited guard; semantic credit granted consistently to both answers.",
+            "evidence": [
+              "src/index.ts:234-252"
+            ],
+            "omitted_detail": "The answer does not explicitly state --finalize exits 1 for an explicit NEEDS_INPUT determination."
+          }
+        ],
+        "false_claims": [],
+        "additional_correct_findings": [
+          {
+            "finding": "Failed judge text is saved by the ordinary workflow and can later be passed to --finalize without manual artifact corruption.",
+            "assessment": "Correct and materially strengthens reachability of the pre-registered enforcement gap. A fresh failed judge still does not automatically draft a report; the problem concerns subsequent explicit finalization.",
+            "evidence": [
+              "src/debate.ts:263-275",
+              "src/index.ts:378-380",
+              "src/index.ts:234-240"
+            ]
+          },
+          {
+            "finding": "--continue accepts a prior RESOLVED or failed determination even though the continuation prompt asserts that it ended in NEEDS_INPUT.",
+            "assessment": "Correct broader accepted behavior and prompt inconsistency. README describes the NEEDS_INPUT use case but does not expressly prohibit reopening a resolved debate; source evidence alone does not establish that broader continuation is an unintended product bug.",
+            "evidence": [
+              "README.md:95-97",
+              "README.md:177-181",
+              "src/index.ts:255-257",
+              "src/debate.ts:164-170"
+            ]
+          },
+          {
+            "finding": "Saved-debate commands do not restore the original judge configuration; they select from current configuration or the fallback.",
+            "assessment": "Correct. The word 'silently' is loose: there is no comparison/warning about a judge change, but ordinary stderr progress explicitly names the selected judge, so this is not literally unreported.",
+            "evidence": [
+              "src/index.ts:184-185",
+              "src/index.ts:214",
+              "src/index.ts:239",
+              "src/index.ts:256"
+            ]
+          }
+        ],
+        "severity_notes": [
+          "Permissive parsing is explicitly intentional for successful turns in src/debate.ts:120-123. The documented-resolution mismatch and lost FAILED distinction on reloading are supported; no frequency or production-harm claim is established.",
+          "Judge fallback and stdout findings are concrete documentation mismatches; no security severity is implied."
+        ],
+        "limitations": [
+          "Self-reported test counts, temporary scenarios, unchanged files, network absence, and git-status availability were not independently audited because run logs/workspaces were excluded to preserve blinding. No inspected evidence contradicts them, and they add no rubric points."
+        ],
+        "method": "Blind rubric scoring against frozen public source; reviewer did not see policy or cost."
+      }
+    },
+    {
+      "run_id": "05-bug-default",
+      "task": "bug",
+      "policy": "default",
+      "elapsed_seconds": 198.058,
+      "resumed_session": false,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 355143,
+        "cached_input_tokens": 314368,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5492,
+        "reasoning_output_tokens": 1600,
+        "total_tokens": 360635
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 355143,
+          "cached_input_tokens": 314368,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5492,
+          "reasoning_output_tokens": 1600,
+          "total_tokens": 360635
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 24.91795
+        },
+        "total": 24.91795
+      },
+      "workers": 0,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 38700,
+        "last_request_input_tokens": 38700,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": {
+        "candidate": "<EXPERIMENT_WORKSPACE>/private/runs/05-bug-default/workspace",
+        "compatibility_exit": 0,
+        "regression_exit": 0,
+        "wall_seconds": 3.24,
+        "compatibility_stdout": "\u2714 claude: success envelope \u2192 ok with text and cost (244.96925ms)\n\u2714 claude: budget-exceeded envelope (no `result` string) \u2192 error from `errors` array (38.92075ms)\n\u2714 claude: REGRESSION \u2014 subtype lies on error; classify on is_error (26.431417ms)\n\u2714 claude: non-JSON stdout \u2192 error with exit code (33.817375ms)\n\u2714 claude: exit 126 (stale shim) \u2192 setup hint, not a cryptic error (30.095416ms)\n\u2714 agy: trimmed stdout is the answer (181.904125ms)\n\u2714 agy: empty stdout \u2192 failure even on exit 0 (17.312917ms)\n\u2714 agy: timeout kills the run and reports it (461.361792ms)\n\u2714 codex: success JSONL \u2192 LAST agent_message wins (179.042458ms)\n\u2714 codex: turn.failed \u2192 failure with the event's message (30.030709ms)\n\u2714 codex: exit 0 but no turn.completed \u2192 failure (incomplete stream) (31.236375ms)\n\u2714 codex: custom bin override is used (25.728083ms)\n\u2714 parses the shipped example config (21.172667ms)\n\u2714 models with spaces and parens survive (agy model names) (3.362375ms)\n\u2714 quoted values are unquoted (0.384541ms)\n\u2714 rejects unknown top-level keys with the line number (1.883458ms)\n\u2714 rejects unknown participant keys (0.908292ms)\n\u2714 rejects a single-participant lineup (0.647167ms)\n\u2714 rejects unknown adapters (2.374083ms)\n\u2714 rejects non-numeric numeric keys and non-integer rounds (0.665792ms)\n\u2714 rejects nested structures it cannot represent (2.056875ms)\n[disputatio] Round 1 \u2014 independent proposals: a, b\n[disputatio] ABORTED \u2014 only 1/2 proposals succeeded \u2014 no debate possible. Failures: b: timeout\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 abort: <2 successful proposals ends the debate before any reaction round (18.606542ms)\n\u2714 abort: both proposals failing lists both failures (12.162167ms)\n[disputatio] ABORTED \u2014 only 0/2 proposals succeeded \u2014 no debate possible. Failures: a: budget | b: timeout\n[disputatio] Round 1 \u2014 independent proposals: a, b\n[disputatio] Round 2 \u2014 reactions\n\u2714 reaction context is clean: proposals included, cost footnotes excluded (15.19575ms)\n[disputatio] Round 1 \u2014 independent proposals: m, s\n\u2714 worktree isolation: agents run in a throwaway worktree, never the real checkout (994.343208ms)\n\u2714 doctor: all participants answer the canary \u2192 all ok, allHealthy true (21.137791ms)\n\u2714 doctor: one participant fails \u2192 that diagnosis ok:false and allHealthy false (9.3265ms)\n\u2714 doctor: a participant that throws is reported as unhealthy, not crash the run (7.082ms)\n\u2714 doctor: report shows a per-participant marker, vendor, and the failing detail (6.536667ms)\n\u2139 tests 29\n\u2139 suites 0\n\u2139 pass 29\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 1825.091334\n",
+        "compatibility_stderr": "",
+        "regression_stdout": "\u2714 REGRESSION \u2014 leaked worker holding the pipe + SIGTERM-ignoring CLI still times out fast (process-group kill) (467.140875ms)\n\u2139 tests 1\n\u2139 suites 0\n\u2139 pass 1\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 867.934625\n",
+        "regression_stderr": "",
+        "passed": true,
+        "external_validation_seconds": 3.675
+      }
+    },
+    {
+      "run_id": "06-bug-rory",
+      "task": "bug",
+      "policy": "rory",
+      "elapsed_seconds": 306.875,
+      "resumed_session": false,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 1654613,
+        "cached_input_tokens": 1564288,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 16785,
+        "reasoning_output_tokens": 7275,
+        "total_tokens": 1671398
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 1128164,
+          "cached_input_tokens": 1083776,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5731,
+          "reasoning_output_tokens": 1917,
+          "total_tokens": 1133895
+        },
+        "gpt-5.6-terra": {
+          "input_tokens": 526449,
+          "cached_input_tokens": 480512,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 11054,
+          "reasoning_output_tokens": 5358,
+          "total_tokens": 537503
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 45.35515,
+          "gpt-5.6-terra": 8.01561
+        },
+        "total": 53.370760000000004
+      },
+      "workers": 1,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 48251,
+        "last_request_input_tokens": 48251,
+        "reported_model_context_window": 258400
+      },
+      "root_compactions": 0,
+      "accounting_warnings": [],
+      "validation": {
+        "candidate": "<EXPERIMENT_WORKSPACE>/private/runs/06-bug-rory/workspace",
+        "compatibility_exit": 0,
+        "regression_exit": 0,
+        "wall_seconds": 3.583,
+        "compatibility_stdout": "\u2714 claude: success envelope \u2192 ok with text and cost (471.0765ms)\n\u2714 claude: budget-exceeded envelope (no `result` string) \u2192 error from `errors` array (29.294959ms)\n\u2714 claude: REGRESSION \u2014 subtype lies on error; classify on is_error (34.123542ms)\n\u2714 claude: non-JSON stdout \u2192 error with exit code (18.585917ms)\n\u2714 claude: exit 126 (stale shim) \u2192 setup hint, not a cryptic error (17.12125ms)\n\u2714 agy: trimmed stdout is the answer (151.175292ms)\n\u2714 agy: empty stdout \u2192 failure even on exit 0 (13.25475ms)\n\u2714 agy: timeout kills the run and reports it (470.234417ms)\n\u2714 codex: success JSONL \u2192 LAST agent_message wins (173.109584ms)\n\u2714 codex: turn.failed \u2192 failure with the event's message (18.143625ms)\n\u2714 codex: exit 0 but no turn.completed \u2192 failure (incomplete stream) (19.7165ms)\n\u2714 codex: custom bin override is used (16.542416ms)\n\u2714 parses the shipped example config (22.099459ms)\n\u2714 models with spaces and parens survive (agy model names) (0.712334ms)\n\u2714 quoted values are unquoted (0.505292ms)\n\u2714 rejects unknown top-level keys with the line number (1.988291ms)\n\u2714 rejects unknown participant keys (2.146791ms)\n\u2714 rejects a single-participant lineup (0.220125ms)\n\u2714 rejects unknown adapters (1.386083ms)\n\u2714 rejects non-numeric numeric keys and non-integer rounds (0.387292ms)\n\u2714 rejects nested structures it cannot represent (0.366125ms)\n[disputatio] Round 1 \u2014 independent proposals: a, b\n[disputatio] ABORTED \u2014 only 1/2 proposals succeeded \u2014 no debate possible. Failures: b: timeout\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 abort: <2 successful proposals ends the debate before any reaction round (22.643292ms)\n[disputatio] ABORTED \u2014 only 0/2 proposals succeeded \u2014 no debate possible. Failures: a: budget | b: timeout\n[disputatio] Round 1 \u2014 independent proposals: a, b\n\u2714 abort: both proposals failing lists both failures (7.894541ms)\n[disputatio] Round 2 \u2014 reactions\n\u2714 reaction context is clean: proposals included, cost footnotes excluded (9.711958ms)\n[disputatio] Round 1 \u2014 independent proposals: m, s\n\u2714 worktree isolation: agents run in a throwaway worktree, never the real checkout (912.691667ms)\n\u2714 doctor: all participants answer the canary \u2192 all ok, allHealthy true (16.746083ms)\n\u2714 doctor: one participant fails \u2192 that diagnosis ok:false and allHealthy false (10.760458ms)\n\u2714 doctor: a participant that throws is reported as unhealthy, not crash the run (9.034708ms)\n\u2714 doctor: report shows a per-participant marker, vendor, and the failing detail (5.585042ms)\n\u2139 tests 29\n\u2139 suites 0\n\u2139 pass 29\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 1909.246709\n",
+        "compatibility_stderr": "",
+        "regression_stdout": "\u2714 REGRESSION \u2014 leaked worker holding the pipe + SIGTERM-ignoring CLI still times out fast (process-group kill) (471.689917ms)\n\u2139 tests 1\n\u2139 suites 0\n\u2139 pass 1\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 887.190166\n",
+        "regression_stderr": "",
+        "passed": true,
+        "external_validation_seconds": 4.104
+      }
+    },
+    {
+      "run_id": "07-audit-rory-long",
+      "task": "audit",
+      "policy": "rory-long",
+      "elapsed_seconds": 134.968,
+      "resumed_session": false,
+      "estimate_is_cumulative_for_resumed_session": false,
+      "usage": {
+        "input_tokens": 562085,
+        "cached_input_tokens": 469632,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 5489,
+        "reasoning_output_tokens": 1065,
+        "total_tokens": 567574
+      },
+      "model_usage": {
+        "gpt-6-astra": {
+          "input_tokens": 354824,
+          "cached_input_tokens": 309376,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3410,
+          "reasoning_output_tokens": 526,
+          "total_tokens": 358234
+        },
+        "gpt-6-luna": {
+          "input_tokens": 207261,
+          "cached_input_tokens": 160256,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2079,
+          "reasoning_output_tokens": 539,
+          "total_tokens": 209340
+        }
+      },
+      "credit_estimate": {
+        "by_model": {
+          "gpt-6-astra": 23.3589,
+          "gpt-6-luna": 0.183564
+        },
+        "total": 23.542464
+      },
+      "workers": 1,
+      "root_context_proxy": {
+        "definition": "Provider input_tokens for each observed response; not exact live occupancy",
+        "peak_request_input_tokens": 52557,
+        "last_request_input_tokens": 52557,
         "reported_model_context_window": 258400
       },
       "root_compactions": 0,

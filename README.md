@@ -2,7 +2,7 @@
 
 Small, reproducible experiments testing Rory's proposal to use Astra as an orchestrator with cheaper workers.
 
-**Status:** experiments being prepared. No comparative results yet. This repository will preserve failures, adaptations, and measurement limits alongside successful runs.
+**Status:** the six-run pilot is in progress. Frozen inputs and completed-run evidence are published under [results/](results/); each completed assessment is stored as `validation.json`. The final report will distinguish observations from unresolved questions. Failures and adaptations remain in the record.
 
 The question is practical: does a simple delegation policy produce more correct, useful work for the cost, and does it keep the main session's context smaller? A cheaper failed answer is not a saving; a higher aggregate token count is not necessarily a higher cost.
 

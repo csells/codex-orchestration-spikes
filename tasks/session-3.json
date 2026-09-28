@@ -1,0 +1,10 @@
+{
+  "id": "session-3",
+  "fixture": "fixtures/current",
+  "prompt": "Explain how this source snapshot interprets question input and reaction-round arguments so an operator can use it correctly. Do not modify source or invoke actual model services.\n\nCompare these command shapes without running a real debate:\n- `node src/index.ts task.md`\n- `node src/index.ts --file task.md`\n- `node src/index.ts --file task.md \"extra question\"`\n- `node src/index.ts Review this branch`\n\nDoes a filename-looking positional argument cause a file read? What changes when a multiword inline question is quoted? Where does actual file I/O occur relative to input resolution? Also explain `--rounds 0`, `--rounds 1.5`, and the default/override precedence. Identify the existing focused tests and what they establish. Give concise source evidence. Local parser tests or in-process checks are allowed; no network or real model CLIs. Return the explanation as your final answer.\n",
+  "kind": "read-only",
+  "revision": "706995b0934ba3ad28684c6b68e965b1b0d9995c",
+  "sequence": "related-work-five-turns",
+  "turn": 3,
+  "scoring": "evaluation/session-answer-key.md#stage-3"
+}

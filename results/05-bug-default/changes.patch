@@ -1,0 +1,181 @@
+--- a/README.md
++++ b/README.md
+@@ -86,7 +86,8 @@
+   evidence-typing yet.
+ - Reaction rounds are parallel snapshots (agents react to proposals, not to each
+   other's same-round reactions).
+-- Timeout kills the direct child only (process-tree kill is a later hardening).
++- On POSIX, timeouts terminate the CLI's process group, with a 250 ms grace
++  period before SIGKILL. Windows currently terminates only the direct child.
+ - Evidence mode shows agents **HEAD only** (uncommitted changes are invisible) and
+   untracked build artifacts (`node_modules`, …) are absent from the worktree, so
+   some test suites won't run there.
+--- a/src/adapters.ts
++++ b/src/adapters.ts
+@@ -8,6 +8,7 @@
+ // Agents can think for minutes; cap wall-clock. 10m: a repo-grounded run showed
+ // 5m is too tight for larger evidence-gathering turns.
+ export const DEFAULT_TIMEOUT_MS = 10 * 60 * 1000;
++const TERMINATION_GRACE_MS = 250;
+ 
+ export type CliCapture = { code: number | null; stdout: string; stderr: string; timedOut: boolean };
+ 
+@@ -15,18 +16,53 @@
+ // hangs waiting for stdin EOF otherwise. stdout/stderr captured separately.
+ function runCli(cmd: string, args: string[], cwd: string, timeoutMs: number): Promise<CliCapture> {
+   return new Promise((resolve) => {
+-    const child = spawn(cmd, args, { cwd, stdio: ["ignore", "pipe", "pipe"] });
++    // On POSIX, detached creates a new process group whose ID is the child's
++    // PID. Only signal that group, never the orchestrator's inherited group.
++    const useProcessGroup = process.platform !== "win32";
++    const child = spawn(cmd, args, { cwd, detached: useProcessGroup, stdio: ["ignore", "pipe", "pipe"] });
+     let stdout = "";
+     let stderr = "";
+     let timedOut = false;
++    let settled = false;
++    let forceTimer: ReturnType<typeof setTimeout> | undefined;
++    const finish = (code: number | null) => {
++      if (settled) return;
++      settled = true;
++      clearTimeout(timer);
++      clearTimeout(forceTimer);
++      resolve({ code, stdout, stderr, timedOut });
++    };
++    const signal = (name: NodeJS.Signals) => {
++      if (!child.pid) return; // A failed spawn has no process group.
++      try {
++        if (useProcessGroup) process.kill(-child.pid, name);
++        else child.kill(name);
++      } catch (e: any) {
++        // The group may already have exited. Other failures belong in the
++        // capture, but must not prevent the timeout from completing.
++        if (e.code !== "ESRCH") stderr += `\n${String(e)}`;
++      }
++    };
+     const timer = setTimeout(() => {
+       timedOut = true;
+-      child.kill("SIGTERM"); // v0: kills the child; process-tree kill is a later hardening (see docs/3_ADAPTERS.md)
++      signal("SIGTERM");
++      forceTimer = setTimeout(() => {
++        // Run even if the direct child closed: workers may still be alive
++        // without holding our pipes open, or may ignore SIGTERM entirely.
++        signal("SIGKILL");
++        child.stdout.destroy();
++        child.stderr.destroy();
++        child.unref();
++        finish(child.exitCode);
++      }, TERMINATION_GRACE_MS);
+     }, timeoutMs);
+     child.stdout.on("data", (d) => { stdout += d.toString(); });
+     child.stderr.on("data", (d) => { stderr += d.toString(); });
+-    child.on("error", (e) => { clearTimeout(timer); resolve({ code: null, stdout, stderr: String(e), timedOut }); });
+-    child.on("close", (code) => { clearTimeout(timer); resolve({ code, stdout, stderr, timedOut }); });
++    child.on("error", (e) => {
++      stderr = String(e);
++      if (!timedOut) finish(null);
++    });
++    child.on("close", (code) => { if (!timedOut) finish(code); });
+   });
+ }
+ 
+--- a/test/fakes/timeout-cli
++++ b/test/fakes/timeout-cli
+@@ -0,0 +1,21 @@
++#!/usr/bin/env node
++// Local timeout reproduction: all processes stay alive until signaled.
++import { spawn } from "node:child_process";
++import { appendFileSync } from "node:fs";
++const record = (event) => appendFileSync(process.env.FAKE_PROCESS_LOG, `${event}\n`);
++const worker = process.argv[2] === "worker";
++record(`pid ${process.pid}`);
++process.on("SIGTERM", () => {
++  record(`term ${process.pid}`);
++  if (!worker && process.env.FAKE_TIMEOUT_MODE !== "ignore") process.exit(0);
++});
++if (!worker) {
++  process.stdout.write("partial stdout\n");
++  process.stderr.write("partial stderr\n");
++  if (process.env.FAKE_TIMEOUT_MODE !== "ignore") {
++    spawn(process.execPath, [import.meta.filename, "worker"], {
++      stdio: process.env.FAKE_TIMEOUT_MODE === "closed-pipes" ? "ignore" : "inherit",
++    });
++  }
++}
++setInterval(() => {}, 1000);
+--- a/test/timeout.test.ts
++++ b/test/timeout.test.ts
+@@ -0,0 +1,74 @@
++import { test } from "node:test";
++import assert from "node:assert/strict";
++import { mkdtempSync, readFileSync, rmSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { fileURLToPath } from "node:url";
++import { setTimeout as delay } from "node:timers/promises";
++import { codexAdapter } from "../src/adapters.ts";
++
++const bin = fileURLToPath(new URL("./fakes/timeout-cli", import.meta.url));
++
++function running(pid: number): boolean {
++  try { process.kill(pid, 0); return true; }
++  catch (e: any) { if (e.code === "ESRCH") return false; throw e; }
++}
++
++test("spawn failure is captured without becoming a timeout", async () => {
++  const dir = mkdtempSync(join(tmpdir(), "cli-missing-"));
++  try {
++    const r = await codexAdapter(undefined, { bin: join(dir, "missing"), timeoutMs: 700 }).run("ping", dir);
++    assert.equal(r.ok, false);
++    assert.equal(r.raw?.timedOut, false);
++    assert.match(r.raw?.stderr ?? "", /ENOENT/);
++  } finally {
++    rmSync(dir, { recursive: true, force: true });
++  }
++});
++
++for (const mode of ["inherited-pipes", "ignore", "closed-pipes"]) {
++  test(`timeout: ${mode} terminates promptly and leaves no live workers`, {
++    skip: process.platform === "win32", // POSIX process groups and signals
++  }, async () => {
++    const dir = mkdtempSync(join(tmpdir(), "cli-timeout-"));
++    const log = join(dir, "processes.log");
++    process.env.FAKE_PROCESS_LOG = log;
++    process.env.FAKE_TIMEOUT_MODE = mode;
++    const events = () => {
++      try { return readFileSync(log, "utf8").trim().split("\n"); }
++      catch (e: any) { if (e.code === "ENOENT") return []; throw e; }
++    };
++    const pids = () => events().filter((s) => s.startsWith("pid ")).map((s) => Number(s.slice(4)));
++    const cleanup = () => {
++      for (const pid of pids()) {
++        try { process.kill(pid, "SIGKILL"); }
++        catch (e: any) { if (e.code !== "ESRCH") throw e; }
++      }
++    };
++    // Bound the reproduction even when run against the broken implementation.
++    const watchdog = setTimeout(cleanup, 4000);
++    try {
++      const started = performance.now();
++      const r = await codexAdapter(undefined, { bin, timeoutMs: 700 }).run("ping", dir);
++      const elapsed = performance.now() - started;
++      assert.equal(r.ok, false);
++      assert.equal(!r.ok && r.error, "timeout");
++      assert.equal(r.raw?.timedOut, true);
++      assert.equal(r.raw?.stdout, "partial stdout\n");
++      assert.equal(r.raw?.stderr, "partial stderr\n");
++      assert.ok(elapsed < 2500, `timeout took ${elapsed.toFixed(0)}ms`);
++      const ids = pids();
++      assert.equal(ids.length, mode === "ignore" ? 1 : 2);
++      for (const pid of ids) assert.ok(events().includes(`term ${pid}`), `PID ${pid} received SIGTERM`);
++      const deadline = performance.now() + 1000;
++      while (ids.some(running) && performance.now() < deadline) await delay(20);
++      for (const pid of ids) assert.equal(running(pid), false, `PID ${pid} survived timeout`);
++    } finally {
++      clearTimeout(watchdog);
++      cleanup();
++      delete process.env.FAKE_PROCESS_LOG;
++      delete process.env.FAKE_TIMEOUT_MODE;
++      rmSync(dir, { recursive: true, force: true });
++    }
++  });
++}

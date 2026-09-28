@@ -1,0 +1,120 @@
+{
+  "score": 8,
+  "max_score": 8,
+  "passed": true,
+  "details": [
+    {
+      "item": 1,
+      "credit": 1,
+      "finding": "Correct fresh-debate scope and cfg.judge/default fallback for both saved-debate commands.",
+      "evidence": [
+        "README.md:158-160",
+        "src/index.ts:103",
+        "src/index.ts:214",
+        "src/index.ts:340"
+      ]
+    },
+    {
+      "item": 2,
+      "credit": 1,
+      "finding": "Correctly identifies both continuation cases that print respondeo-N.md rather than README's claimed debate.md fallback.",
+      "evidence": [
+        "README.md:107-110",
+        "src/index.ts:270-292"
+      ]
+    },
+    {
+      "item": 3,
+      "credit": 1,
+      "finding": "Correctly identifies permissive parser behavior for missing/malformed/failed determinations and --finalize accepting them.",
+      "evidence": [
+        "README.md:103-104",
+        "README.md:172-175",
+        "src/debate.ts:124-126",
+        "src/index.ts:234-240"
+      ]
+    },
+    {
+      "item": 4,
+      "credit": 1,
+      "finding": "Correctly describes configured judging after reactions and no automatic drafting after NEEDS_INPUT or failed judge turns.",
+      "evidence": [
+        "src/debate.ts:228-275"
+      ]
+    },
+    {
+      "item": 5,
+      "credit": 1,
+      "finding": "Correct judge-only continuation, synthesis on resolved result, and absence of re-judging in --finalize.",
+      "evidence": [
+        "src/index.ts:234-279",
+        "src/debate.ts:188-200"
+      ]
+    },
+    {
+      "item": 6,
+      "credit": 1,
+      "finding": "Correct latest numeric determination selection within explicit/latest debate directory, without falling back to an older resolved version.",
+      "evidence": [
+        "src/index.ts:124-152"
+      ]
+    },
+    {
+      "item": 7,
+      "credit": 1,
+      "finding": "Correct separation between transcript-only initial/re-judging and final drafting with disposable HEAD-worktree evidence. It does not spell out repoArg ?? cfg.repo, but correctly conveys the underlying repository-access distinction.",
+      "evidence": [
+        "src/index.ts:221",
+        "src/debate.ts:70-77",
+        "src/debate.ts:188-200",
+        "src/debate.ts:261"
+      ]
+    },
+    {
+      "item": 8,
+      "credit": 1,
+      "finding": "The NEEDS_INPUT parser exception plus cited finalize guard convey the blocking case; successful final-report.md emission is explicit. Exact refusal exit code 1 is omitted in prose but present in cited guard; semantic credit granted consistently to both answers.",
+      "evidence": [
+        "src/index.ts:234-252"
+      ],
+      "omitted_detail": "The answer does not explicitly state --finalize exits 1 for an explicit NEEDS_INPUT determination."
+    }
+  ],
+  "false_claims": [],
+  "additional_correct_findings": [
+    {
+      "finding": "--continue can re-judge an already-resolved determination without a previous-status check.",
+      "assessment": "Correct broader accepted behavior. README presents a NEEDS_INPUT workflow rather than an explicit prohibition on other input states; do not infer bug severity from acceptance alone. The internal prompt's NEEDS_INPUT assumption supports an additional consistency concern.",
+      "evidence": [
+        "README.md:95-97",
+        "src/index.ts:255-257",
+        "src/debate.ts:164-170"
+      ]
+    },
+    {
+      "finding": "Saved-debate commands select the current configured judge or fallback rather than restoring the original judge.",
+      "assessment": "Correct; no saved judge spec is recovered by these branches.",
+      "evidence": [
+        "src/index.ts:184-185",
+        "src/index.ts:209-214"
+      ]
+    },
+    {
+      "finding": "Saved failed determination text is accepted as resolved by subsequent --finalize.",
+      "assessment": "Correct. Source confirms the normal workflow persists this text, while preventing automatic final drafting on the initial failure.",
+      "evidence": [
+        "src/debate.ts:263-275",
+        "src/index.ts:378-380",
+        "src/index.ts:234-240"
+      ]
+    }
+  ],
+  "severity_notes": [
+    "Parser permissiveness is an explicitly documented implementation choice for successful turns. The saved FAILED-state loss and divergence from already-resolved documentation are concrete; observed occurrence frequency or real-world harm is not established.",
+    "No material factual overstatement or invented issue was found."
+  ],
+  "limitations": [
+    "Self-reported test counts, temporary scenarios, unchanged files, network absence, and git-status availability were not independently audited because run logs/workspaces were excluded to preserve blinding. No inspected evidence contradicts them, and they add no rubric points."
+  ],
+  "method": "Blind rubric scoring against frozen public source; reviewer did not see policy or cost."
+}
